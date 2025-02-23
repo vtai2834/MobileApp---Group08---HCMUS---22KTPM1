@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="0dp">
+
+    <VideoView
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="0dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="0dp">
+        <!--        AVT người dùng-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avt"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/avt"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@android:color/white" />
+        <!--        Dấu + dưới AVT-->
+        <ImageView
+            android:id="@+id/plus"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/avt"
+
+            app:tint="#FF0000"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="-15dp"
+            android:layout_marginRight="25dp"
+            android:accessibilityHeading="false"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/plus_icon" />
+
+        <!--        Block trái tim -->
+        <RelativeLayout
+            android:id="@+id/heart"
+            android:layout_width="50dp"
+            android:layout_height="70dp"
+            android:layout_below="@id/plus"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/heart_icon" />
+
+            <TextView
+                android:id="@+id/like"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text="345k"
+                android:textColor="#ffffff"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+
+        <!--        Block bình luận -->
+        <RelativeLayout
+            android:id="@+id/comment"
+            android:layout_width="50dp"
+            android:layout_height="70dp"
+            android:layout_below="@id/heart"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="5dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/comment" />
+
+            <TextView
+                android:id="@+id/cmt_num"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text="54"
+                android:textColor="#ffffff"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+
+        <!--        Block chia sẻ -->
+        <RelativeLayout
+            android:id="@+id/share"
+            android:layout_width="50dp"
+            android:layout_height="70dp"
+            android:layout_below="@id/comment"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="5dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/share_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text="Share"
+                android:textColor="#ffffff"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+
+        <!--        Block tải xuống -->
+        <RelativeLayout
+            android:id="@+id/download"
+            android:layout_width="50dp"
+            android:layout_height="70dp"
+            android:layout_below="@id/share"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="5dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/download_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="24dp"
+                android:text="Download"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="11dp"
+                tools:ignore="TextSizeCheck" />
+        </RelativeLayout>
+
+
+        <!--        Phần thông tin video (tên người dùng, ...)-->
+        <!--        Tên người dùng-->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp">
+            <!--        Tên người dùng-->
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="\@karenne"
+                android:textStyle="bold"
+                android:textSize="25dp"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-condensed-light"/>
+
+            <!--            Nội dung bài viết-->
+            <TextView
+                android:id="@+id/content"
+                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/username"
+                android:text="#mangden #aiuem10ngannam"
+                android:textColor="@color/white" />
+
+            <!--            Phần nhạc nhẽo-->
+            <TextView
+                android:id="@+id/music"
+                android:layout_below="@id/content"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="\u266B Waiting for you"
+                android:textSize="15sp"
+                android:textColor="@color/white"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

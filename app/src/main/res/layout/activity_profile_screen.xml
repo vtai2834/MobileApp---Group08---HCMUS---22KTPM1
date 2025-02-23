@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileScreen"
+    android:layout_marginBottom="50dp">
+
+    <!--    Phần thanh taskbar bên trên-->
+    <LinearLayout
+        android:id="@+id/top_taskbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="10dp">
+
+        <!-- Icon người dùng -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/add_user"
+            android:layout_marginStart="5dp"
+            android:contentDescription="User Icon" />
+
+        <!-- Tên người dùng + mũi tên -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginStart="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jacob West"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_dropdown"
+                android:contentDescription="Dropdown Arrow"
+                android:layout_marginStart="5dp"/>
+        </LinearLayout>
+
+        <!-- Icon menu ba chấm -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/three_dots"
+            android:layout_marginEnd="5dp"
+            android:contentDescription="More Options" />
+    </LinearLayout>
+
+    <!--    Phần giữa -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:layout_below="@+id/top_taskbar"
+        android:layout_above="@+id/bottom_taskbar"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/top_taskbar"
+            android:layout_above="@+id/bottom_taskbar">
+
+            <LinearLayout
+                android:id="@+id/avt_area"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingTop="10dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avt"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/avt"
+                    app:civ_border_color="@android:color/white"
+                    app:civ_border_width="2dp" />
+
+                <TextView
+                    android:id="@+id/user_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@jacob_w"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/para_area"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:background="@color/white"
+                android:gravity="center"
+                android:layout_below="@id/avt_area"
+                android:weightSum="3"> <!-- Chia đều 3 phần -->
+
+                <!-- Following -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.7"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="14"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Following"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+
+                <!-- Followers -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.7"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="38"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Followers"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+
+                <!-- Likes -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.7"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="91"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Likes"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/edit_area"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_below="@id/para_area"
+                android:paddingHorizontal="20dp">
+
+                <!-- Nút Edit Profile -->
+                <RelativeLayout
+                    android:id="@+id/edit_profile_btn"
+                    android:layout_width="120dp"
+                    android:layout_height="45dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/button_background"
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Edit Profile"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"/>
+                </RelativeLayout>
+
+
+                <!-- Khoảng cách giữa nút và icon -->
+                <Space
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content"/>
+
+                <!-- Icon Bookmark -->
+                <ImageView
+                    android:id="@+id/btn_bookmark"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:src="@drawable/ic_bookmark"
+                    android:background="@drawable/button_background"
+                    android:padding="10dp"/>
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edit_area"
+                android:hint="Tap to add bio"
+                android:textSize="16sp"
+                android:padding="15dp"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:background="@android:color/transparent"/>
+
+            <View
+                android:id="@+id/hr"
+                android:layout_width="match_parent"
+                android:layout_height="0.7dp"
+                android:layout_below="@id/editText"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/darker_gray" />
+
+            <LinearLayout
+                android:id="@+id/typeVid"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:layout_below="@id/hr"
+                android:background="@color/white"
+                android:gravity="center"
+                android:paddingHorizontal="10dp">
+
+                <!-- Icon 1 -->
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_menu"
+                    android:contentDescription="User Icon" />
+
+                <!-- Spacer with fixed 50dp space between the icons -->
+                <Space
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content" />
+
+                <!-- Icon 2 -->
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_heart"
+                    android:contentDescription="More Options" />
+            </LinearLayout>
+
+<!--            Phần các video của người dùng-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewProfile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/typeVid"
+                android:padding="10dp"/>
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <!--    Phần thanh taskbar bên dưới-->
+    <LinearLayout
+        android:id="@+id/bottom_taskbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:padding="5dp"
+        android:weightSum="5"
+        android:gravity="center_vertical">
+
+        <!-- Nút home-->
+        <RelativeLayout
+            android:id="@+id/home_page"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/home_icon"
+                app:tint="@color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:text="Home"
+                android:textColor="#000000"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+
+        <!-- Nút tìm kiếm-->
+        <RelativeLayout
+            android:id="@+id/search_page"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/search_icon"
+                app:tint="@color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:text="Discover"
+                android:textColor="#000000"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+
+        <!-- Nút đăng bài-->
+        <RelativeLayout
+            android:id="@+id/upload_page"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/upload_icon" />
+        </RelativeLayout>
+
+        <!-- Nút thông báo-->
+        <RelativeLayout
+            android:id="@+id/notifi_page"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/notification_icon"
+                app:tint="@color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:text="Inbox"
+                android:textColor="#000000"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+
+        <!-- Nút thông tin-->
+        <RelativeLayout
+            android:id="@+id/info_page"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/black">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/user_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:text="Me"
+                android:textColor="#ffffff"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

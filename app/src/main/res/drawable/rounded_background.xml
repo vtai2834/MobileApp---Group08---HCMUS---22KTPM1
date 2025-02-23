@@ -1,0 +1,5 @@
+<!-- res/drawable/rounded_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#C8C8C8"/> <!-- Màu nền bạn muốn -->
+    <corners android:radius="16dp"/> <!-- Chỉnh độ bo góc (16dp là ví dụ) -->
+</shape>

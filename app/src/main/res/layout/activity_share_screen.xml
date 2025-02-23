@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <VideoView
+        android:id="@+id/share_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:backgroundTint="#C8C8C8"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="0dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/rounded_background">
+        <!-- Title bar -->
+        <TextView
+            android:id="@+id/shareTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Share to"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:padding="5dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#878787" />
+
+
+        <!-- GridLayout for Share buttons -->
+        <LinearLayout
+            android:id="@+id/shareButtons"
+            android:background="#C8C8C8"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:weightSum="5"
+            android:gravity="center_vertical">
+
+            <!-- Report Button -->
+            <RelativeLayout
+                android:id="@+id/reportButton"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_report"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:text="Report"
+                    android:textColor="#000000"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center">
+                </TextView>
+            </RelativeLayout>
+
+            <!-- Facebook Button -->
+            <RelativeLayout
+                android:id="@+id/facebookButton"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_facebook"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:text="Facebook"
+                    android:textColor="#000000"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center">
+                </TextView>
+            </RelativeLayout>
+
+            <!-- SMS Button -->
+            <RelativeLayout
+                android:id="@+id/smsButton"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_sms"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:text="SMS"
+                    android:textColor="#000000"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center">
+                </TextView>
+            </RelativeLayout>
+
+            <!-- Messenger Button -->
+            <RelativeLayout
+                android:id="@+id/messengerButton"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_messenger"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:text="Messenger"
+                    android:textColor="#000000"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center">
+                </TextView>
+            </RelativeLayout>
+
+            <!-- Instagram Button -->
+            <RelativeLayout
+                android:id="@+id/instagramButton"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_instagram"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:text="Instagram"
+                    android:textColor="#000000"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center">
+                </TextView>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#878787" />
+
+        <!-- Cancel Button -->
+        <Button
+            android:backgroundTint="#C8C8C8"
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="@color/black"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+
+</RelativeLayout>

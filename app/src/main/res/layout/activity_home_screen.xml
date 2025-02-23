@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeScreen"
+    android:layout_marginBottom="50dp">
+
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="60dp"/>
+
+<!--    Phần thanh taskbar bên dưới-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/black"
+        android:padding="5dp"
+        android:weightSum="5"
+        android:gravity="center_vertical">
+
+        <!-- Nút home-->
+        <RelativeLayout
+            android:id="@+id/home_page"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/home_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:text="Home"
+                android:textColor="#ffffff"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+
+        <!-- Nút tìm kiếm-->
+        <RelativeLayout
+            android:id="@+id/search_page"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/search_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:text="Discover"
+                android:textColor="#ffffff"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+
+        <!-- Nút đăng bài-->
+        <RelativeLayout
+            android:id="@+id/upload_page"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/upload_icon" />
+        </RelativeLayout>
+
+        <!-- Nút thông báo-->
+        <RelativeLayout
+            android:id="@+id/notifi_page"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/notification_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:text="Inbox"
+                android:textColor="#ffffff"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+
+        <!-- Nút thông tin-->
+        <RelativeLayout
+            android:id="@+id/info_page"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/user_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:text="Me"
+                android:textColor="#ffffff"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:textAlignment="center">
+            </TextView>
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

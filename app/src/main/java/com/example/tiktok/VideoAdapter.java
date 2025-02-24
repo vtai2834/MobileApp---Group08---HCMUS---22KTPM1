@@ -1,21 +1,21 @@
 package com.example.tiktok;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.ui.PlayerView;
 
 import java.util.List;
 
@@ -23,10 +23,36 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     private List<Video> videoItems;
     private Context context;
+    private ExoPlayer currentPlayer = null;
+    private int currentPlayingPosition = -1;
+    private RecyclerView recyclerView;
 
-    public VideoAdapter(List<Video> videoItems, Context context) {
+    public VideoAdapter(List<Video> videoItems, Context context, RecyclerView recyclerView) {
         this.videoItems = videoItems;
-        this.context = context; // Save context to use later for showing Toast/Dialogs
+        this.context = context;
+        this.recyclerView = recyclerView;
+        setupScrollListener();
+    }
+
+    private void setupScrollListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    playVisibleVideo();
+                }
+            }
+        });
+    }
+
+    private void playVisibleVideo() {
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        if (layoutManager == null) return;
+
+        int firstVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition();
+        if (firstVisibleItem == RecyclerView.NO_POSITION) return;
+
+        playVideoAt(firstVisibleItem);
     }
 
     @NonNull
@@ -40,116 +66,79 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         Video videoItem = videoItems.get(position);
 
-        // Set video URI
-        holder.videoView.setVideoURI(Uri.parse(videoItem.getVideoUri()));
-//        holder.videoView.start();
+        if (holder.player != null) {
+            holder.player.release();
+        }
 
-        // Set video to loop by setting a listener on the VideoView's MediaPlayer
-        holder.videoView.setOnPreparedListener(mp -> {
-            mp.setLooping(true);  // Set the video to loop
-            holder.videoView.start(); // Start the video
-        });
+        holder.player = new ExoPlayer.Builder(context).build();
+        holder.playerView.setPlayer(holder.player);
+        holder.playerView.setUseController(false);
 
-        // Set user info
-        holder.username.setText(videoItem.getUsername());
-        holder.likes.setText(videoItem.getLikes());
-        holder.comments.setText(videoItem.getComments());
-        holder.music.setText(videoItem.getMusic());
-        holder.content.setText(videoItem.getTitle());
+        MediaItem mediaItem = new MediaItem.Builder()
+                .setUri(Uri.parse(videoItem.getVideoUri()))
+                .setMimeType("video/mp4")
+                .build();
 
-        // Handle comment button click
-        holder.commentButton.setOnClickListener(new View.OnClickListener() {
+        holder.player.setMediaItem(mediaItem);
+        holder.player.prepare();
+
+        holder.player.addListener(new Player.Listener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), CommentScreen.class);
-                intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
-                view.getContext().startActivity(intent);
+            public void onPlaybackStateChanged(int state) {
+                if (state == Player.STATE_ENDED) {
+                    holder.player.seekTo(0);
+                    holder.player.play();
+                }
             }
         });
 
-        // Handle share button click
-        holder.shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), ShareScreen.class);
-                intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
-                view.getContext().startActivity(intent);
+        holder.playerView.setOnClickListener(v -> {
+            if (holder.player.isPlaying()) {
+                holder.player.pause();
+            } else {
+                holder.player.play();
             }
         });
 
-        // Handle like button click
-        holder.likeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Handle like action here
-                Toast.makeText(view.getContext(), "Liked", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Handle download button click
-        holder.downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDownloadDialog();
-            }
-        });
+        // Dừng video trước đó nếu có
+        if (currentPlayingPosition == position) {
+            holder.player.play();
+            currentPlayer = holder.player;
+        } else {
+            holder.player.pause();
+        }
     }
+
 
     @Override
     public int getItemCount() {
         return videoItems.size();
     }
 
-    public static class VideoViewHolder extends RecyclerView.ViewHolder {
+    public void playVideoAt(int position) {
+        if (currentPlayingPosition == position) return;
 
-        VideoView videoView;
-        TextView username, likes, comments, music, content;
-        RelativeLayout commentButton, shareButton, likeButton, downloadButton;
+        Log.d("VideoAdapter", "Switched video from position " + currentPlayingPosition + " to " + position);
+
+        // Dừng video hiện tại nếu có
+        if (currentPlayer != null) {
+            currentPlayer.pause();
+        }
+
+        notifyItemChanged(currentPlayingPosition);
+        currentPlayingPosition = position;
+        notifyItemChanged(position);
+    }
+
+
+    public static class VideoViewHolder extends RecyclerView.ViewHolder {
+        PlayerView playerView;
+        ExoPlayer player;
 
         public VideoViewHolder(View itemView) {
             super(itemView);
-            videoView = itemView.findViewById(R.id.video);
-            username = itemView.findViewById(R.id.username);
-            likes = itemView.findViewById(R.id.like);
-            comments = itemView.findViewById(R.id.cmt_num);
-            music = itemView.findViewById(R.id.music);
-            content = itemView.findViewById(R.id.content);
-
-            commentButton = itemView.findViewById(R.id.comment);
-            shareButton = itemView.findViewById(R.id.share);
-            likeButton = itemView.findViewById(R.id.heart);
-            downloadButton = itemView.findViewById(R.id.download);
+            playerView = itemView.findViewById(R.id.video);
         }
     }
 
-    // Method to show the download confirmation dialog
-    private void showDownloadDialog() {
-        // Create the AlertDialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(context); // Use the context passed in constructor
-        builder.setTitle("Tải xuống video này")
-                .setMessage("Bạn có chắc chắn muốn tải video này xuống?")
-                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Handle "Đồng ý" button click (start download)
-                        startDownload();
-                    }
-                })
-                .setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Handle "Hủy bỏ" button click (cancel download)
-                        dialog.dismiss();
-                    }
-                })
-                .create()
-                .show();
-    }
-
-    // Method to simulate video download
-    private void startDownload() {
-        // Simulate the video download process here
-        // For now, you can just show a toast as a placeholder
-        Toast.makeText(context, "Video đang được tải xuống...", Toast.LENGTH_SHORT).show();
-    }
 }

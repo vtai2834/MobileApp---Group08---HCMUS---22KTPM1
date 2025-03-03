@@ -20,6 +20,7 @@ public class HomeScreen extends AppCompatActivity {
     RelativeLayout noti_button;
     RelativeLayout profile_button;
 
+
     private ViewPager2 viewPager;
     private VideoAdapter videoAdapter;
     private List<Video> videoItems;
@@ -35,16 +36,18 @@ public class HomeScreen extends AppCompatActivity {
 
         // Khởi tạo danh sách video
         videoItems = new ArrayList<>();
-        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//63d56221-aec7-42e7-9653-9a373ba9fe58.mp4", "@karenne", "345k", "54", "Waiting for you", "#mangden #kontum #dance"));
         videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//6d4d64f5-eb0d-4262-8e6d-2c30e9afa8da.mp4", "@john_doe", "120k", "30", "Smooth vibes", "đám dỗ bên cồn"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//63d56221-aec7-42e7-9653-9a373ba9fe58.mp4", "@karenne", "345k", "54", "Waiting for you", "#mangden #kontum #dance"));
         videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//d270f3e0-6427-46cf-8bcf-792d553cb9fd.mp4", "@tiktok_user", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//d270f3e0-6427-46cf-8bcf-792d553cb9fd.mp4", "@tiktok_user", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//91bf1782-1b22-41ef-874a-6e06d64f66a5.mp4", "@tiktok_user222", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//91bf1782-1b22-41ef-874a-6e06d64f66a5.mp4", "@tiktok_user222", "900k", "150", "Let's dance", "#beoitutu"));
 
         // Thêm các video khác vào danh sách videoItems
 
-        recyclerView = findViewById(R.id.recyclerView);
         // Set ViewPager2 adapter
         viewPager = findViewById(R.id.viewPager);
-        videoAdapter = new VideoAdapter(videoItems, this, recyclerView); // Đảm bảo rằng context được truyền vào
+        videoAdapter = new VideoAdapter(videoItems, this); // Đảm bảo rằng context được truyền vào
         viewPager.setAdapter(videoAdapter);
 
         // Thiết lập ViewPager2 cuộn dọc
@@ -86,6 +89,8 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
+
+//        videoAdapter.playVideoAt(0);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -93,6 +98,7 @@ public class HomeScreen extends AppCompatActivity {
                 videoAdapter.playVideoAt(position); // Gọi phương thức phát video
             }
         });
+
 
     }
 

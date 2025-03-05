@@ -6,6 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,13 +21,16 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
 
     private List<Video> videoItems;
     private Context context;
     private Map<Integer, ExoPlayer> playerMap = new HashMap<>();
-    private int currentPlayingPosition = -1;
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(3);
 
     public VideoAdapter(List<Video> videoItems, Context context) {
         this.videoItems = videoItems;
@@ -35,47 +41,90 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     @Override
     public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_home_screen, parent, false);
+        processClick(view);
         return new VideoViewHolder(view);
+    }
+
+    private void processClick(View view) {
+        RelativeLayout heart = view.findViewById(R.id.heart);
+        heart.setOnClickListener(v -> showToast(view, "Click heart"));
+
+        RelativeLayout comment = view.findViewById(R.id.comment);
+        comment.setOnClickListener(v -> showToast(view, "Click comment"));
+
+        RelativeLayout share = view.findViewById(R.id.share);
+        share.setOnClickListener(v -> showToast(view, "Click share"));
+
+        RelativeLayout download = view.findViewById(R.id.download);
+        download.setOnClickListener(v -> showToast(view, "Click download"));
+    }
+
+    private void showToast(View view, String message) {
+        Log.d("ItemVideoHomeScreen", message);
+        Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
-        Video videoItem = videoItems.get(position);
+        if (position < 0 || position >= videoItems.size()) return; // Tránh truy cập vị trí không hợp lệ
 
-        // Kiểm tra nếu đã có ExoPlayer cho vị trí này, thì dùng lại
+        Video videoItem = videoItems.get(position);
         ExoPlayer player = playerMap.get(position);
+
         if (player == null) {
             player = new ExoPlayer.Builder(context).build();
             playerMap.put(position, player);
-        }
-
-        holder.playerView.setPlayer(player);
-
-        // Tránh load lại nếu video đã thiết lập trước đó
-        if (player.getMediaItemCount() == 0) {
             MediaItem mediaItem = MediaItem.fromUri(Uri.parse(videoItem.getVideoUri()));
             player.setMediaItem(mediaItem);
             player.prepare();
         }
-
-        // Tự động lặp lại video
-        player.setRepeatMode(Player.REPEAT_MODE_ONE);
-
-        // Hiển thị vĩnh viễn thanh điều khiển
+        holder.playerView.setUseController(true);
         holder.playerView.setControllerShowTimeoutMs(0);
+        ExoPlayer finalPlayer = player;
+        holder.itemView.post(() -> {
+            if (holder.getAdapterPosition() == position) { // Đảm bảo đúng ViewHolder
+                holder.playerView.setPlayer(finalPlayer);
+                finalPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
+                finalPlayer.play();
+
+                TextView username = holder.itemView.findViewById(R.id.username);
+                username.setText(videoItem.getUsername());
+            }
+        });
     }
 
-    public void playVideoAt(int position) {
-        for (int i = 0; i < playerMap.size(); i++)
-            if(playerMap.get(i) != null)
-                playerMap.get(i).pause();
-        if (playerMap.get(position) != null)
-            playerMap.get(position).play();
 
-        Log.d(
-                "VideoAdapter",
-                "Playing video at position: " + position
-        );
+    @Override
+    public void onViewDetachedFromWindow(@NonNull VideoViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        int position = holder.getAdapterPosition();
+
+        if (position != RecyclerView.NO_POSITION && playerMap.containsKey(position)) {
+            ExoPlayer player = playerMap.get(position);
+            if (player != null) {
+                player.stop();
+                player.release();
+            }
+            playerMap.remove(position);
+        }
+
+        holder.playerView.setPlayer(null);
+
+        // Gọi cập nhật lại Adapter để ép RecyclerView load lại video ngay lập tức
+        new android.os.Handler().postDelayed(() -> {
+            notifyItemChanged(position);
+        }, 50); // Delay ngắn để tránh conflict với RecyclerView
+    }
+
+
+    public void playVideoAt(int position) {
+        for (ExoPlayer player : playerMap.values()) {
+            if (player != null) player.pause();
+        }
+        if (playerMap.get(position) != null) {
+            playerMap.get(position).play();
+        }
+        Log.d("VideoAdapter", "Playing video at position: " + position);
     }
 
     @Override
@@ -83,9 +132,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         return videoItems.size();
     }
 
-    /**
-     * Giữ nguyên player khi ViewHolder bị tái sử dụng, tránh reset video.
-     */
     @Override
     public void onViewRecycled(@NonNull VideoViewHolder holder) {
         super.onViewRecycled(holder);
@@ -94,16 +140,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         }
     }
 
-    /**
-     * Giải phóng bộ nhớ khi Adapter bị hủy
-     */
     public void releasePlayers() {
         for (ExoPlayer player : playerMap.values()) {
             player.release();
         }
         playerMap.clear();
     }
-
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
         PlayerView playerView;

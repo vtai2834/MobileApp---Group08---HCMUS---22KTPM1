@@ -8,11 +8,11 @@
     tools:context=".HomeScreen"
     android:layout_marginBottom="50dp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"/>
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/recyclerView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:overScrollMode="never"/>-->
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"

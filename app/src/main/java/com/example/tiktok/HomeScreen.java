@@ -7,6 +7,7 @@ import android.widget.RelativeLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.ArrayList;
@@ -19,9 +20,13 @@ public class HomeScreen extends AppCompatActivity {
     RelativeLayout noti_button;
     RelativeLayout profile_button;
 
+
     private ViewPager2 viewPager;
     private VideoAdapter videoAdapter;
     private List<Video> videoItems;
+
+    private RecyclerView recyclerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +36,18 @@ public class HomeScreen extends AppCompatActivity {
 
         // Khởi tạo danh sách video
         videoItems = new ArrayList<>();
-        videoItems.add(new Video("android.resource://" + getPackageName() + "/" + R.raw.main_video, "@karenne", "345k", "54", "Waiting for you", "#mangden #kontum #dance"));
-        videoItems.add(new Video("android.resource://" + getPackageName() + "/" + R.raw.video_2, "@john_doe", "120k", "30", "Smooth vibes", "đám dỗ bên cồn"));
-        videoItems.add(new Video("android.resource://" + getPackageName() + "/" + R.raw.video_3, "@tiktok_user", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//6d4d64f5-eb0d-4262-8e6d-2c30e9afa8da.mp4", "@john_doe", "120k", "30", "Smooth vibes", "đám dỗ bên cồn"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//63d56221-aec7-42e7-9653-9a373ba9fe58.mp4", "@karenne", "345k", "54", "Waiting for you", "#mangden #kontum #dance"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//d270f3e0-6427-46cf-8bcf-792d553cb9fd.mp4", "@tiktok_user", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//d270f3e0-6427-46cf-8bcf-792d553cb9fd.mp4", "@tiktok_user", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//91bf1782-1b22-41ef-874a-6e06d64f66a5.mp4", "@tiktok_user222", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//91bf1782-1b22-41ef-874a-6e06d64f66a5.mp4", "@tiktok_user222", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//91bf1782-1b22-41ef-874a-6e06d64f66a5.mp4", "@tiktok_user222", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//91bf1782-1b22-41ef-874a-6e06d64f66a5.mp4", "@tiktok_user222", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//91bf1782-1b22-41ef-874a-6e06d64f66a5.mp4", "@tiktok_user222", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//91bf1782-1b22-41ef-874a-6e06d64f66a5.mp4", "@tiktok_user222", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//91bf1782-1b22-41ef-874a-6e06d64f66a5.mp4", "@tiktok_user222", "900k", "150", "Let's dance", "#beoitutu"));
+        videoItems.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//91bf1782-1b22-41ef-874a-6e06d64f66a5.mp4", "@tiktok_user222", "900k", "150", "Let's dance", "#beoitutu"));
 
         // Thêm các video khác vào danh sách videoItems
 
@@ -80,5 +94,19 @@ public class HomeScreen extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+//        videoAdapter.playVideoAt(0);
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                videoAdapter.playVideoAt(position); // Gọi phương thức phát video
+            }
+        });
+
+
     }
+
+
 }

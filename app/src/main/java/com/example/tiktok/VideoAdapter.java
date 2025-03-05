@@ -1,98 +1,130 @@
 package com.example.tiktok;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.ui.PlayerView;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
 
     private List<Video> videoItems;
     private Context context;
+    private Map<Integer, ExoPlayer> playerMap = new HashMap<>();
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(3);
 
     public VideoAdapter(List<Video> videoItems, Context context) {
         this.videoItems = videoItems;
-        this.context = context; // Save context to use later for showing Toast/Dialogs
+        this.context = context;
     }
 
     @NonNull
     @Override
     public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_home_screen, parent, false);
+        processClick(view);
         return new VideoViewHolder(view);
+    }
+
+    private void processClick(View view) {
+        RelativeLayout heart = view.findViewById(R.id.heart);
+        heart.setOnClickListener(v -> showToast(view, "Click heart"));
+
+        RelativeLayout comment = view.findViewById(R.id.comment);
+        comment.setOnClickListener(v -> showToast(view, "Click comment"));
+
+        RelativeLayout share = view.findViewById(R.id.share);
+        share.setOnClickListener(v -> showToast(view, "Click share"));
+
+        RelativeLayout download = view.findViewById(R.id.download);
+        download.setOnClickListener(v -> showToast(view, "Click download"));
+    }
+
+    private void showToast(View view, String message) {
+        Log.d("ItemVideoHomeScreen", message);
+        Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
+        if (position < 0 || position >= videoItems.size()) return; // Tránh truy cập vị trí không hợp lệ
+
         Video videoItem = videoItems.get(position);
+        ExoPlayer player = playerMap.get(position);
 
-        // Set video URI
-        holder.videoView.setVideoURI(Uri.parse(videoItem.getVideoUri()));
-//        holder.videoView.start();
+        if (player == null) {
+            player = new ExoPlayer.Builder(context).build();
+            playerMap.put(position, player);
+            MediaItem mediaItem = MediaItem.fromUri(Uri.parse(videoItem.getVideoUri()));
+            player.setMediaItem(mediaItem);
+            player.prepare();
+        }
+        holder.playerView.setUseController(true);
+        holder.playerView.setControllerShowTimeoutMs(0);
+        ExoPlayer finalPlayer = player;
+        holder.itemView.post(() -> {
+            if (holder.getAdapterPosition() == position) { // Đảm bảo đúng ViewHolder
+                holder.playerView.setPlayer(finalPlayer);
+                finalPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
+                finalPlayer.play();
 
-        // Set video to loop by setting a listener on the VideoView's MediaPlayer
-        holder.videoView.setOnPreparedListener(mp -> {
-            mp.setLooping(true);  // Set the video to loop
-            holder.videoView.start(); // Start the video
-        });
-
-        // Set user info
-        holder.username.setText(videoItem.getUsername());
-        holder.likes.setText(videoItem.getLikes());
-        holder.comments.setText(videoItem.getComments());
-        holder.music.setText(videoItem.getMusic());
-        holder.content.setText(videoItem.getTitle());
-
-        // Handle comment button click
-        holder.commentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), CommentScreen.class);
-                intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
-                view.getContext().startActivity(intent);
+                TextView username = holder.itemView.findViewById(R.id.username);
+                username.setText(videoItem.getUsername());
             }
         });
+    }
 
-        // Handle share button click
-        holder.shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), ShareScreen.class);
-                intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
-                view.getContext().startActivity(intent);
-            }
-        });
 
-        // Handle like button click
-        holder.likeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Handle like action here
-                Toast.makeText(view.getContext(), "Liked", Toast.LENGTH_SHORT).show();
-            }
-        });
+    @Override
+    public void onViewDetachedFromWindow(@NonNull VideoViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        int position = holder.getAdapterPosition();
 
-        // Handle download button click
-        holder.downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDownloadDialog();
+        if (position != RecyclerView.NO_POSITION && playerMap.containsKey(position)) {
+            ExoPlayer player = playerMap.get(position);
+            if (player != null) {
+                player.stop();
+                player.release();
             }
-        });
+            playerMap.remove(position);
+        }
+
+        holder.playerView.setPlayer(null);
+
+        // Gọi cập nhật lại Adapter để ép RecyclerView load lại video ngay lập tức
+        new android.os.Handler().postDelayed(() -> {
+            notifyItemChanged(position);
+        }, 50); // Delay ngắn để tránh conflict với RecyclerView
+    }
+
+
+    public void playVideoAt(int position) {
+        for (ExoPlayer player : playerMap.values()) {
+            if (player != null) player.pause();
+        }
+        if (playerMap.get(position) != null) {
+            playerMap.get(position).play();
+        }
+        Log.d("VideoAdapter", "Playing video at position: " + position);
     }
 
     @Override
@@ -100,56 +132,27 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         return videoItems.size();
     }
 
-    public static class VideoViewHolder extends RecyclerView.ViewHolder {
-
-        VideoView videoView;
-        TextView username, likes, comments, music, content;
-        RelativeLayout commentButton, shareButton, likeButton, downloadButton;
-
-        public VideoViewHolder(View itemView) {
-            super(itemView);
-            videoView = itemView.findViewById(R.id.video);
-            username = itemView.findViewById(R.id.username);
-            likes = itemView.findViewById(R.id.like);
-            comments = itemView.findViewById(R.id.cmt_num);
-            music = itemView.findViewById(R.id.music);
-            content = itemView.findViewById(R.id.content);
-
-            commentButton = itemView.findViewById(R.id.comment);
-            shareButton = itemView.findViewById(R.id.share);
-            likeButton = itemView.findViewById(R.id.heart);
-            downloadButton = itemView.findViewById(R.id.download);
+    @Override
+    public void onViewRecycled(@NonNull VideoViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder.playerView.getPlayer() != null) {
+            holder.playerView.getPlayer().pause();
         }
     }
 
-    // Method to show the download confirmation dialog
-    private void showDownloadDialog() {
-        // Create the AlertDialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(context); // Use the context passed in constructor
-        builder.setTitle("Tải xuống video này")
-                .setMessage("Bạn có chắc chắn muốn tải video này xuống?")
-                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Handle "Đồng ý" button click (start download)
-                        startDownload();
-                    }
-                })
-                .setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Handle "Hủy bỏ" button click (cancel download)
-                        dialog.dismiss();
-                    }
-                })
-                .create()
-                .show();
+    public void releasePlayers() {
+        for (ExoPlayer player : playerMap.values()) {
+            player.release();
+        }
+        playerMap.clear();
     }
 
-    // Method to simulate video download
-    private void startDownload() {
-        // Simulate the video download process here
-        // For now, you can just show a toast as a placeholder
-        Toast.makeText(context, "Video đang được tải xuống...", Toast.LENGTH_SHORT).show();
+    public static class VideoViewHolder extends RecyclerView.ViewHolder {
+        PlayerView playerView;
+
+        public VideoViewHolder(View itemView) {
+            super(itemView);
+            playerView = itemView.findViewById(R.id.video);
+        }
     }
 }

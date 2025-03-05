@@ -63,8 +63,12 @@ public class HomeScreen extends AppCompatActivity {
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
+
                 Intent intent = new Intent(HomeScreen.this, SearchScreen.class);
                 startActivity(intent);
+
+                HomeScreen.this.finish();
             }
         });
 
@@ -72,8 +76,12 @@ public class HomeScreen extends AppCompatActivity {
         plus_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
+
                 Intent intent = new Intent(HomeScreen.this, CameraScreen.class);
                 startActivity(intent);
+
+                HomeScreen.this.finish();
             }
         });
 
@@ -81,8 +89,12 @@ public class HomeScreen extends AppCompatActivity {
         noti_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
+
                 Intent intent = new Intent(HomeScreen.this, NotificationScreen.class);
                 startActivity(intent);
+
+                HomeScreen.this.finish();
             }
         });
 
@@ -90,8 +102,12 @@ public class HomeScreen extends AppCompatActivity {
         profile_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
+
                 Intent intent = new Intent(HomeScreen.this, ProfileScreen.class);
                 startActivity(intent);
+
+                HomeScreen.this.finish();
             }
         });
 

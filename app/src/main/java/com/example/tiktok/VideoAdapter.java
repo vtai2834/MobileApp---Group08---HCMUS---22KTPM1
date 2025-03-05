@@ -152,7 +152,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 finalPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
                 finalPlayer.play();
 
-                currentPositionPlayingVideo = position;
+                currentPositionPlayingVideo = holder.getAdapterPosition();
 
                 TextView username = holder.itemView.findViewById(R.id.username);
                 TextView like_cnt = holder.itemView.findViewById(R.id.like);

@@ -57,7 +57,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         RelativeLayout heart = view.findViewById(R.id.heart);
         heart.setOnClickListener(v -> {
             ImageView like_img = view.findViewById(R.id.like_img);
-            like_img.setBackgroundColor(Color.parseColor("#FF0007"));
+            like_img.setColorFilter(Color.parseColor("#FF0007"));
         });
 
         RelativeLayout comment = view.findViewById(R.id.comment);

@@ -9,7 +9,8 @@
         android:required="false" /> <!-- Cung cấp quyền WRITE_EXTERNAL_STORAGE cho Android 9 (API 28) -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+        android:maxSdkVersion="28" /> <!-- Quyen truy cap Internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -21,18 +22,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TikTok"
         tools:targetApi="31">
-        <activity
-            android:name=".LogIn"
-            android:exported="false" />
-        <activity
-            android:name=".SignIn"
-            android:exported="false" />
-        <activity
-            android:name=".SendCode"
-            android:exported="false" />
-        <activity
-            android:name=".SignUp"
-            android:exported="false" />
         <activity
             android:name=".EditProfile"
             android:exported="false" />

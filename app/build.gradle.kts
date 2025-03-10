@@ -65,4 +65,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    //Exo for video
+    implementation(libs.exoplayer)
+
 }

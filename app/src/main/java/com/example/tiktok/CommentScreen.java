@@ -185,6 +185,8 @@ public class CommentScreen extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(CommentScreen.this, HomeScreen.class);
                 startActivity(intent);
+
+                CommentScreen.this.finish();
             }
         });
     }

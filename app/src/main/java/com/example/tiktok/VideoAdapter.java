@@ -195,11 +195,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 //        }, 50); // Delay ngắn để tránh conflict với RecyclerView
     }
 
+    public void stopAllVideo(){
+        for (ExoPlayer player : playerMap.values()) {
+            if (player != null) player.stop();
+        }
+    }
 
     public void playVideoAt(int position) {
-        for (ExoPlayer player : playerMap.values()) {
-            if (player != null) player.pause();
-        }
+        stopAllVideo();
         if (playerMap.get(position) != null) {
             playerMap.get(position).play();
         }

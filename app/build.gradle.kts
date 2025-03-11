@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -40,6 +41,7 @@ android {
 dependencies {
 
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
+    implementation(libs.firebase.database)
 
     val camerax_version = "1.3.0-alpha04"
     implementation("androidx.camera:camera-core:$camerax_version")
@@ -68,5 +70,10 @@ dependencies {
 
     //Exo for video
     implementation(libs.exoplayer)
-
+    
+    //Lib for okhttp
+    implementation(libs.retrofit) // Retrofit core
+    implementation(libs.converter.gson) // Gson converter for Retrofit
+    implementation(libs.okhttp) // OkHttp core library
+    implementation(libs.okhttp.urlconnection)
 }

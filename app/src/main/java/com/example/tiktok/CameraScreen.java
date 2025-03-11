@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -33,10 +34,13 @@ public class CameraScreen extends AppCompatActivity {
     private ImageButton recordButton;
     private ImageButton flipCameraButton;
     private ImageButton closeButton;
+    private ImageButton gallery;
     private VideoCapture<Recorder> videoCapture;
     private Recording recording;
     private boolean isRecording = false;
     private int lensFacing = CameraSelector.LENS_FACING_BACK;
+    private static final int PICK_VIDEO_REQUEST = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,7 @@ public class CameraScreen extends AppCompatActivity {
         recordButton = findViewById(R.id.recordButton);
         flipCameraButton = findViewById(R.id.flipCameraButton);
         closeButton = findViewById(R.id.closeButton);
+        gallery = findViewById(R.id.gallery);
     }
 
     private void setupClickListeners() {
@@ -78,7 +83,31 @@ public class CameraScreen extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("video/*");
+                startActivityForResult(intent, PICK_VIDEO_REQUEST);
+            }
+        });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @NonNull Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_VIDEO_REQUEST && resultCode == RESULT_OK && data != null) {
+            Uri selectedVideoUri = data.getData();
+            if (selectedVideoUri != null) {
+                Intent intent = new Intent(this, VideoPreviewActivity.class);
+                intent.putExtra("video_uri", selectedVideoUri);
+                startActivity(intent);
+            }
+        }
+    }
+
+
 
     private boolean checkPermissions() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)

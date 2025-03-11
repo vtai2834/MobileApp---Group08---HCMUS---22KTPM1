@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "600993928400",
+    "firebase_url": "https://testtiktok-ca63d-default-rtdb.firebaseio.com",
+    "project_id": "testtiktok-ca63d",
+    "storage_bucket": "testtiktok-ca63d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:600993928400:android:28c86eaa4b4a4c3043bad5",
+        "android_client_info": {
+          "package_name": "com.example.tiktok"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKnPn2KMq0iKEhBNeK8zgQ8T9bPJsdmcA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:600993928400:android:3bb0aa79a21b5d2943bad5",
+        "android_client_info": {
+          "package_name": "com.example.tiktok_clone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKnPn2KMq0iKEhBNeK8zgQ8T9bPJsdmcA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,6 +11,13 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" /> <!-- Quyen truy cap Internet -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Quyền đọc file từ bộ nhớ (Android 9 trở xuống) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+
+
+    <!-- Quyền truy cập bộ nhớ ngoài (Android 10 trở lên) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
 
     <application
         android:allowBackup="true"
@@ -23,7 +30,7 @@
         android:theme="@style/Theme.TikTok"
         tools:targetApi="31">
         <activity
-            android:name=".ItemVideoHomeScreen"
+            android:name=".VideoPreviewActivity"
             android:exported="false" />
         <activity
             android:name=".EditProfile"

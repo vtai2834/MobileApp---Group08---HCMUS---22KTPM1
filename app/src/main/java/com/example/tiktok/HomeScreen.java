@@ -146,7 +146,7 @@ public class HomeScreen extends AppCompatActivity {
         });
 
 
-//        videoAdapter.playVideoAt(0);
+        videoAdapter.playVideoAt(0);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -155,8 +155,51 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
+        Log.d("VideoAdapter", "On Create play video at: " + videoAdapter.getCurrentPositionVideo());
+
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videoAdapter.stopAllVideo();
+        videoAdapter.releasePlayers();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        videoAdapter.releasePlayers();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videoAdapter.playVideoAt(videoAdapter.getCurrentPositionVideo());
+        Log.d(
+                "VideoAdapter",
+                "On Resumn play video at: " + videoAdapter.getCurrentPositionVideo()
+        );
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        videoAdapter.stopAllVideo();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        videoAdapter.playVideoAt(videoAdapter.getCurrentPositionVideo());
+        Log.d(
+                "VideoAdapter",
+                "On Start play video at: " + videoAdapter.getCurrentPositionVideo()
+        );
+    }
+
+
 
 
 }

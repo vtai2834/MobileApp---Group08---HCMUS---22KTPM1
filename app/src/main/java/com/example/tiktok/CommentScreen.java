@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,6 +177,11 @@ public class CommentScreen extends AppCompatActivity {
 
                 // Xóa nội dung input
                 editTextComment.setText("");
+
+                DatabaseReference cmtRef = FirebaseDatabase.getInstance().getReference("comments");
+                String username = "username_test";
+                String videoUri = "videoUri_test";
+                cmtRef.child(username).child(videoUri).push().setValue(newComment);
             }
         });
 

@@ -101,7 +101,7 @@
                 android:id="@+id/cmt_num"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:text="54"
+                android:text="..."
                 android:textColor="#ffffff"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"

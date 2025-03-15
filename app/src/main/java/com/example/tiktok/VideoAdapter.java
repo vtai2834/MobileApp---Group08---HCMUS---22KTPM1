@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.ExoPlayer;
@@ -95,10 +97,13 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         RelativeLayout comment = view.findViewById(R.id.comment);
         comment.setOnClickListener(v -> {
-            stopVideoAtPosition(position_vid);
-            Intent intent = new Intent(view.getContext(), CommentScreen.class);
-            intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
-            view.getContext().startActivity(intent);
+            FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+            CommentBottomSheet commentBottomSheet = new CommentBottomSheet(videoIds.get(position_vid));
+            commentBottomSheet.show(fragmentManager, commentBottomSheet.getTag());
+            //            stopVideoAtPosition(position_vid);
+//            Intent intent = new Intent(view.getContext(), CommentScreen.class);
+//            intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
+//            view.getContext().startActivity(intent);
         });
 
         RelativeLayout share = view.findViewById(R.id.share);

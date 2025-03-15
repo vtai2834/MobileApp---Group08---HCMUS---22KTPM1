@@ -41,7 +41,8 @@
                 android:text="54 Comments"
                 android:layout_gravity="center"
                 android:textStyle="bold"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:textColor="@color/black"/>
 
             <!-- Nút X để đóng -->
             <ImageButton
@@ -76,7 +77,8 @@
                 android:layout_weight="1"
                 android:hint="Add a comment..."
                 android:padding="12dp"
-                android:background="@drawable/rounded_input_background"/>
+                android:background="@drawable/rounded_input_background"
+                android:textColor="@color/black"/>
 
             <ImageButton
                 android:id="@+id/btn_send_comment"

@@ -24,6 +24,11 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +39,7 @@ import java.util.concurrent.Executors;
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
 
     private List<Video> videoItems;
+    private List<String> videoIds;
     private Context context;
     private Map<Integer, ExoPlayer> playerMap = new HashMap<>();
 
@@ -41,8 +47,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     private ExecutorService executorService = Executors.newFixedThreadPool(3);
 
-    public VideoAdapter(List<Video> videoItems, Context context) {
+    public VideoAdapter(List<Video> videoItems, List<String> videoIds, Context context) {
         this.videoItems = videoItems;
+        this.videoIds = videoIds;
         this.context = context;
     }
 
@@ -56,9 +63,35 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private void processClick(View view, int position_vid, Video videoItem) {
         RelativeLayout heart = view.findViewById(R.id.heart);
         heart.setOnClickListener(v -> {
+            String userId = "-OL4poKAL6huFI4pgHbb";
+            String videoId = videoIds.get(position_vid);
             ImageView like_img = view.findViewById(R.id.like_img);
-            like_img.setColorFilter(Color.parseColor("#FF0007"));
+            DatabaseReference likeRef = FirebaseDatabase.getInstance().getReference("likes").child(videoId).child(userId);
+
+            likeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        // User has already liked, so remove the like
+                        likeRef.removeValue();
+                        like_img.clearColorFilter(); // Reset color
+                    } else {
+                        // User has not liked, so add the like
+                        likeRef.setValue(true);
+                        like_img.setColorFilter(Color.parseColor("#FF0007")); // Change to red
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Log.d(
+                            "Firebase",
+                            "Error: " + error.getMessage()
+                    );
+                }
+            });
         });
+
 
         RelativeLayout comment = view.findViewById(R.id.comment);
         comment.setOnClickListener(v -> {
@@ -163,12 +196,41 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 TextView cmt_cnt = holder.itemView.findViewById(R.id.cmt_num);
                 TextView music = holder.itemView.findViewById(R.id.music);
                 TextView content = holder.itemView.findViewById(R.id.content);
+                ImageView like_img = holder.itemView.findViewById(R.id.like_img);
 
                 username.setText(videoItem.getUsername());
                 like_cnt.setText(videoItem.getLikes());
                 cmt_cnt.setText(videoItem.getComments());
                 music.setText(videoItem.getMusic());
                 content.setText(videoItem.getTitle());
+
+                Log.d(
+                        "Firebase",
+                        "Video: " + videoItem.getTitle() + "Id: " + videoIds.get(position) + "Position: " + position + ""
+                );
+
+                String userId = "-OL4poKAL6huFI4pgHbb";
+                DatabaseReference likeRef = FirebaseDatabase.getInstance().getReference("likes").child(videoIds.get(position)).child(userId);
+                likeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            like_img.setColorFilter(Color.parseColor("#FF0007")); // Change to red
+                        } else {
+                            like_img.clearColorFilter(); // Reset color
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Log.d(
+                                "Firebase",
+                                "Error: " + error.getMessage()
+                        );
+                    }
+                });
+
+
 
                 // Truyền position vào processClick
                 processClick(holder.itemView, position, videoItem);

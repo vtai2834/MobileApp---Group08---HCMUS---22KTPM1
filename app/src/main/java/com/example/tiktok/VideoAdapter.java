@@ -71,15 +71,32 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         RelativeLayout share = view.findViewById(R.id.share);
         share.setOnClickListener(v -> {
             stopVideoAtPosition(position_vid);
-            Intent intent = new Intent(view.getContext(), ShareScreen.class);
-            intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
-            view.getContext().startActivity(intent);
+//            Intent intent = new Intent(view.getContext(), ShareScreen.class);
+//            intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
+//            view.getContext().startActivity(intent);
+
+            shareVideo(view, videoItem.getVideoUri());
+
         });
 
         RelativeLayout download = view.findViewById(R.id.download);
         download.setOnClickListener(v -> {
             showDownloadDialog();
         });
+    }
+
+    public void shareVideo(View view, String videoUrl) {
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, videoUrl);
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Chia sẻ video từ ứng dụng");
+
+            view.getContext().startActivity(Intent.createChooser(shareIntent, "Chia sẻ video qua"));
+        } catch (Exception e) {
+            Log.e("VideoAdapter", "Error sharing video: " + e.getMessage());
+            Toast.makeText(context, "Lỗi khi chia sẻ: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Method to show the download confirmation dialog
@@ -126,10 +143,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         }
 
         currentPositionPlayingVideo = -1;
-        Log.d(
-                "VideoAdapter",
-                "Stop video at position: " + position
-        );
     }
 
     @Override
@@ -174,8 +187,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 processClick(holder.itemView, position, videoItem);
             }
         });
-
-
     }
 
 
@@ -209,10 +220,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 player.stop();
             }
         }
-        Log.d(
-                "VideoAdapter",
-                "Stop all video"
-        );
     }
 
     public void playVideoAt(int position) {
@@ -220,11 +227,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         if (playerMap.get(position) != null) {
             playerMap.get(position).prepare();
             playerMap.get(position).play();
-            Log.d("VideoAdapter", "Play  " + position);
         }
-
-
-
         Log.d("VideoAdapter", "Playing video at position: " + position);
     }
 

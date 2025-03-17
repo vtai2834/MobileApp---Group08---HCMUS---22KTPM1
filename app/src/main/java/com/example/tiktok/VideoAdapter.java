@@ -2,6 +2,7 @@ package com.example.tiktok;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,12 +74,13 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         RelativeLayout share = view.findViewById(R.id.share);
         share.setOnClickListener(v -> {
-            stopVideoAtPosition(position_vid);
-//            Intent intent = new Intent(view.getContext(), ShareScreen.class);
-//            intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
-//            view.getContext().startActivity(intent);
+//            stopVideoAtPosition(position_vid);
 
-            shareVideo(view, videoItem.getVideoUri());
+//            shareVideo(view, videoItem.getVideoUri());
+            ShareDialog dialog = new ShareDialog(context, videoItem.getVideoUri(), url -> {
+                showReportDialog(videoItem.getVideoUri());
+            });
+            dialog.show();
 
         });
 
@@ -83,6 +88,70 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         download.setOnClickListener(v -> {
             showDownloadDialog();
         });
+    }
+
+    public void showReportDialog(String videoUrl) {
+        String[] reasons = {
+                "Bạo lực, làm dụng và bóc lột dạng phạm tội",
+                "Thủ ghét và quấy rối",
+                "Tự tử và tự làm hại bản thân",
+                "Cách ăn uống không lành mạnh và hình ảnh cơ thể ốm yếu",
+                "Hoạt động và thử thách nguy hiểm",
+                "Hình ảnh khoả thân hoặc nội dung tình dục",
+                "Nội dung gây sốc và phản cảm",
+                "Thông tin sai lệch",
+                "Hành vi lừa đảo và gửi nội dung thu rác",
+                "Hàng hóa và hoạt động được kiểm soát",
+                "Gian lận và lừa đảo",
+                "Chia sẻ thông tin cá nhân",
+                "Sản phẩm nhái và vi phạm quyền sở hữu trí tuệ",
+                "Nội dung định hướng thương hiệu không được chi tiết lộ",
+                "Khác"
+        };
+
+        // Đảm bảo context là một Activity
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.report_dialog_layout, null);
+
+            // Tùy chỉnh phần tiêu đề và phần tử
+            TextView dialogTitle = dialogView.findViewById(R.id.dialogTitle);
+            dialogTitle.setText("Chọn lý do của bạn");
+
+            // Lấy ListView và set các lựa chọn
+            ListView listView = dialogView.findViewById(R.id.dialogListView);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, reasons);
+            listView.setAdapter(adapter);
+
+            // Tạo AlertDialog và hiển thị
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setView(dialogView); // Gán view tùy chỉnh cho dialog
+            builder.setCancelable(true);  // Cho phép đóng dialog khi nhấn ra ngoài
+
+            // Tạo AlertDialog
+            AlertDialog alertDialog = builder.create();
+
+            // Xử lý sự kiện khi người dùng chọn một mục trong ListView
+            listView.setOnItemClickListener((parent, view, position, id) -> {
+                String selectedReason = reasons[position];
+                Toast.makeText(context, "Lý do bạn chọn: " + selectedReason, Toast.LENGTH_SHORT).show();
+
+
+                alertDialog.dismiss();
+            });
+
+            // Lấy ImageButton (nút đóng) và thêm sự kiện đóng dialog
+            ImageButton closeButton = dialogView.findViewById(R.id.closeButton_report);
+            closeButton.setOnClickListener(v1 -> {
+                // Đảm bảo rằng dialog được đóng khi người dùng nhấn vào nút "X"
+                alertDialog.dismiss();
+            });
+
+            // Hiển thị dialog
+            alertDialog.show();
+        }
     }
 
     public void shareVideo(View view, String videoUrl) {

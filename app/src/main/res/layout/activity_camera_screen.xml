@@ -58,7 +58,7 @@
             app:contentDescription="Record Video" />
 
         <ImageButton
-            android:id="@+id/templatesButton"
+            android:id="@+id/gallery"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginStart="32dp"

@@ -126,6 +126,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         }
 
         currentPositionPlayingVideo = -1;
+        Log.d(
+                "VideoAdapter",
+                "Stop video at position: " + position
+        );
     }
 
     @Override
@@ -170,6 +174,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 processClick(holder.itemView, position, videoItem);
             }
         });
+
+
     }
 
 
@@ -189,20 +195,36 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         holder.playerView.setPlayer(null);
 
-        // Gọi cập nhật lại Adapter để ép RecyclerView load lại video ngay lập tức
-//        new android.os.Handler().postDelayed(() -> {
-//            notifyItemChanged(position);
-//        }, 50); // Delay ngắn để tránh conflict với RecyclerView
+//         Gọi cập nhật lại Adapter để ép RecyclerView load lại video ngay lập tức
+        new android.os.Handler().postDelayed(() -> {
+            notifyItemChanged(position);
+        }, 50); // Delay ngắn để tránh conflict với RecyclerView
     }
 
+    public void stopAllVideo(){
+        for (ExoPlayer player : playerMap.values()) {
+            if (player != null)
+            {
+                player.pause();
+                player.stop();
+            }
+        }
+        Log.d(
+                "VideoAdapter",
+                "Stop all video"
+        );
+    }
 
     public void playVideoAt(int position) {
-        for (ExoPlayer player : playerMap.values()) {
-            if (player != null) player.pause();
-        }
+        stopAllVideo();
         if (playerMap.get(position) != null) {
+            playerMap.get(position).prepare();
             playerMap.get(position).play();
+            Log.d("VideoAdapter", "Play  " + position);
         }
+
+
+
         Log.d("VideoAdapter", "Playing video at position: " + position);
     }
 

@@ -13,12 +13,7 @@
           "package_name": "com.example.tiktok"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "600993928400-kqt9k8998noagnpei0a66cjgg8gkaj48.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyDKnPn2KMq0iKEhBNeK8zgQ8T9bPJsdmcA"
@@ -26,12 +21,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "600993928400-kqt9k8998noagnpei0a66cjgg8gkaj48.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     },
@@ -42,12 +32,7 @@
           "package_name": "com.example.tiktok_clone"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "600993928400-kqt9k8998noagnpei0a66cjgg8gkaj48.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyDKnPn2KMq0iKEhBNeK8zgQ8T9bPJsdmcA"
@@ -55,12 +40,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "600993928400-kqt9k8998noagnpei0a66cjgg8gkaj48.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
     android:background="@android:color/white">
 
     <TextView
@@ -21,7 +22,7 @@
         android:id="@+id/etUsername"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Nhập email/sđt/tên đăng nhập"
+        android:hint="Nhập tên đăng nhập"
         android:padding="12dp"
         android:background="@android:drawable/editbox_background"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
@@ -66,12 +67,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginBottom="20dp"
-        android:layout_marginStart="100dp"
+        android:layout_marginStart="90dp"
         android:textColor="@android:color/black"
         android:text="Bạn không có tài khoản? " />
 
     <TextView
-        android:id="@+id/tvLoginLink"
+        android:id="@+id/tvSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Đăng ký"

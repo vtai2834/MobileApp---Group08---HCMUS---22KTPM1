@@ -14,6 +14,7 @@
         android:background="@color/white"
         android:padding="16dp">
 
+        <!-- Tiêu đề nhập mã -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,6 +23,7 @@
             android:textSize="30sp"
             android:textStyle="bold"/>
 
+        <!-- Thông báo gửi mã -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,6 +33,7 @@
             android:textColor="@android:color/darker_gray"
             android:layout_marginBottom="16dp"/>
 
+        <!-- Nhập mã OTP -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,69 +41,96 @@
 
             <EditText
                 android:id="@+id/otp1"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:gravity="center"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="5dp"
                 android:inputType="number"
+                android:maxLength="1"
                 android:textSize="18sp"
                 android:background="@drawable/otp_box"/>
 
             <EditText
-                android:id="@+id/otp1"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:id="@+id/otp2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_marginLeft="10dp"
                 android:inputType="number"
+                android:maxLength="1"
                 android:textSize="18sp"
                 android:background="@drawable/otp_box"/>
+
             <EditText
-                android:id="@+id/otp1"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:id="@+id/otp3"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_marginLeft="10dp"
                 android:inputType="number"
+                android:maxLength="1"
                 android:textSize="18sp"
                 android:background="@drawable/otp_box"/>
+
             <EditText
-                android:id="@+id/otp1"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:id="@+id/otp4"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_marginLeft="10dp"
                 android:inputType="number"
+                android:maxLength="1"
                 android:textSize="18sp"
                 android:background="@drawable/otp_box"/>
+
             <EditText
-                android:id="@+id/otp1"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:id="@+id/otp5"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_marginLeft="10dp"
                 android:inputType="number"
+                android:maxLength="1"
                 android:textSize="18sp"
                 android:background="@drawable/otp_box"/>
+
             <EditText
-                android:id="@+id/otp1"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:id="@+id/otp6"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_marginLeft="10dp"
                 android:inputType="number"
+                android:maxLength="1"
                 android:textSize="18sp"
                 android:background="@drawable/otp_box"/>
 
         </LinearLayout>
 
+        <!-- Thời gian gửi lại mã -->
         <TextView
+            android:id="@+id/txt_resend_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Gửi lại mã 55s"
             android:textColor="@android:color/darker_gray"
             android:layout_marginTop="16dp"
             android:layout_marginLeft="10dp"/>
+
+        <!-- Nút xác minh OTP -->
+        <Button
+            android:id="@+id/btn_verify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xác minh OTP"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:padding="12dp"
+            android:textSize="18sp"
+            android:backgroundTint="@color/light_gray"
+            android:textColor="@android:color/black"/>
+
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

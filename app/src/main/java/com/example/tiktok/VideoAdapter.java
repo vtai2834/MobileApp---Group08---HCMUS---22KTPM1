@@ -124,7 +124,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         RelativeLayout download = view.findViewById(R.id.download);
         download.setOnClickListener(v -> {
-            showDownloadDialog();
+            showDownloadDialog(videoItem);
         });
     }
 
@@ -207,7 +207,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     }
 
     // Method to show the download confirmation dialog
-    private void showDownloadDialog() {
+    private void showDownloadDialog(Video videoItem) {
         // Create the AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context); // Use the context passed in constructor
         builder.setTitle("Tải xuống video này")
@@ -216,7 +216,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Handle "Đồng ý" button click (start download)
-                        startDownload();
+//                        startDownload();
+                        AndroidDownloader downloader = new AndroidDownloader(context);
+                        downloader.downloadFile(videoItem.getVideoUri());
                     }
                 })
                 .setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {

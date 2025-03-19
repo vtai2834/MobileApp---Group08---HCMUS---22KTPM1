@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <VideoView
-        android:id="@+id/share_video"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+<!--    <VideoView-->
+<!--        android:id="@+id/share_video"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"/>-->
 
     <LinearLayout
         android:backgroundTint="#C8C8C8"
@@ -56,12 +57,14 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:layout_centerHorizontal="true"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_report"/>
+                    android:layout_centerHorizontal="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="report"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_report"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -82,12 +85,14 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:layout_centerHorizontal="true"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_facebook"/>
+                    android:layout_centerHorizontal="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="fb"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_facebook"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -108,12 +113,14 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:layout_centerHorizontal="true"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_sms"/>
+                    android:layout_centerHorizontal="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="sms"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_sms"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -134,12 +141,14 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:layout_centerHorizontal="true"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_messenger"/>
+                    android:layout_centerHorizontal="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="message"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_messenger"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -160,12 +169,14 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:layout_centerHorizontal="true"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_instagram"/>
+                    android:layout_centerHorizontal="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="ig"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_instagram"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <TextView
                     android:layout_width="match_parent"

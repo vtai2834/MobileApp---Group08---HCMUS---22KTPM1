@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="16dp"
     android:layout_width="match_parent"
@@ -30,9 +31,10 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="end"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Close" />
+            android:contentDescription="Close"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            tools:ignore="TouchTargetSizeCheck" />
     </LinearLayout>
 
     <View

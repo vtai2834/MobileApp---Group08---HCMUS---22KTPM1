@@ -1,6 +1,7 @@
 package com.example.tiktok;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -85,6 +86,7 @@ public class CameraScreen extends AppCompatActivity {
         });
 
         gallery.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("IntentReset")
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);

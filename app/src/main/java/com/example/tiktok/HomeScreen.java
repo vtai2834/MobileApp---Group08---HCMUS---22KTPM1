@@ -45,6 +45,11 @@ public class HomeScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        Intent intent = new Intent(this, SendCode.class);
+//        startActivity(intent);
+//        finish(); // Đóng HomeScreen để không quay lại màn hình này khi nhấn Back
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_screen);

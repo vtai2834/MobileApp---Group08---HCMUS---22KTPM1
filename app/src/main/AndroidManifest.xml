@@ -29,6 +29,15 @@
             android:name=".VideoPreviewActivity"
             android:exported="false" />
         <activity
+            android:name=".SignUp"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".EditProfile"
             android:exported="false" />
         <activity
@@ -50,14 +59,17 @@
             android:name=".CommentScreen"
             android:exported="false" />
         <activity
+            android:name=".LogIn"
+            android:exported="false" />
+        <activity
+            android:name=".SignIn"
+            android:exported="false" />
+        <activity
+            android:name=".SendCode"
+            android:exported="false" />
+        <activity
             android:name=".HomeScreen"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false" />
     </application>
 
 </manifest>

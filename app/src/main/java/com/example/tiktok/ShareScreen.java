@@ -43,10 +43,10 @@ public class ShareScreen extends AppCompatActivity {
         VideoView mainVideo;
         String videoUriString = getIntent().getStringExtra("VIDEO_URI");
         if (videoUriString != null) {
-            Uri videoUri = Uri.parse(videoUriString);
-            mainVideo = findViewById(R.id.share_video);
-            mainVideo.setVideoURI(videoUri);
-            mainVideo.start();
+//            Uri videoUri = Uri.parse(videoUriString);
+//            mainVideo = findViewById(R.id.share_video);
+//            mainVideo.setVideoURI(videoUri);
+//            mainVideo.start();
         } else {
             // Log or show an error message, indicating that the VIDEO_URI was not passed properly
             Log.e("ShareScreen", "VIDEO_URI is null");

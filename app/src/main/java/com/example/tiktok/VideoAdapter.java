@@ -2,6 +2,7 @@ package com.example.tiktok;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,18 +13,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +45,7 @@ import java.util.concurrent.Executors;
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
 
     private List<Video> videoItems;
+    private List<String> videoIds;
     private Context context;
     private Map<Integer, ExoPlayer> playerMap = new HashMap<>();
 
@@ -41,8 +53,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     private ExecutorService executorService = Executors.newFixedThreadPool(3);
 
-    public VideoAdapter(List<Video> videoItems, Context context) {
+    public VideoAdapter(List<Video> videoItems, List<String> videoIds, Context context) {
         this.videoItems = videoItems;
+        this.videoIds = videoIds;
         this.context = context;
     }
 
@@ -56,30 +69,141 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private void processClick(View view, int position_vid, Video videoItem) {
         RelativeLayout heart = view.findViewById(R.id.heart);
         heart.setOnClickListener(v -> {
+            String userId = "-OL4poKAL6huFI4pgHbb";
+            String videoId = videoIds.get(position_vid);
             ImageView like_img = view.findViewById(R.id.like_img);
-            like_img.setColorFilter(Color.parseColor("#FF0007"));
+            DatabaseReference likeRef = FirebaseDatabase.getInstance().getReference("likes").child(videoId).child(userId);
+
+            likeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        // User has already liked, so remove the like
+                        likeRef.removeValue();
+                        like_img.clearColorFilter(); // Reset color
+                    } else {
+                        // User has not liked, so add the like
+                        likeRef.setValue(true);
+                        like_img.setColorFilter(Color.parseColor("#FF0007")); // Change to red
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Log.d(
+                            "Firebase",
+                            "Error: " + error.getMessage()
+                    );
+                }
+            });
         });
+
 
         RelativeLayout comment = view.findViewById(R.id.comment);
         comment.setOnClickListener(v -> {
-            stopVideoAtPosition(position_vid);
-            Intent intent = new Intent(view.getContext(), CommentScreen.class);
-            intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
-            view.getContext().startActivity(intent);
+            FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+            CommentBottomSheet commentBottomSheet = new CommentBottomSheet(videoIds.get(position_vid));
+            commentBottomSheet.show(fragmentManager, commentBottomSheet.getTag());
+            //            stopVideoAtPosition(position_vid);
+//            Intent intent = new Intent(view.getContext(), CommentScreen.class);
+//            intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
+//            view.getContext().startActivity(intent);
         });
 
         RelativeLayout share = view.findViewById(R.id.share);
         share.setOnClickListener(v -> {
-            stopVideoAtPosition(position_vid);
-            Intent intent = new Intent(view.getContext(), ShareScreen.class);
-            intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
-            view.getContext().startActivity(intent);
+//            stopVideoAtPosition(position_vid);
+
+//            shareVideo(view, videoItem.getVideoUri());
+            ShareDialog dialog = new ShareDialog(context, videoItem.getVideoUri(), url -> {
+                showReportDialog(videoItem.getVideoUri());
+            });
+            dialog.show();
+
         });
 
         RelativeLayout download = view.findViewById(R.id.download);
         download.setOnClickListener(v -> {
             showDownloadDialog(videoItem);
         });
+    }
+
+    public void showReportDialog(String videoUrl) {
+        String[] reasons = {
+                "Bạo lực, làm dụng và bóc lột dạng phạm tội",
+                "Thủ ghét và quấy rối",
+                "Tự tử và tự làm hại bản thân",
+                "Cách ăn uống không lành mạnh và hình ảnh cơ thể ốm yếu",
+                "Hoạt động và thử thách nguy hiểm",
+                "Hình ảnh khoả thân hoặc nội dung tình dục",
+                "Nội dung gây sốc và phản cảm",
+                "Thông tin sai lệch",
+                "Hành vi lừa đảo và gửi nội dung thu rác",
+                "Hàng hóa và hoạt động được kiểm soát",
+                "Gian lận và lừa đảo",
+                "Chia sẻ thông tin cá nhân",
+                "Sản phẩm nhái và vi phạm quyền sở hữu trí tuệ",
+                "Nội dung định hướng thương hiệu không được chi tiết lộ",
+                "Khác"
+        };
+
+        // Đảm bảo context là một Activity
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.report_dialog_layout, null);
+
+            // Tùy chỉnh phần tiêu đề và phần tử
+            TextView dialogTitle = dialogView.findViewById(R.id.dialogTitle);
+            dialogTitle.setText("Chọn lý do của bạn");
+
+            // Lấy ListView và set các lựa chọn
+            ListView listView = dialogView.findViewById(R.id.dialogListView);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, reasons);
+            listView.setAdapter(adapter);
+
+            // Tạo AlertDialog và hiển thị
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setView(dialogView); // Gán view tùy chỉnh cho dialog
+            builder.setCancelable(true);  // Cho phép đóng dialog khi nhấn ra ngoài
+
+            // Tạo AlertDialog
+            AlertDialog alertDialog = builder.create();
+
+            // Xử lý sự kiện khi người dùng chọn một mục trong ListView
+            listView.setOnItemClickListener((parent, view, position, id) -> {
+                String selectedReason = reasons[position];
+                Toast.makeText(context, "Lý do bạn chọn: " + selectedReason, Toast.LENGTH_SHORT).show();
+
+
+                alertDialog.dismiss();
+            });
+
+            // Lấy ImageButton (nút đóng) và thêm sự kiện đóng dialog
+            ImageButton closeButton = dialogView.findViewById(R.id.closeButton_report);
+            closeButton.setOnClickListener(v1 -> {
+                // Đảm bảo rằng dialog được đóng khi người dùng nhấn vào nút "X"
+                alertDialog.dismiss();
+            });
+
+            // Hiển thị dialog
+            alertDialog.show();
+        }
+    }
+
+    public void shareVideo(View view, String videoUrl) {
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, videoUrl);
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Chia sẻ video từ ứng dụng");
+
+            view.getContext().startActivity(Intent.createChooser(shareIntent, "Chia sẻ video qua"));
+        } catch (Exception e) {
+            Log.e("VideoAdapter", "Error sharing video: " + e.getMessage());
+            Toast.makeText(context, "Lỗi khi chia sẻ: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Method to show the download confirmation dialog
@@ -128,10 +252,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         }
 
         currentPositionPlayingVideo = -1;
-        Log.d(
-                "VideoAdapter",
-                "Stop video at position: " + position
-        );
     }
 
     @Override
@@ -165,6 +285,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 TextView cmt_cnt = holder.itemView.findViewById(R.id.cmt_num);
                 TextView music = holder.itemView.findViewById(R.id.music);
                 TextView content = holder.itemView.findViewById(R.id.content);
+                ImageView like_img = holder.itemView.findViewById(R.id.like_img);
 
                 username.setText(videoItem.getUsername());
                 like_cnt.setText(videoItem.getLikes());
@@ -172,12 +293,38 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 music.setText(videoItem.getMusic());
                 content.setText(videoItem.getTitle());
 
+                Log.d(
+                        "Firebase",
+                        "Video: " + videoItem.getTitle() + "Id: " + videoIds.get(position) + "Position: " + position + ""
+                );
+
+                String userId = "-OL4poKAL6huFI4pgHbb";
+                DatabaseReference likeRef = FirebaseDatabase.getInstance().getReference("likes").child(videoIds.get(position)).child(userId);
+                likeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            like_img.setColorFilter(Color.parseColor("#FF0007")); // Change to red
+                        } else {
+                            like_img.clearColorFilter(); // Reset color
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Log.d(
+                                "Firebase",
+                                "Error: " + error.getMessage()
+                        );
+                    }
+                });
+
+
+
                 // Truyền position vào processClick
                 processClick(holder.itemView, position, videoItem);
             }
         });
-
-
     }
 
 
@@ -211,10 +358,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 player.stop();
             }
         }
-        Log.d(
-                "VideoAdapter",
-                "Stop all video"
-        );
     }
 
     public void playVideoAt(int position) {
@@ -222,11 +365,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         if (playerMap.get(position) != null) {
             playerMap.get(position).prepare();
             playerMap.get(position).play();
-            Log.d("VideoAdapter", "Play  " + position);
         }
-
-
-
         Log.d("VideoAdapter", "Playing video at position: " + position);
     }
 

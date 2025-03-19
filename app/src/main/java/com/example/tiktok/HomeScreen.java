@@ -3,6 +3,7 @@ package com.example.tiktok;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -35,6 +36,7 @@ public class HomeScreen extends AppCompatActivity {
     private VideoAdapter videoAdapter;
     private List<Video> videoItems;
 //    private List<Video> videoItems1;
+    private List<String> videoIds;
 
 
 
@@ -43,6 +45,11 @@ public class HomeScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        Intent intent = new Intent(this, SendCode.class);
+//        startActivity(intent);
+//        finish(); // Đóng HomeScreen để không quay lại màn hình này khi nhấn Back
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_screen);
@@ -56,6 +63,7 @@ public class HomeScreen extends AppCompatActivity {
 
 
         videoItems = new ArrayList<>();
+        videoIds = new ArrayList<>();
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("videos");
 
@@ -67,19 +75,39 @@ public class HomeScreen extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                videoItems.clear(); // Xóa danh sách cũ
+                videoItems.clear(); // Clear old list
+                videoIds.clear();   // Also clear videoIds to avoid duplicates
+
+                // Temporary list to store pairs
+                List<Pair<Video, String>> videoPairs = new ArrayList<>();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Video video = dataSnapshot.getValue(Video.class);
-                    videoItems.add(video);
+                    String videoId = dataSnapshot.getKey();
+                    videoPairs.add(new Pair<>(video, videoId)); // Store as a pair
                 }
-                Collections.reverse(videoItems); // Reverse the list to show latest first
-                videoAdapter.notifyDataSetChanged(); // Cập nhật giao diện
+
+                sortVideo(videoPairs);
+
+                videoAdapter.notifyDataSetChanged(); // Update UI
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("FirebaseError", "Failed to load videos: " + error.getMessage());
+            }
+
+            private void sortVideo(List<Pair<Video, String>> videoPairs)
+            {
+
+//                Collections.shuffle(videoPairs);
+                Collections.reverse(videoPairs);
+
+                for (Pair<Video, String> pair : videoPairs) {
+                    videoItems.add(pair.first);
+                    videoIds.add(pair.second);
+                }
             }
         });
 
@@ -87,7 +115,7 @@ public class HomeScreen extends AppCompatActivity {
 
         // Set ViewPager2 adapter
         viewPager = findViewById(R.id.viewPager);
-        videoAdapter = new VideoAdapter(videoItems, this); // Đảm bảo rằng context được truyền vào
+        videoAdapter = new VideoAdapter(videoItems, videoIds, this); // Đảm bảo rằng context được truyền vào
         viewPager.setAdapter(videoAdapter);
 
         // Thiết lập ViewPager2 cuộn dọc

@@ -10,14 +10,12 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" /> <!-- Quyen truy cap Internet -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Quyền đọc file từ bộ nhớ (Android 9 trở xuống) -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Quyền đọc file từ bộ nhớ (Android 9 trở xuống) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> <!-- Quyền truy cập bộ nhớ ngoài (Android 10 trở lên) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
 
-    <!-- Quyền truy cập bộ nhớ ngoài (Android 10 trở lên) -->
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
 
     <application
         android:allowBackup="true"
@@ -28,10 +26,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TikTok"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:networkSecurityConfig="@xml/network_security_config">
+<!--        <activity-->
+<!--            android:name=".ItemVideoHomeScreen"-->
+<!--            android:exported="false" />-->
+        <activity android:name=".VideoPreviewActivity"
+            android:exported="false"/>
         <activity
-            android:name=".VideoPreviewActivity"
-            android:exported="false" />
+            android:name=".SignUp"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".EditProfile"
             android:exported="false" />
@@ -52,6 +62,15 @@
             android:exported="false" />
         <activity
             android:name=".CommentScreen"
+            android:exported="false" />
+        <activity
+            android:name=".LogIn"
+            android:exported="false" />
+        <activity
+            android:name=".SignIn"
+            android:exported="false" />
+        <activity
+            android:name=".SendCode"
             android:exported="false" />
         <activity
             android:name=".HomeScreen"

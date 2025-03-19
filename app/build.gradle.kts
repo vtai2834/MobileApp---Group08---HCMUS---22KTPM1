@@ -41,7 +41,6 @@ android {
 dependencies {
 
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
-    implementation(libs.firebase.database)
 
     val camerax_version = "1.3.0-alpha04"
     implementation("androidx.camera:camera-core:$camerax_version")
@@ -70,10 +69,20 @@ dependencies {
 
     //Exo for video
     implementation(libs.exoplayer)
-    
+
     //Lib for okhttp
     implementation(libs.retrofit) // Retrofit core
     implementation(libs.converter.gson) // Gson converter for Retrofit
     implementation(libs.okhttp) // OkHttp core library
     implementation(libs.okhttp.urlconnection)
+
+    //Exo for video
+    implementation(libs.exoplayer)
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
 }

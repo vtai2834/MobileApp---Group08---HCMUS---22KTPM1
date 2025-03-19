@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SendCode">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:padding="16dp">
+
+        <!-- Tiêu đề nhập mã -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nhập mã gồm 6 chữ số"
+            android:layout_marginLeft="10dp"
+            android:textSize="30sp"
+            android:textStyle="bold"/>
+
+        <!-- Thông báo gửi mã -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mã của bạn đã được gửi đến +84 0853539005."
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Nhập mã OTP -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/otp1"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_marginLeft="5dp"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="18sp"
+                android:background="@drawable/otp_box"/>
+
+            <EditText
+                android:id="@+id/otp2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="18sp"
+                android:background="@drawable/otp_box"/>
+
+            <EditText
+                android:id="@+id/otp3"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="18sp"
+                android:background="@drawable/otp_box"/>
+
+            <EditText
+                android:id="@+id/otp4"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="18sp"
+                android:background="@drawable/otp_box"/>
+
+            <EditText
+                android:id="@+id/otp5"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="18sp"
+                android:background="@drawable/otp_box"/>
+
+            <EditText
+                android:id="@+id/otp6"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textSize="18sp"
+                android:background="@drawable/otp_box"/>
+
+        </LinearLayout>
+
+        <!-- Thời gian gửi lại mã -->
+        <TextView
+            android:id="@+id/txt_resend_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gửi lại mã 55s"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="10dp"/>
+
+        <!-- Nút xác minh OTP -->
+        <Button
+            android:id="@+id/btn_verify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xác minh OTP"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:padding="12dp"
+            android:textSize="18sp"
+            android:backgroundTint="@color/light_gray"
+            android:textColor="@android:color/black"/>
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

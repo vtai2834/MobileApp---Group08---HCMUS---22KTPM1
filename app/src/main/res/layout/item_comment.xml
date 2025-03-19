@@ -23,19 +23,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="Username"/>
+            android:text="Username"
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/tv_comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nội dung bình luận"/>
+            android:text="Nội dung bình luận"
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/tv_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/darker_gray"
-            android:text="2 giờ trước"/>
+            android:text="2 giờ trước" />
     </LinearLayout>
 </LinearLayout>

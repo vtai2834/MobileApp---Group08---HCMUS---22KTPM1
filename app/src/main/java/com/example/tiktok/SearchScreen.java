@@ -17,12 +17,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.common.reflect.TypeToken;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +44,18 @@ public class SearchScreen extends AppCompatActivity {
     private List<Video> searchResults = new ArrayList<>();
     private List<String> videoIds = new ArrayList<>();
 
+    public List<String> videoIdsItems;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
+
+        //Lấy videos_list từ HomeScreen -> trả về pos video sẽ tìm dc result:
+        String videoItemsJson = getIntent().getStringExtra("VIDEOS_ARRAY_JSON");
+//        Gson gson = new Gson();
+//        videoIdsItems = gson.fromJson(videoItemsJson, new TypeToken<List<String>>(){}.getType());
+        videoIdsItems = getIntent().getStringArrayListExtra("VIDEOS_ARRAY_JSON");
 
         // Initialize Firebase
         videosRef = FirebaseDatabase.getInstance().getReference("videos");
@@ -62,6 +72,10 @@ public class SearchScreen extends AppCompatActivity {
         searchSuggestionsList = findViewById(R.id.searchSuggestionsList);
         searchResultsList = findViewById(R.id.searchResultsList);
         noResultsText = findViewById(R.id.noResultsText);
+
+        // Set IME options để hiển thị nút tìm kiếm trên bàn phím
+        searchEditText.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH);
+        searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
 
         // Initially hide no results text
         noResultsText.setVisibility(View.GONE);
@@ -111,6 +125,18 @@ public class SearchScreen extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+        // Thêm listener cho nút tìm kiếm trên bàn phím
+        searchEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+                String query = searchEditText.getText().toString().trim();
+                if (!query.isEmpty()) {
+                    performSearch(query);
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
     private void setupRecyclerViews() {
@@ -148,11 +174,9 @@ public class SearchScreen extends AppCompatActivity {
         });
     }
 
+
     private void performSearch(String query) {
         Log.d("SearchScreen", "Performing search with query: " + query);
-
-        // Show loading indicator (you may add a ProgressBar in your layout)
-        // loadingIndicator.setVisibility(View.VISIBLE);
 
         // Clear previous results
         searchResults.clear();
@@ -162,24 +186,41 @@ public class SearchScreen extends AppCompatActivity {
         searchSuggestionsList.setVisibility(View.GONE);
         searchResultsList.setVisibility(View.VISIBLE);
 
-        // Perform case-insensitive search in title, username, and music fields
-        Query titleQuery = videosRef.orderByChild("title")
-                .startAt(query.toLowerCase())
-                .endAt(query.toLowerCase() + "\uf8ff");
-
-        titleQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Tìm kiếm trong toàn bộ danh sách video
+        videosRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                String queryLower = query.toLowerCase();
+
                 for (DataSnapshot videoSnapshot : dataSnapshot.getChildren()) {
-                    Video video = createVideoFromSnapshot(videoSnapshot);
-                    if (video != null) {
-                        searchResults.add(video);
-                        videoIds.add(videoSnapshot.getKey());
+                    String videoId = videoSnapshot.getKey();
+
+                    // Kiểm tra tất cả 3 trường: title, username, music
+                    String title = videoSnapshot.child("title").getValue(String.class);
+                    String username = videoSnapshot.child("username").getValue(String.class);
+                    String music = videoSnapshot.child("music").getValue(String.class);
+
+                    // Chuyển đổi thành lowercase để tìm kiếm không phân biệt chữ hoa/thường
+                    title = (title != null) ? title.toLowerCase() : "";
+                    username = (username != null) ? username.toLowerCase() : "";
+                    music = (music != null) ? music.toLowerCase() : "";
+
+                    // Kiểm tra xem query có xuất hiện trong bất kỳ trường nào không
+                    if (title.contains(queryLower) ||
+                            username.contains(queryLower) ||
+                            music.contains(queryLower)) {
+
+                        // Tạo đối tượng Video và thêm vào kết quả
+                        Video video = createVideoFromSnapshot(videoSnapshot);
+                        if (video != null) {
+                            searchResults.add(video);
+                            videoIds.add(videoId);
+                        }
                     }
                 }
 
-                // Now search by username
-                searchByUsername(query);
+                // Update UI with search results
+                updateSearchResultsUI();
             }
 
             @Override
@@ -191,69 +232,6 @@ public class SearchScreen extends AppCompatActivity {
         });
     }
 
-    private void searchByUsername(String query) {
-        Query usernameQuery = videosRef.orderByChild("username")
-                .startAt(query.toLowerCase())
-                .endAt(query.toLowerCase() + "\uf8ff");
-
-        usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot videoSnapshot : dataSnapshot.getChildren()) {
-                    // Check if this video is already in results
-                    String videoId = videoSnapshot.getKey();
-                    if (!videoIds.contains(videoId)) {
-                        Video video = createVideoFromSnapshot(videoSnapshot);
-                        if (video != null) {
-                            searchResults.add(video);
-                            videoIds.add(videoId);
-                        }
-                    }
-                }
-
-                // Finally search by music
-                searchByMusic(query);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("SearchScreen", "Firebase query error: " + databaseError.getMessage());
-                updateSearchResultsUI();
-            }
-        });
-    }
-
-    private void searchByMusic(String query) {
-        Query musicQuery = videosRef.orderByChild("music")
-                .startAt(query.toLowerCase())
-                .endAt(query.toLowerCase() + "\uf8ff");
-
-        musicQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot videoSnapshot : dataSnapshot.getChildren()) {
-                    // Check if this video is already in results
-                    String videoId = videoSnapshot.getKey();
-                    if (!videoIds.contains(videoId)) {
-                        Video video = createVideoFromSnapshot(videoSnapshot);
-                        if (video != null) {
-                            searchResults.add(video);
-                            videoIds.add(videoId);
-                        }
-                    }
-                }
-
-                // Update UI with all search results
-                updateSearchResultsUI();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("SearchScreen", "Firebase query error: " + databaseError.getMessage());
-                updateSearchResultsUI();
-            }
-        });
-    }
 
     private Video createVideoFromSnapshot(DataSnapshot snapshot) {
         try {
@@ -324,10 +302,18 @@ public class SearchScreen extends AppCompatActivity {
             // Set click listener to open the video
             holder.itemView.setOnClickListener(v -> {
                 // Open video in player activity or return to home screen with position
-                Intent intent = new Intent(SearchScreen.this, HomeScreen.class);
-                intent.putExtra("SEARCH_VIDEO_ID", videoId);
-                startActivity(intent);
-                finish();
+                int pos = videoIdsItems.indexOf(videoId);
+
+                if (pos != -1) {
+                    // Gửi position về HomeScreen thay vì videoId
+                    Intent intent = new Intent(SearchScreen.this, HomeScreen.class);
+                    intent.putExtra("SEARCH_VIDEO_POSITION", pos);  // Thêm pos vào Intent
+                    startActivity(intent);
+                    finish();
+                } else {
+                    // Trường hợp không tìm thấy videoId trong danh sách
+                    Log.e("SearchScreen", "VideoId " + videoId + " not found in videoIdsFromHome");
+                }
             });
         }
 

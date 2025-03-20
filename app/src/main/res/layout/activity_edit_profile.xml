@@ -135,7 +135,7 @@
                         android:layout_height="24dp"
                         android:src="@drawable/ic_video"
                         android:layout_centerInParent="true"
-                        android:tint="@android:color/black"/>
+                        app:tint="@android:color/black" />
                 </RelativeLayout>
 
 
@@ -180,8 +180,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_next"
-                android:tint="@android:color/darker_gray"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                app:tint="@android:color/darker_gray" />
         </LinearLayout>
 
         <LinearLayout
@@ -214,8 +214,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_next"
-                android:tint="@android:color/darker_gray"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                app:tint="@android:color/darker_gray" />
         </LinearLayout>
 
         <LinearLayout
@@ -246,8 +246,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_duplicate"
-                android:tint="@android:color/darker_gray"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                app:tint="@android:color/darker_gray" />
         </LinearLayout>
 
         <LinearLayout
@@ -280,8 +280,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_next"
-                android:tint="@android:color/darker_gray"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                app:tint="@android:color/darker_gray" />
         </LinearLayout>
 
         <View
@@ -323,8 +323,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_next"
-                android:tint="@android:color/darker_gray"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                app:tint="@android:color/darker_gray" />
         </LinearLayout>
 
         <LinearLayout
@@ -357,8 +357,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_next"
-                android:tint="@android:color/darker_gray"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                app:tint="@android:color/darker_gray" />
         </LinearLayout>
 
         <Button

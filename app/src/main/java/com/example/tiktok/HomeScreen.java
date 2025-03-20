@@ -18,11 +18,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeScreen extends AppCompatActivity {
 
@@ -36,7 +38,7 @@ public class HomeScreen extends AppCompatActivity {
     private VideoAdapter videoAdapter;
     private List<Video> videoItems;
 //    private List<Video> videoItems1;
-    private List<String> videoIds;
+    private final List<String> videoIds = new ArrayList<>();;
 
 
 
@@ -45,51 +47,52 @@ public class HomeScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        Intent intent = new Intent(this, SendCode.class);
-//        startActivity(intent);
-//        finish(); // Đóng HomeScreen để không quay lại màn hình này khi nhấn Back
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_screen);
 
-
-//         Khởi tạo danh sách video
-//        videoItems1 = new ArrayList<>();
-//        videoItems1.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//6d4d64f5-eb0d-4262-8e6d-2c30e9afa8da.mp4", "@john_doe", "120k", "30", "Smooth vibes", "đám dỗ bên cồn"));
-//        videoItems1.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//63d56221-aec7-42e7-9653-9a373ba9fe58.mp4", "@karenne", "345k", "54", "Waiting for you", "#mangden #kontum #dance"));
-//        videoItems1.add(new Video("https://xtjgitlcyzphaailqpdj.supabase.co/storage/v1/object/public/testvideo//d270f3e0-6427-46cf-8bcf-792d553cb9fd.mp4", "@tiktok_user", "900k", "150", "Let's dance", "#beoitutu"));
-
-
         videoItems = new ArrayList<>();
-        videoIds = new ArrayList<>();
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("videos");
 
-//        for (Video video : videoItems1) {
-//            String videoId = databaseReference.push().getKey(); // Tạo ID duy nhất
-//            databaseReference.child(videoId).setValue(video);
-//        }
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                videoItems.clear(); // Clear old list
-                videoIds.clear();   // Also clear videoIds to avoid duplicates
+                videoItems.clear();
+                videoIds.clear();
 
-                // Temporary list to store pairs
                 List<Pair<Video, String>> videoPairs = new ArrayList<>();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Video video = dataSnapshot.getValue(Video.class);
                     String videoId = dataSnapshot.getKey();
-                    videoPairs.add(new Pair<>(video, videoId)); // Store as a pair
+                    videoPairs.add(new Pair<>(video, videoId));
                 }
 
                 sortVideo(videoPairs);
 
-                videoAdapter.notifyDataSetChanged(); // Update UI
+
+                videoAdapter.notifyDataSetChanged();
+
+
+                Log.d("checkVideoIds_onDataChange", String.valueOf(videoIds));
+
+                // After data is loaded, set the correct item position
+                int pos = getIntent().getIntExtra("SEARCH_VIDEO_POSITION", 0);  // Default is 0 if not found
+                Log.d("check pos from search -> home", String.valueOf(pos));
+
+                videoAdapter.currentPositionPlayingVideo = pos;
+
+                // Ensure setCurrentItem is called after data is loaded
+                viewPager.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        viewPager.setCurrentItem(pos, false);  // Set the correct item position without animation
+                        videoAdapter.playVideoAt(pos);
+                    }
+                });
             }
 
 
@@ -107,6 +110,7 @@ public class HomeScreen extends AppCompatActivity {
                 for (Pair<Video, String> pair : videoPairs) {
                     videoItems.add(pair.first);
                     videoIds.add(pair.second);
+//                    Log.d("checkVideoIds_onCreate()", String.valueOf(videoIds));
                 }
             }
         });
@@ -127,10 +131,13 @@ public class HomeScreen extends AppCompatActivity {
             public void onClick(View view) {
                 videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
 
-                Intent intent = new Intent(HomeScreen.this, SearchScreen.class);
-                startActivity(intent);
+//                Gson gson = new Gson();
+//                String videoItemsJson = gson.toJson(videoIds);
 
-                HomeScreen.this.finish();
+                Intent intent = new Intent(HomeScreen.this, SearchScreen.class);
+                intent.putExtra("VIDEOS_ARRAY_JSON", new ArrayList<>(videoIds));
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -174,17 +181,14 @@ public class HomeScreen extends AppCompatActivity {
         });
 
 
-        videoAdapter.playVideoAt(0);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+                Log.d("VideoAdapter - onPageSelected()", "On Page Selected play video at: " + position);
                 videoAdapter.playVideoAt(position); // Gọi phương thức phát video
             }
         });
-
-        Log.d("VideoAdapter", "On Create play video at: " + videoAdapter.getCurrentPositionVideo());
-
 
     }
 
@@ -203,12 +207,13 @@ public class HomeScreen extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+
         super.onResume();
-        videoAdapter.playVideoAt(videoAdapter.getCurrentPositionVideo());
         Log.d(
-                "VideoAdapter",
+                "VideoAdapter - onResume()",
                 "On Resumn play video at: " + videoAdapter.getCurrentPositionVideo()
         );
+        videoAdapter.playVideoAt(videoAdapter.getCurrentPositionVideo());
     }
 
     @Override
@@ -220,11 +225,11 @@ public class HomeScreen extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        videoAdapter.playVideoAt(videoAdapter.getCurrentPositionVideo());
         Log.d(
-                "VideoAdapter",
+                "VideoAdapter - onStart()",
                 "On Start play video at: " + videoAdapter.getCurrentPositionVideo()
         );
+        videoAdapter.playVideoAt(videoAdapter.getCurrentPositionVideo());
     }
 
 

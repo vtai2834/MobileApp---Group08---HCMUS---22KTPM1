@@ -60,9 +60,9 @@
         <activity
             android:name=".SearchScreen"
             android:exported="false" />
-        <activity
-            android:name=".CommentScreen"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".CommentScreen"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".LogIn"
             android:exported="false" />
@@ -74,12 +74,12 @@
             android:exported="false" />
         <activity
             android:name=".HomeScreen"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <receiver android:name=".DownloadCompleteReceiver" android:exported="true">
             <intent-filter>

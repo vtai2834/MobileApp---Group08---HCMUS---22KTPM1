@@ -210,7 +210,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private void showDownloadDialog(Video videoItem) {
         // Create the AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context); // Use the context passed in constructor
-        builder.setTitle("Tải xuống video này")
+        AlertDialog dialog = builder.setTitle("Tải xuống video này")
                 .setMessage("Bạn có chắc chắn muốn tải video này xuống?")
                 .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     @Override
@@ -228,8 +228,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         dialog.dismiss();
                     }
                 })
-                .create()
-                .show();
+                .setCancelable(false)
+                .create();
+        dialog.show();
+        // After showing the dialog, you can modify button colors
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(Color.BLUE);
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.RED);
+
+
     }
 
     // Method to simulate video download

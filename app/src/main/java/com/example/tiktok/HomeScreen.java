@@ -40,7 +40,7 @@ public class HomeScreen extends AppCompatActivity {
 //    private List<Video> videoItems1;
     private final List<String> videoIds = new ArrayList<>();;
 
-
+    String userID = "";
 
     private RecyclerView recyclerView;
 
@@ -51,6 +51,9 @@ public class HomeScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_screen);
+
+        // Lấy userId từ Intent
+        userID = getIntent().getStringExtra("USER_ID");
 
         videoItems = new ArrayList<>();
 
@@ -119,7 +122,7 @@ public class HomeScreen extends AppCompatActivity {
 
         // Set ViewPager2 adapter
         viewPager = findViewById(R.id.viewPager);
-        videoAdapter = new VideoAdapter(videoItems, videoIds, this); // Đảm bảo rằng context được truyền vào
+        videoAdapter = new VideoAdapter(videoItems, videoIds, this, userID); // Đảm bảo rằng context được truyền vào
         viewPager.setAdapter(videoAdapter);
 
         // Thiết lập ViewPager2 cuộn dọc
@@ -136,6 +139,7 @@ public class HomeScreen extends AppCompatActivity {
 
                 Intent intent = new Intent(HomeScreen.this, SearchScreen.class);
                 intent.putExtra("VIDEOS_ARRAY_JSON", new ArrayList<>(videoIds));
+                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
                 finish();
             }
@@ -148,6 +152,7 @@ public class HomeScreen extends AppCompatActivity {
                 videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
 
                 Intent intent = new Intent(HomeScreen.this, CameraScreen.class);
+                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
 
                 HomeScreen.this.finish();
@@ -161,6 +166,7 @@ public class HomeScreen extends AppCompatActivity {
                 videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
 
                 Intent intent = new Intent(HomeScreen.this, NotificationScreen.class);
+                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
 
                 HomeScreen.this.finish();
@@ -174,6 +180,8 @@ public class HomeScreen extends AppCompatActivity {
                 videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
 
                 Intent intent = new Intent(HomeScreen.this, ProfileScreen.class);
+                Log.d("CHECK_USER_ID", userID);
+                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
 
                 HomeScreen.this.finish();

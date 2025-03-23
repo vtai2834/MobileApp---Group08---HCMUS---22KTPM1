@@ -13,8 +13,6 @@
 <!--        android:alpha="0" />-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="600dp"
         android:layout_gravity="bottom"
@@ -44,10 +42,12 @@
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
                 android:layout_gravity="end|center_vertical"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_close" />
+                android:src="@drawable/ic_close"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
+                tools:layout_editor_absoluteX="367dp"
+                tools:layout_editor_absoluteY="16dp" />
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -81,7 +81,8 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:padding="12dp"
-                android:src="@drawable/ic_send" />
+                android:src="@drawable/ic_send"
+                tools:ignore="SpeakableTextPresentCheck" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

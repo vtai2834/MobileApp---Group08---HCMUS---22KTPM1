@@ -36,6 +36,7 @@
             android:layout_marginStart="10dp">
 
             <TextView
+                android:id="@+id/userName_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Jacob West"
@@ -84,7 +85,7 @@
                 android:paddingTop="10dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/avt"
+                    android:id="@+id/avt_profile"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:scaleType="centerCrop"
@@ -122,6 +123,7 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/num_following"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="14"
@@ -146,6 +148,7 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/num_follower"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="38"
@@ -170,6 +173,7 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/num_like"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="91"

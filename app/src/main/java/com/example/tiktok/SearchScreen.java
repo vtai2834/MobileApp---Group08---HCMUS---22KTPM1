@@ -46,10 +46,14 @@ public class SearchScreen extends AppCompatActivity {
 
     public List<String> videoIdsItems;
 
+    private String userID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
+
+        userID = getIntent().getStringExtra("USER_ID");
 
         //Lấy videos_list từ HomeScreen -> trả về pos video sẽ tìm dc result:
         String videoItemsJson = getIntent().getStringExtra("VIDEOS_ARRAY_JSON");
@@ -86,6 +90,7 @@ public class SearchScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SearchScreen.this, HomeScreen.class);
+                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
                 finish();
             }
@@ -308,6 +313,7 @@ public class SearchScreen extends AppCompatActivity {
                     // Gửi position về HomeScreen thay vì videoId
                     Intent intent = new Intent(SearchScreen.this, HomeScreen.class);
                     intent.putExtra("SEARCH_VIDEO_POSITION", pos);  // Thêm pos vào Intent
+                    intent.putExtra("USER_ID", userID);
                     startActivity(intent);
                     finish();
                 } else {

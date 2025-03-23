@@ -36,6 +36,7 @@
             android:layout_marginStart="10dp">
 
             <TextView
+                android:id="@+id/userName_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Jacob West"
@@ -84,7 +85,7 @@
                 android:paddingTop="10dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/avt"
+                    android:id="@+id/avt_profile"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:scaleType="centerCrop"
@@ -96,7 +97,7 @@
                     android:id="@+id/user_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@jacob_w"
+                    android:text="jacob_w"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/black"
@@ -122,6 +123,7 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/num_following"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="14"
@@ -146,6 +148,7 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/num_follower"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="38"
@@ -170,6 +173,7 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/num_like"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="91"
@@ -200,19 +204,20 @@
                     android:id="@+id/edit_profile_btn"
                     android:layout_width="120dp"
                     android:layout_height="45dp"
-                    android:orientation="horizontal"
-                    android:gravity="center"
                     android:background="@drawable/button_background"
-                    android:padding="10dp"
                     android:clickable="true"
-                    android:focusable="true">
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    tools:ignore="TouchTargetSizeCheck">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Edit Profile"
-                        android:textSize="14sp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
                 </RelativeLayout>
 
 

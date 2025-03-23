@@ -66,6 +66,7 @@ public class LogIn extends AppCompatActivity {
         databaseReference.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult().exists()) {
                 boolean loginSuccess = false;
+                String userID = ""; // lưu userID để truy cập dữ liệu ng dùng trong ứng dụng
 
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String existingUsername = userSnapshot.child("account").getValue(String.class);
@@ -74,6 +75,7 @@ public class LogIn extends AppCompatActivity {
                     if (existingUsername != null && existingPassword != null
                             && existingUsername.equals(username) && existingPassword.equals(password)) {
                         loginSuccess = true;
+                        userID = userSnapshot.getKey();
                         break;
                     }
                 }
@@ -83,6 +85,7 @@ public class LogIn extends AppCompatActivity {
 
                     // Chuyển sang màn hình HomeScreen
                     Intent intent = new Intent(LogIn.this, HomeScreen.class);
+                    intent.putExtra("USER_ID", userID);
                     startActivity(intent);
                     finish(); // Đóng màn hình đăng nhập
                 } else {

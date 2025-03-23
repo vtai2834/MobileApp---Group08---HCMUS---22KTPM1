@@ -49,14 +49,18 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private Context context;
     private Map<Integer, ExoPlayer> playerMap = new HashMap<>();
 
+    private String userID = "";
+
+
     public int currentPositionPlayingVideo = -1;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(3);
 
-    public VideoAdapter(List<Video> videoItems, List<String> videoIds, Context context) {
+    public VideoAdapter(List<Video> videoItems, List<String> videoIds, Context context, String userID) {
         this.videoItems = videoItems;
         this.videoIds = videoIds;
         this.context = context;
+        this.userID = userID;
     }
 
     @NonNull
@@ -69,7 +73,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private void processClick(View view, int position_vid, Video videoItem) {
         RelativeLayout heart = view.findViewById(R.id.heart);
         heart.setOnClickListener(v -> {
-            String userId = "-OL4poKAL6huFI4pgHbb";
+            String userId = userID;
             String videoId = videoIds.get(position_vid);
             ImageView like_img = view.findViewById(R.id.like_img);
             DatabaseReference likeRef = FirebaseDatabase.getInstance().getReference("likes").child(videoId).child(userId);
@@ -102,7 +106,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         RelativeLayout comment = view.findViewById(R.id.comment);
         comment.setOnClickListener(v -> {
             FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
-            CommentBottomSheet commentBottomSheet = new CommentBottomSheet(videoIds.get(position_vid));
+            CommentBottomSheet commentBottomSheet = new CommentBottomSheet(videoIds.get(position_vid), userID);
             commentBottomSheet.show(fragmentManager, commentBottomSheet.getTag());
             //            stopVideoAtPosition(position_vid);
 //            Intent intent = new Intent(view.getContext(), CommentScreen.class);
@@ -210,7 +214,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private void showDownloadDialog(Video videoItem) {
         // Create the AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context); // Use the context passed in constructor
-        builder.setTitle("Tải xuống video này")
+        AlertDialog dialog = builder.setTitle("Tải xuống video này")
                 .setMessage("Bạn có chắc chắn muốn tải video này xuống?")
                 .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     @Override
@@ -228,8 +232,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         dialog.dismiss();
                     }
                 })
-                .create()
-                .show();
+                .setCancelable(false)
+                .create();
+        dialog.show();
+        // After showing the dialog, you can modify button colors
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(Color.BLUE);
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.RED);
+
+
     }
 
     // Method to simulate video download
@@ -287,7 +297,39 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 TextView content = holder.itemView.findViewById(R.id.content);
                 ImageView like_img = holder.itemView.findViewById(R.id.like_img);
 
-                username.setText(videoItem.getUsername());
+                if (videoItem.getUsername().substring(0, 3).equals("-OL")) {
+                    // This is a Firebase user ID, fetch the actual username from Firebase
+                    String userId = videoItem.getUsername(); // The full ID like "-OLm4Zc1z1YSUyV7zHDm"
+                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+
+                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                // Get the idName field from the user data
+                                String idName = snapshot.child("idName").getValue(String.class);
+                                if (idName != null && !idName.isEmpty()) {
+                                    username.setText(idName);
+                                } else {
+                                    // Fallback in case idName is not available
+                                    username.setText(videoItem.getUsername());
+                                }
+                            } else {
+                                // User not found in database, use original username
+                                username.setText(videoItem.getUsername());
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d("Firebase", "Error fetching user data: " + error.getMessage());
+                            username.setText(videoItem.getUsername());
+                        }
+                    });
+                } else {
+                    username.setText(videoItem.getUsername());
+                }
+
                 like_cnt.setText(videoItem.getLikes());
                 cmt_cnt.setText(videoItem.getComments());
                 music.setText(videoItem.getMusic());

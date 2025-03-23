@@ -32,9 +32,12 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
     private List<Comment> commentList;
     private ImageButton btn_close;
     private String videoID;
+    private String userID;
 
-    public CommentBottomSheet(String videoId) {
+    public CommentBottomSheet(String videoId, String userID) {
         this.videoID = videoId;
+        this.userID = userID;
+
     }
 
     @Nullable
@@ -89,7 +92,6 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
 
         // Handle comment submission
         buttonSendComment.setOnClickListener(v -> {
-            String userID = "-OL4poKAL6huFI4pgHbb";
             String commentText = editTextComment.getText().toString().trim();
             if (!commentText.isEmpty()) {
                 Comment newComment = new Comment(

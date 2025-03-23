@@ -25,6 +25,9 @@ public class VideoPreviewActivity extends AppCompatActivity {
     private Button uploadButton;
     private Uri videoUri;
 
+    //thong tin cua user
+    private String userID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +36,9 @@ public class VideoPreviewActivity extends AppCompatActivity {
         videoView = findViewById(R.id.videoView);
         closeButton = findViewById(R.id.closeButton);
         uploadButton = findViewById(R.id.uploadButton);
+
+        // Get the userID from the intent
+        userID = getIntent().getStringExtra("USER_ID");
 
         // Get the video URI from the intent
         videoUri = getIntent().getParcelableExtra("video_uri");
@@ -101,7 +107,7 @@ public class VideoPreviewActivity extends AppCompatActivity {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("videos");
         String videoId = databaseReference.push().getKey();
 
-        Video video = new Video(videoUrl, "@new_vid", "0", "0", "new music", "Title of new Video");
+        Video video = new Video(videoUrl, userID, "0", "0", "new music", "Title of new Video");
         databaseReference.child(videoId).setValue(video)
                 .addOnSuccessListener(aVoid -> runOnUiThread(() -> {
                     Toast.makeText(this, "Video uploaded: " + videoUrl, Toast.LENGTH_SHORT).show();

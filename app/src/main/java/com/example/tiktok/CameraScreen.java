@@ -42,11 +42,16 @@ public class CameraScreen extends AppCompatActivity {
     private int lensFacing = CameraSelector.LENS_FACING_BACK;
     private static final int PICK_VIDEO_REQUEST = 1;
 
+    //userID infor
+    private String userID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_screen);
+
+        userID = getIntent().getStringExtra("USER_ID");
 
         initializeViews();
         setupClickListeners();
@@ -81,6 +86,7 @@ public class CameraScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(CameraScreen.this, HomeScreen.class);
+                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
             }
         });
@@ -103,6 +109,7 @@ public class CameraScreen extends AppCompatActivity {
             Uri selectedVideoUri = data.getData();
             if (selectedVideoUri != null) {
                 Intent intent = new Intent(this, VideoPreviewActivity.class);
+                intent.putExtra("USER_ID", userID);
                 intent.putExtra("video_uri", selectedVideoUri);
                 startActivity(intent);
             }

@@ -135,7 +135,7 @@
                         android:layout_height="24dp"
                         android:src="@drawable/ic_video"
                         android:layout_centerInParent="true"
-                        app:tint="@android:color/black" />
+                        app:tint="@android:color/black"/>
                 </RelativeLayout>
 
 
@@ -169,19 +169,25 @@
                 android:textSize="14sp"
                 android:textStyle="bold"/>
 
-            <TextView
+            <EditText
+                android:id="@+id/etUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Jacob West"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                android:focusable="false"
+                android:cursorVisible="false"
+                android:background="@null"
+                android:inputType="text"/>
 
-            <!-- Mũi tên điều hướng -->
+            <!-- Mũi tên chỉnh sửa -->
             <ImageView
+                android:id="@+id/editName"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_next"
-                android:layout_marginStart="8dp"
-                app:tint="@android:color/darker_gray" />
+                app:tint="@android:color/darker_gray"
+                android:layout_marginStart="8dp"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -203,19 +209,24 @@
                 android:textSize="14sp"
                 android:textStyle="bold"/>
 
-            <TextView
+            <EditText
+                android:id="@+id/etUserId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="jacob_w"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                android:focusable="false"
+                android:cursorVisible="false"
+                android:background="@null"
+                android:inputType="text"/>
 
-            <!-- Mũi tên điều hướng -->
+            <!-- Mũi tên chỉnh sửa -->
             <ImageView
+                android:id="@+id/editUsername"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_next"
-                android:layout_marginStart="8dp"
-                app:tint="@android:color/darker_gray" />
+                app:tint="@android:color/darker_gray"
+                android:layout_marginStart="8dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -236,9 +247,9 @@
                 android:text="" />
 
             <TextView
+                android:id="@+id/linkID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="tiktok.com@jacob_w"
                 android:textSize="14sp"/>
 
             <!-- Mũi tên điều hướng -->
@@ -246,8 +257,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_duplicate"
-                android:layout_marginStart="8dp"
-                app:tint="@android:color/darker_gray" />
+                app:tint="@android:color/darker_gray"
+                android:layout_marginStart="8dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -269,19 +280,24 @@
                 android:textSize="14sp"
                 android:textStyle="bold"/>
 
-            <TextView
+            <EditText
+                android:id="@+id/Bio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add a bio to your profile"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                android:focusable="false"
+                android:cursorVisible="false"
+                android:background="@null"
+                android:inputType="text"/>
 
             <!-- Mũi tên điều hướng -->
             <ImageView
+                android:id="@+id/etBio"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_next"
-                android:layout_marginStart="8dp"
-                app:tint="@android:color/darker_gray" />
+                app:tint="@android:color/darker_gray"
+                android:layout_marginStart="8dp"/>
         </LinearLayout>
 
         <View
@@ -323,8 +339,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_next"
-                android:layout_marginStart="8dp"
-                app:tint="@android:color/darker_gray" />
+                app:tint="@android:color/darker_gray"
+                android:layout_marginStart="8dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -357,8 +373,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_next"
-                android:layout_marginStart="8dp"
-                app:tint="@android:color/darker_gray" />
+                app:tint="@android:color/darker_gray"
+                android:layout_marginStart="8dp"/>
         </LinearLayout>
 
         <Button

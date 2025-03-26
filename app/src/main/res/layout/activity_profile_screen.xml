@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/profile_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProfileScreen"
@@ -36,7 +36,7 @@
             android:layout_marginStart="10dp">
 
             <TextView
-                android:id="@+id/userName_profile"
+                android:id="@+id/tvUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Jacob West"
@@ -63,6 +63,7 @@
 
     <!--    Phần giữa -->
     <ScrollView
+        android:id="@+id/mid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -71,6 +72,7 @@
         android:fillViewport="true">
 
         <RelativeLayout
+            android:id="@+id/middle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/top_taskbar"
@@ -85,7 +87,7 @@
                 android:paddingTop="10dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/avt_profile"
+                    android:id="@+id/avt"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:scaleType="centerCrop"
@@ -97,7 +99,6 @@
                     android:id="@+id/user_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="jacob_w"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/black"
@@ -123,13 +124,12 @@
                     android:gravity="center">
 
                     <TextView
-                        android:id="@+id/num_following"
+                        android:id="@+id/following"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="14"
+                        android:textColor="@color/black"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -148,10 +148,9 @@
                     android:gravity="center">
 
                     <TextView
-                        android:id="@+id/num_follower"
+                        android:id="@+id/follower"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="38"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/black"/>
@@ -173,10 +172,9 @@
                     android:gravity="center">
 
                     <TextView
-                        android:id="@+id/num_like"
+                        android:id="@+id/like"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="91"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/black"/>
@@ -204,20 +202,19 @@
                     android:id="@+id/edit_profile_btn"
                     android:layout_width="120dp"
                     android:layout_height="45dp"
-                    android:background="@drawable/button_background"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
                     android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/button_background"
                     android:padding="10dp"
-                    tools:ignore="TouchTargetSizeCheck">
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Edit Profile"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:textColor="@color/black"/>
                 </RelativeLayout>
 
 
@@ -237,7 +234,7 @@
             </LinearLayout>
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/etBio"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edit_area"
@@ -252,7 +249,7 @@
                 android:id="@+id/hr"
                 android:layout_width="match_parent"
                 android:layout_height="0.7dp"
-                android:layout_below="@id/editText"
+                android:layout_below="@id/etBio"
                 android:layout_marginTop="4dp"
                 android:background="@android:color/darker_gray" />
 

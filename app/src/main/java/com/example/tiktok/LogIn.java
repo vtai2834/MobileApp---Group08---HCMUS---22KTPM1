@@ -1,6 +1,7 @@
 package com.example.tiktok;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,9 +19,9 @@ public class LogIn extends AppCompatActivity {
 
     private EditText etUsername, etPassword;
     private Button btnLogin;
+    private TextView tvSignUp;
     private DatabaseReference databaseReference;
 
-    private TextView tvSignUp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,34 +63,36 @@ public class LogIn extends AppCompatActivity {
             return;
         }
 
-        // Kiểm tra tài khoản trong Firebase
         databaseReference.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult().exists()) {
-                boolean loginSuccess = false;
-                String userID = ""; // lưu userID để truy cập dữ liệu ng dùng trong ứng dụng
-
+            if (task.isSuccessful() && task.getResult() != null) {
+                boolean userFound = false;
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
-                    String existingUsername = userSnapshot.child("account").getValue(String.class);
-                    String existingPassword = userSnapshot.child("password").getValue(String.class);
+                    String storedUsername = userSnapshot.child("account").getValue(String.class);
+                    String storedPassword = userSnapshot.child("password").getValue(String.class);
 
-                    if (existingUsername != null && existingPassword != null
-                            && existingUsername.equals(username) && existingPassword.equals(password)) {
-                        loginSuccess = true;
-                        userID = userSnapshot.getKey();
+                    if (storedUsername != null && storedUsername.equals(username)) {
+                        userFound = true;
+                        if (storedPassword != null && storedPassword.equals(password)) {
+                            // Lưu username vào SharedPreferences
+                            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("username", username);
+                            editor.apply();
+
+                            Toast.makeText(LogIn.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+
+                            // Chuyển sang ProfileScreen
+                            Intent intent = new Intent(LogIn.this, HomeScreen.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(LogIn.this, "Sai tài khoản hoặc mật khẩu!", Toast.LENGTH_SHORT).show();
+                        }
                         break;
                     }
                 }
-
-                if (loginSuccess) {
-                    Toast.makeText(LogIn.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-
-                    // Chuyển sang màn hình HomeScreen
-                    Intent intent = new Intent(LogIn.this, HomeScreen.class);
-                    intent.putExtra("USER_ID", userID);
-                    startActivity(intent);
-                    finish(); // Đóng màn hình đăng nhập
-                } else {
-                    Toast.makeText(LogIn.this, "Sai tài khoản hoặc mật khẩu!", Toast.LENGTH_SHORT).show();
+                if (!userFound) {
+                    Toast.makeText(LogIn.this, "Tài khoản không tồn tại!", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(LogIn.this, "Lỗi khi kiểm tra tài khoản!", Toast.LENGTH_SHORT).show();

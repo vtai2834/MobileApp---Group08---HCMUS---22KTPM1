@@ -42,6 +42,7 @@ public class ProfileScreen extends AppCompatActivity {
     private TextView tvUsername, tvUserId, tvLike, tvFollower, tvFollowing;
     private String username;
     private DatabaseReference databaseReference;
+    private CircleImageView avtProfile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +77,7 @@ public class ProfileScreen extends AppCompatActivity {
         etBio = findViewById(R.id.etBio); // EditText nhập Bio
         home_button = findViewById(R.id.home_page);
         edit_profile_button = findViewById(R.id.edit_profile_btn);
+        avtProfile = findViewById(R.id.avt_profile);
 
         // Lấy username từ SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -141,6 +143,7 @@ public class ProfileScreen extends AppCompatActivity {
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     if (storedUsername != null && storedUsername.equals(username)) {
+                        String avt = userSnapshot.child("avatar").getValue(String.class);
                         String name = userSnapshot.child("name").getValue(String.class);
                         String idName = userSnapshot.child("idName").getValue(String.class);
                         Integer followerCount = userSnapshot.child("followerCount").getValue(Integer.class);
@@ -155,6 +158,15 @@ public class ProfileScreen extends AppCompatActivity {
                         tvFollowing.setText(followingCount != null ? String.valueOf(followingCount) : "0");
                         tvLike.setText(likeCount != null ? String.valueOf(likeCount) : "0");
                         etBio.setText(bio != null ? bio : ""); // Hiển thị bio
+                        if (avt != null && !avt.isEmpty()) {
+                            Glide.with(this)
+                                    .load(avt)
+                                    .placeholder(R.drawable.default_profile)
+                                    .error(R.drawable.default_profile)
+                                    .into(avtProfile);
+                        } else {
+                            avtProfile.setImageResource(R.drawable.default_profile);
+                        }
 
                         return;
                     }

@@ -113,7 +113,7 @@ public class ProfileScreen extends AppCompatActivity {
         });
 
         // Bắt sự kiện click vào profile_layout, mid hoặc middle để ẩn bàn phím
-        View profileLayout = findViewById(R.id.profile_layout);
+        View profileLayout = findViewById(R.id.main);
 //        View midLayout = findViewById(R.id.mid);
         View middleLayout = findViewById(R.id.middle);
 

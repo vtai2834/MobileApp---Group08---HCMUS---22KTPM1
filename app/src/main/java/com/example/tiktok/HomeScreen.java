@@ -179,14 +179,14 @@ public class HomeScreen extends AppCompatActivity {
             public void onClick(View view) {
                 videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
 
+                // Không cần truyền USER_ID nữa, vì ProfileScreen đã lấy từ SharedPreferences
                 Intent intent = new Intent(HomeScreen.this, ProfileScreen.class);
-                Log.d("CHECK_USER_ID", userID);
-                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
 
                 HomeScreen.this.finish();
             }
         });
+
 
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

@@ -41,6 +41,7 @@ public class HomeScreen extends AppCompatActivity {
     private final List<String> videoIds = new ArrayList<>();;
 
     String userID = "";
+    String userIdName = "";
 
     private RecyclerView recyclerView;
 
@@ -54,13 +55,14 @@ public class HomeScreen extends AppCompatActivity {
 
         // Lấy userId từ Intent
         userID = getIntent().getStringExtra("USER_ID");
+        userIdName = getIntent().getStringExtra("USER_ID_NAME");
 
         videoItems = new ArrayList<>();
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("videos");
 
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 videoItems.clear();
@@ -153,6 +155,7 @@ public class HomeScreen extends AppCompatActivity {
 
                 Intent intent = new Intent(HomeScreen.this, CameraScreen.class);
                 intent.putExtra("USER_ID", userID);
+                intent.putExtra("USER_ID_NAME", userIdName);
                 startActivity(intent);
 
                 HomeScreen.this.finish();

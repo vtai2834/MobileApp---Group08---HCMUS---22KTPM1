@@ -22,6 +22,7 @@ public class LogIn extends AppCompatActivity {
     private TextView tvSignUp;
     private DatabaseReference databaseReference;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,9 +67,12 @@ public class LogIn extends AppCompatActivity {
         databaseReference.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 boolean userFound = false;
+                String userID = "";
+                String userIdName = "";
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     String storedPassword = userSnapshot.child("password").getValue(String.class);
+                    userIdName = userSnapshot.child("idName").getValue(String.class);
 
                     if (storedUsername != null && storedUsername.equals(username)) {
                         userFound = true;
@@ -83,6 +87,8 @@ public class LogIn extends AppCompatActivity {
 
                             // Chuyển sang ProfileScreen
                             Intent intent = new Intent(LogIn.this, HomeScreen.class);
+                            intent.putExtra("USER_ID", userID);
+                            intent.putExtra("USER_ID_NAME", userIdName);
                             startActivity(intent);
                             finish();
                         } else {

@@ -27,6 +27,7 @@ public class VideoPreviewActivity extends AppCompatActivity {
 
     //thong tin cua user
     private String userID;
+    private String userIdName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class VideoPreviewActivity extends AppCompatActivity {
 
         // Get the userID from the intent
         userID = getIntent().getStringExtra("USER_ID");
+        userIdName = getIntent().getStringExtra("USER_ID_NAME");
 
         // Get the video URI from the intent
         videoUri = getIntent().getParcelableExtra("video_uri");
@@ -107,7 +109,7 @@ public class VideoPreviewActivity extends AppCompatActivity {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("videos");
         String videoId = databaseReference.push().getKey();
 
-        Video video = new Video(videoUrl, userID, "0", "0", "new music", "Title of new Video");
+        Video video = new Video(videoUrl, userIdName, "0", "0", "new music", "Title of new Video");
         databaseReference.child(videoId).setValue(video)
                 .addOnSuccessListener(aVoid -> runOnUiThread(() -> {
                     Toast.makeText(this, "Video uploaded: " + videoUrl, Toast.LENGTH_SHORT).show();

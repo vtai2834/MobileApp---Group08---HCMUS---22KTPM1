@@ -76,8 +76,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             String userId = userID;
             String videoId = videoIds.get(position_vid);
             ImageView like_img = view.findViewById(R.id.like_img);
+            TextView like_cnt = view.findViewById(R.id.like);
             DatabaseReference likeRef = FirebaseDatabase.getInstance().getReference("likes").child(videoId).child(userId);
-
+            DatabaseReference videoRef = FirebaseDatabase.getInstance().getReference("videos").child(videoId);
             likeRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -85,10 +86,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         // User has already liked, so remove the like
                         likeRef.removeValue();
                         like_img.clearColorFilter(); // Reset color
+                        videoRef.child("likes").setValue(String.valueOf(Integer.parseInt(videoItem.getLikes()) - 1));
+                        like_cnt.setText(String.valueOf(Integer.parseInt(like_cnt.getText().toString()) - 1));
                     } else {
                         // User has not liked, so add the like
                         likeRef.setValue(true);
                         like_img.setColorFilter(Color.parseColor("#FF0007")); // Change to red
+                        videoRef.child("likes").setValue(String.valueOf(Integer.parseInt(videoItem.getLikes()) + 1));
+                        like_cnt.setText(String.valueOf(Integer.parseInt(like_cnt.getText().toString()) + 1));
                     }
                 }
 
@@ -340,7 +345,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         "Video: " + videoItem.getTitle() + "Id: " + videoIds.get(position) + "Position: " + position + ""
                 );
 
-                String userId = "-OL4poKAL6huFI4pgHbb";
+                String userId = userID;
                 DatabaseReference likeRef = FirebaseDatabase.getInstance().getReference("likes").child(videoIds.get(position)).child(userId);
                 likeRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

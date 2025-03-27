@@ -44,6 +44,7 @@ public class CameraScreen extends AppCompatActivity {
 
     //userID infor
     private String userID;
+    private String userIdName;
 
 
     @Override
@@ -52,6 +53,7 @@ public class CameraScreen extends AppCompatActivity {
         setContentView(R.layout.activity_camera_screen);
 
         userID = getIntent().getStringExtra("USER_ID");
+        userIdName = getIntent().getStringExtra("USER_ID_NAME");
 
         initializeViews();
         setupClickListeners();
@@ -110,6 +112,7 @@ public class CameraScreen extends AppCompatActivity {
             if (selectedVideoUri != null) {
                 Intent intent = new Intent(this, VideoPreviewActivity.class);
                 intent.putExtra("USER_ID", userID);
+                intent.putExtra("USER_ID_NAME",userIdName);
                 intent.putExtra("video_uri", selectedVideoUri);
                 startActivity(intent);
             }

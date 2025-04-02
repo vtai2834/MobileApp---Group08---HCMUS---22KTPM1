@@ -11,6 +11,8 @@ public class Video {
     private String music;
     private String title;
 
+    private String thumbnailUrl; // New field for thumbnail URL
+
 //    private int point;
 
     // 🔹 Constructor rỗng (Firebase bắt buộc)
@@ -35,6 +37,9 @@ public class Video {
     public String getComments() { return comments; }
     public String getMusic() { return music; }
 //    public int getPoint() { return point; }
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
 
     // 🔹 Setters (Bắt buộc để Firebase có thể set dữ liệu)
     public void setTitle(String title) { this.title = title; }
@@ -44,4 +49,7 @@ public class Video {
     public void setComments(String comments) { this.comments = comments; }
     public void setMusic(String music) { this.music = music; }
 //    public void setPoint(int point) { this.point = point; }
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
 }

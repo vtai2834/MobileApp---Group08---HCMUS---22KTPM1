@@ -43,6 +43,7 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.10.1")
 
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
+    implementation(libs.firebase.storage)
 
     val camerax_version = "1.3.0-alpha04"
     implementation("androidx.camera:camera-core:$camerax_version")

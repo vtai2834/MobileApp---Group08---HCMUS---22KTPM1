@@ -1,62 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:background="?attr/selectableItemBackground">
-
-    <ImageView
-        android:id="@+id/thumbnailImage"
-        android:layout_width="120dp"
-        android:layout_height="160dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:scaleType="centerCrop"
-        android:background="#EEEEEE"
-        android:src="@drawable/ic_video_placeholder" />
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/thumbnailImage"
-        android:layout_marginStart="12dp"
-        android:layout_centerVertical="true"
         android:orientation="vertical">
 
+        <!-- Thumbnail Image -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/thumbnailImage"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="Thumbnail" />
+
+            <!-- Time indicator overlay -->
+            <TextView
+                android:id="@+id/timeIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 ngày trước"
+                android:textColor="@android:color/white"
+                android:background="#80000000"
+                android:padding="4dp"
+                android:textSize="12sp"
+                android:layout_gravity="bottom|start"
+                android:layout_margin="8dp" />
+        </FrameLayout>
+
+        <!-- Title -->
         <TextView
-            android:id="@+id/videoTitle"
+            android:id="@+id/titleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:text="FPT Top 1 GD1 Với Con Bài Zip Quá Hay Trong Tay Y..."
+            android:textSize="14sp"
+            android:textColor="#000000"
             android:maxLines="2"
             android:ellipsize="end"
-            android:text="Video Title" />
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="8dp"
+            android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/videoUsername"
+        <!-- Channel info and likes -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp"
-            android:text="\@username" />
+            android:orientation="horizontal"
+            android:padding="8dp">
 
-        <TextView
-            android:id="@+id/videoMusic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:text="Music title" />
+            <!-- Channel info -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/videoLikes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp"
-            android:text="120K lượt thích" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/channelAvatar"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/default_profile" />
+
+                <TextView
+                    android:id="@+id/channelName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="dpsports99"
+                    android:textSize="12sp"
+                    android:textColor="#757575"
+                    android:layout_marginStart="8dp"
+                    android:layout_gravity="center_vertical" />
+            </LinearLayout>
+
+            <!-- Likes -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_heart"
+                    android:layout_gravity="center_vertical" />
+
+                <TextView
+                    android:id="@+id/likeCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="674"
+                    android:textSize="12sp"
+                    android:textColor="#757575"
+                    android:layout_marginStart="4dp"
+                    android:layout_gravity="center_vertical" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</androidx.cardview.widget.CardView>

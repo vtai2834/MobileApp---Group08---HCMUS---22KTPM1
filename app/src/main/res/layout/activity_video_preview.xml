@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:text="Upload"
         android:textColor="@android:color/white"
-        android:background="@color/cardview_dark_background"
+        android:backgroundTint="@color/cardview_dark_background"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"/>

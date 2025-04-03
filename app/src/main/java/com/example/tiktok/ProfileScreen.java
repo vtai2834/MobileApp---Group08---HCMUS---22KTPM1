@@ -1,25 +1,22 @@
 package com.example.tiktok;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,52 +31,39 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileScreen extends AppCompatActivity {
 
+    private static final String TAG = "ProfileScreen";
+
     private RecyclerView recyclerView;
-    private VideoAdapter videoAdapter;
+    private ProfileVideoAdapter videoAdapter;
     private List<Video> videoList;
-    private RelativeLayout home_button, edit_profile_button;
-    private EditText etBio;
-    private TextView tvUsername, tvUserId, tvLike, tvFollower, tvFollowing;
-    private String username;
-    private DatabaseReference databaseReference;
+    private List<String> videoIds;
+
     private CircleImageView avtProfile;
+    private TextView tvUsername, user_id, follower, following, like;
+    private EditText etBio;
+    private TextView addBioBtn;
+    private View indicatorVideos, indicatorLiked;
+    private ImageView tabVideos, tabLiked;
+    private LinearLayout emptyStateContainer;
+    private Button edit_profile_btn;
+    private LinearLayout tiktokStudioBtn, ordersBtn;
+    private LinearLayout home_button, discover_button, upload_button, inbox_button, profile_button;
+
+    private String username; // Account username (e.g., "zoi5161")
+    private String userIdName; // Display username for UI
+    private DatabaseReference databaseReference;
+    private DatabaseReference videosReference;
+    private boolean isEditingBio = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile_screen);
 
-//        recyclerView = findViewById(R.id.recyclerViewProfile);
-//
-//        // Sử dụng GridLayoutManager với 3 cột và hướng cuộn ngang
-//        GridLayoutManager layoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, true);
-//        recyclerView.setLayoutManager(layoutManager);
-//
-//        // Khởi tạo danh sách video
-//        videoList = new ArrayList<>();
-//        videoList.add(new Video("android.resource://" + getPackageName() + "/" + R.raw.main_video, "", "", "", "", ""));
-//        videoList.add(new Video("android.resource://" + getPackageName() + "/" + R.raw.main_video, "", "", "", "", ""));
-//        videoList.add(new Video("android.resource://" + getPackageName() + "/" + R.raw.main_video, "", "", "", "", ""));
-//        videoList.add(new Video("android.resource://" + getPackageName() + "/" + R.raw.main_video, "", "", "", "", ""));
-//        videoList.add(new Video("android.resource://" + getPackageName() + "/" + R.raw.main_video, "", "", "", "", ""));
-//        videoList.add(new Video("android.resource://" + getPackageName() + "/" + R.raw.main_video, "", "", "", "", ""));
-//
-//        // Thiết lập Adapter
-//        videoAdapter = new VideoAdapter(videoList, this); // Truyền context vào VideoAdapter
-//        recyclerView.setAdapter(videoAdapter);
+        initializeViews();
+        setupClickListeners();
 
-// Ánh xạ View
-        tvUsername = findViewById(R.id.tvUsername);
-        tvUserId = findViewById(R.id.user_id);
-        tvFollower = findViewById(R.id.follower);
-        tvFollowing = findViewById(R.id.following);
-        tvLike = findViewById(R.id.like);
-        etBio = findViewById(R.id.etBio); // EditText nhập Bio
-        home_button = findViewById(R.id.home_page);
-        edit_profile_button = findViewById(R.id.edit_profile_btn);
-        avtProfile = findViewById(R.id.avt_profile);
-
-        // Lấy username từ SharedPreferences
+        // Get username from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         username = sharedPreferences.getString("username", null);
 
@@ -89,75 +73,203 @@ public class ProfileScreen extends AppCompatActivity {
             return;
         }
 
-        // Truy cập Firebase
+        // Initialize Firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-
-        // Lấy dữ liệu user từ Firebase
+        videosReference = FirebaseDatabase.getInstance().getReference("videos");
+//
+        // Load user data
         getUserDataFromFirebase();
 
-        // Xử lý sự kiện click nút Home
-        home_button.setOnClickListener(v -> {
-            Intent homeIntent = new Intent(ProfileScreen.this, HomeScreen.class);
-            startActivity(homeIntent);
+        // Initialize RecyclerView
+        setupRecyclerView();
+    }
+
+    private void initializeViews() {
+        // Profile info
+        avtProfile = findViewById(R.id.avt_profile);
+        tvUsername = findViewById(R.id.tvUsername);
+        user_id = findViewById(R.id.user_id);
+        follower = findViewById(R.id.follower);
+        following = findViewById(R.id.following);
+        like = findViewById(R.id.like);
+        etBio = findViewById(R.id.etBio);
+        addBioBtn = findViewById(R.id.addBioBtn);
+
+        // Tabs
+        tabVideos = findViewById(R.id.tabVideos);
+        tabLiked = findViewById(R.id.tabLiked);
+        indicatorVideos = findViewById(R.id.indicatorVideos);
+        indicatorLiked = findViewById(R.id.indicatorLiked);
+
+        // Buttons
+        edit_profile_btn = findViewById(R.id.edit_profile_btn);
+        tiktokStudioBtn = findViewById(R.id.tiktokStudioBtn);
+        ordersBtn = findViewById(R.id.ordersBtn);
+
+        // Navigation
+        home_button = findViewById(R.id.home_button);
+        discover_button = findViewById(R.id.discover_button);
+        upload_button = findViewById(R.id.upload_button);
+        inbox_button = findViewById(R.id.inbox_button);
+        profile_button = findViewById(R.id.profile_button);
+
+        // RecyclerView and empty state
+        recyclerView = findViewById(R.id.recyclerViewProfile);
+        emptyStateContainer = findViewById(R.id.emptyStateContainer);
+
+        // Initialize video lists
+        videoList = new ArrayList<>();
+        videoIds = new ArrayList<>();
+    }
+
+    private void setupRecyclerView() {
+        // Set up RecyclerView with GridLayoutManager (3 columns)
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // Initialize adapter
+        videoAdapter = new ProfileVideoAdapter(videoList, this);
+        recyclerView.setAdapter(videoAdapter);
+    }
+
+    private void updateEmptyState() {
+        if (videoList.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            emptyStateContainer.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyStateContainer.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupClickListeners() {
+        // Tab selection
+        tabVideos.setOnClickListener(v -> {
+            indicatorVideos.setVisibility(View.VISIBLE);
+            indicatorLiked.setVisibility(View.INVISIBLE);
+            tabVideos.setColorFilter(getResources().getColor(android.R.color.black));
+            tabLiked.setColorFilter(getResources().getColor(android.R.color.darker_gray));
         });
 
-        // Xử lý sự kiện click nút Chỉnh sửa hồ sơ
-        edit_profile_button.setOnClickListener(view -> {
-            Intent editIntent = new Intent(ProfileScreen.this, EditProfile.class);
-            startActivity(editIntent);
+        tabLiked.setOnClickListener(v -> {
+            indicatorVideos.setVisibility(View.INVISIBLE);
+            indicatorLiked.setVisibility(View.VISIBLE);
+            tabVideos.setColorFilter(getResources().getColor(android.R.color.darker_gray));
+            tabLiked.setColorFilter(getResources().getColor(android.R.color.black));
+
+            // Show toast for liked videos (not implemented)
+            Toast.makeText(this, "Chức năng video đã thích chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
         });
 
-        // Lắng nghe khi EditText mất focus
-        etBio.setOnFocusChangeListener((view, hasFocus) -> {
-            if (!hasFocus) {
+        // Bio editing
+        addBioBtn.setOnClickListener(v -> {
+            addBioBtn.setVisibility(View.GONE);
+            etBio.setVisibility(View.VISIBLE);
+            etBio.requestFocus();
+
+            // Show keyboard
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.showSoftInput(etBio, InputMethodManager.SHOW_IMPLICIT);
+
+            isEditingBio = true;
+        });
+
+        etBio.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus && isEditingBio) {
                 updateBioToFirebase();
+                isEditingBio = false;
             }
         });
 
-        // Bắt sự kiện click vào profile_layout, mid hoặc middle để ẩn bàn phím
-        View profileLayout = findViewById(R.id.main);
-//        View midLayout = findViewById(R.id.mid);
-        View middleLayout = findViewById(R.id.middle);
+        // Navigation
+        home_button.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileScreen.this, HomeScreen.class);
+            intent.putExtra("USER_ID", username);
+            startActivity(intent);
+        });
 
-        View.OnClickListener hideKeyboardListener = v -> {
-            hideKeyboard();
-            etBio.clearFocus();
-            updateBioToFirebase(); // Cập nhật Bio nếu có thay đổi
-        };
+        edit_profile_btn.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileScreen.this, EditProfile.class);
+            startActivity(intent);
+        });
 
-        profileLayout.setOnClickListener(hideKeyboardListener);
-//        midLayout.setOnClickListener(hideKeyboardListener);
-        middleLayout.setOnClickListener(hideKeyboardListener);
+        upload_button.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileScreen.this, CameraScreen.class);
+            intent.putExtra("USER_ID", username);
+            intent.putExtra("USER_ID_NAME", userIdName != null ? userIdName : username);
+            startActivity(intent);
+        });
 
+        // TikTok Studio and Orders (just show toast)
+        tiktokStudioBtn.setOnClickListener(v -> {
+            Toast.makeText(this, "Chức năng TikTok Studio chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
+        });
+
+        ordersBtn.setOnClickListener(v -> {
+            Toast.makeText(this, "Chức năng Đơn hàng chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getUserDataFromFirebase(); // Gọi lại để cập nhật thông tin
+        getUserDataFromFirebase(); // Refresh data when returning to screen
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (videoAdapter != null) {
+            videoAdapter.releaseAllPlayers();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (videoAdapter != null) {
+            videoAdapter.releaseAllPlayers();
+        }
     }
 
     private void getUserDataFromFirebase() {
         databaseReference.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
+                boolean userFound = false;
+
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     if (storedUsername != null && storedUsername.equals(username)) {
+                        userFound = true;
                         String avt = userSnapshot.child("avatar").getValue(String.class);
                         String name = userSnapshot.child("name").getValue(String.class);
                         String idName = userSnapshot.child("idName").getValue(String.class);
                         Integer followerCount = userSnapshot.child("followerCount").getValue(Integer.class);
                         Integer followingCount = userSnapshot.child("followingCount").getValue(Integer.class);
                         Integer likeCount = userSnapshot.child("likeCount").getValue(Integer.class);
-                        String bio = userSnapshot.child("bio").getValue(String.class); // Lấy bio từ Firebase
+                        String bio = userSnapshot.child("bio").getValue(String.class);
 
-                        // Set dữ liệu vào View
+                        // Save idName for later use
+                        userIdName = idName;
+
+                        // Update UI with user data
                         tvUsername.setText(name != null ? name : "Người dùng");
-                        tvUserId.setText(idName != null ? idName : username);
-                        tvFollower.setText(followerCount != null ? String.valueOf(followerCount) : "0");
-                        tvFollowing.setText(followingCount != null ? String.valueOf(followingCount) : "0");
-                        tvLike.setText(likeCount != null ? String.valueOf(likeCount) : "0");
-                        etBio.setText(bio != null ? bio : ""); // Hiển thị bio
+                        user_id.setText("@" + (idName != null ? idName : username));
+                        follower.setText(followerCount != null ? String.valueOf(followerCount) : "0");
+                        following.setText(followingCount != null ? String.valueOf(followingCount) : "0");
+                        like.setText(likeCount != null ? String.valueOf(likeCount) : "0");
+
+                        // Handle bio
+                        if (bio != null && !bio.isEmpty()) {
+                            etBio.setText(bio);
+                            etBio.setVisibility(View.VISIBLE);
+                            addBioBtn.setVisibility(View.GONE);
+                        } else {
+                            etBio.setVisibility(View.GONE);
+                            addBioBtn.setVisibility(View.VISIBLE);
+                        }
+
+                        // Load profile image
                         if (avt != null && !avt.isEmpty()) {
                             Glide.with(this)
                                     .load(avt)
@@ -168,29 +280,136 @@ public class ProfileScreen extends AppCompatActivity {
                             avtProfile.setImageResource(R.drawable.default_profile);
                         }
 
-                        return;
+                        // Load user videos after getting user data
+                        Log.d(TAG, "User ID Name khi query: '" + userIdName + "'");
+                        loadUserVideos();
+                        break;
                     }
                 }
-                Toast.makeText(ProfileScreen.this, "Không tìm thấy dữ liệu tài khoản!", Toast.LENGTH_SHORT).show();
+
+                if (!userFound) {
+                    Toast.makeText(ProfileScreen.this, "Không tìm thấy dữ liệu tài khoản!", Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(ProfileScreen.this, "Lỗi khi tải dữ liệu!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    private void loadUserVideos() {
+        // Clear existing lists
+        videoList.clear();
+        videoIds.clear();
+
+        String queryUsername = (userIdName != null) ? userIdName : username;
+
+
+        // Query videos where username matches the current user's username
+        videosReference.orderByChild("username").equalTo(userIdName).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+
+                for (DataSnapshot videoSnapshot : task.getResult().getChildren()) {
+                    String videoId = videoSnapshot.getKey();
+                    String video_user_name = videoSnapshot.child("username").getValue(String.class);
+                    String videoUrl = videoSnapshot.child("videoUri").getValue(String.class);
+                    String thumbnailUrl = videoSnapshot.child("thumbnailUrl").getValue(String.class);
+                    String title = videoSnapshot.child("title").getValue(String.class);
+                    String likes = videoSnapshot.child("likes").getValue(String.class);
+                    String comments = videoSnapshot.child("comments").getValue(String.class);
+                    String music = videoSnapshot.child("music").getValue(String.class);
+
+                    if (videoUrl != null) {
+                        Video video = new Video(
+                                videoUrl,
+                                thumbnailUrl != null ? thumbnailUrl : "",
+                                userIdName != null ? userIdName : username,
+                                title != null ? title : "",
+                                likes != null ? likes : "0",
+                                comments != null ? comments : "0",
+                                music != null ? music : "Original Sound"
+                        );
+
+                        // Check if thumbnail is missing and generate one
+                        if ((thumbnailUrl == null || thumbnailUrl.isEmpty()) && videoUrl != null && !videoUrl.isEmpty()) {
+                            generateAndUpdateThumbnail(video, videoId);
+                        }
+
+                        videoList.add(video);
+                        videoIds.add(videoId);
+                    }
+                }
+
+                // Update adapter and UI
+                if (videoAdapter != null) {
+                    videoAdapter.notifyDataSetChanged();
+                }
+                updateEmptyState();
+
+                Log.d(TAG, "Đã tải " + videoList.size() + " video cho người dùng: " + userIdName);
+            } else {
+                Log.e(TAG, "Lỗi khi tải video: " +
+                        (task.getException() != null ? task.getException().getMessage() : "Lỗi không xác định"));
+                Toast.makeText(ProfileScreen.this, "Lỗi khi tải video!", Toast.LENGTH_SHORT).show();
+                updateEmptyState();
+            }
+        });
+    }
+
+    private void generateAndUpdateThumbnail(Video video, String videoId) {
+        ThumbnailGenerator.generateAndUploadThumbnail(
+                this,
+                video.getVideoUri(),
+                new ThumbnailGenerator.ThumbnailCallback() {
+                    @Override
+                    public void onThumbnailGenerated(String thumbnailUrl) {
+                        // Update the video object
+                        video.setThumbnailUrl(thumbnailUrl);
+
+                        // Update Firebase
+                        videosReference.child(videoId).child("thumbnailUrl").setValue(thumbnailUrl)
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d(TAG, "Thumbnail updated for video: " + videoId);
+                                    // Notify adapter of change
+                                    int position = videoList.indexOf(video);
+                                    if (position != -1 && videoAdapter != null) {
+                                        videoAdapter.notifyItemChanged(position);
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Failed to update thumbnail: " + e.getMessage());
+                                });
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e(TAG, "Error generating thumbnail: " + e.getMessage());
+                    }
+                }
+        );
+    }
+
     private void updateBioToFirebase() {
         String newBio = etBio.getText().toString().trim();
-        if (newBio.isEmpty()) return;
+
+        if (newBio.isEmpty()) {
+            etBio.setVisibility(View.GONE);
+            addBioBtn.setVisibility(View.VISIBLE);
+            return;
+        }
 
         databaseReference.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     if (storedUsername != null && storedUsername.equals(username)) {
-                        // Cập nhật bio trên Firebase
+                        // Update bio in Firebase
                         userSnapshot.getRef().child("bio").setValue(newBio)
-                                .addOnSuccessListener(unused -> Toast.makeText(this, "Cập nhật Bio thành công!", Toast.LENGTH_SHORT).show())
-                                .addOnFailureListener(e -> Toast.makeText(this, "Lỗi khi cập nhật Bio!", Toast.LENGTH_SHORT).show());
+                                .addOnSuccessListener(unused -> {
+                                    // Bio updated successfully
+                                    hideKeyboard();
+                                })
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(this, "Lỗi khi cập nhật Bio!", Toast.LENGTH_SHORT).show());
                         return;
                     }
                 }
@@ -198,7 +417,6 @@ public class ProfileScreen extends AppCompatActivity {
         });
     }
 
-    // Hàm ẩn bàn phím
     private void hideKeyboard() {
         View view = this.getCurrentFocus();
         if (view != null) {
@@ -206,18 +424,5 @@ public class ProfileScreen extends AppCompatActivity {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View view = getCurrentFocus();
-            if (view != null && !(view instanceof EditText)) {
-                hideKeyboard();
-                etBio.clearFocus();
-                updateBioToFirebase(); // Cập nhật bio khi chạm ra ngoài
-            }
-        }
-        return super.dispatchTouchEvent(event);
-    }
-
 }
+

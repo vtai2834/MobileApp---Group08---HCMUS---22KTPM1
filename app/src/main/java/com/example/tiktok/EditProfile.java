@@ -1,44 +1,53 @@
 package com.example.tiktok;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class EditProfile extends AppCompatActivity {
 
-    private ImageView back_to_profile_button, editName, editUsername;
-    private EditText etUsername, etUserId, etBio;
-    private TextView tvLinkID, btnSave;
+    private ImageView back_to_profilescreen;
+    private CircleImageView profileImage;
+    private FrameLayout profilePhotoContainer;
+    private EditText etUsername, etUserId, Bio;
+    private TextView linkID;
+    private TextView btn_save;
+    private RelativeLayout nameContainer, usernameContainer, bioContainer;
+    private RelativeLayout instagramContainer, youtubeContainer;
+    private RelativeLayout tiktokStudioContainer, ordersContainer;
+
     private DatabaseReference databaseReference;
     private String username;
+    private String originalName, originalIdName, originalBio;
+    private boolean hasChanges = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        // Ánh xạ View
-        etUsername = findViewById(R.id.etUsername);
-        etUserId = findViewById(R.id.etUserId);
-        etBio = findViewById(R.id.Bio);
-        tvLinkID = findViewById(R.id.linkID);
-        back_to_profile_button = findViewById(R.id.back_to_profilescreen);
-        editName = findViewById(R.id.editName);
-        editUsername = findViewById(R.id.editUsername);
-        btnSave = findViewById(R.id.btn_save);
+        initializeViews();
+        setupClickListeners();
 
-        // Lấy username từ SharedPreferences
+        // Get username from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         username = sharedPreferences.getString("username", null);
 
@@ -48,26 +57,93 @@ public class EditProfile extends AppCompatActivity {
             return;
         }
 
-        // Khởi tạo Firebase Database
+        // Initialize Firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
 
-        // Lấy dữ liệu user từ Firebase
+        // Load user data
         getUserDataFromFirebase();
+    }
 
-        // Xử lý sự kiện nút quay lại ProfileScreen
-        back_to_profile_button.setOnClickListener(view -> finish());
+    private void initializeViews() {
+        back_to_profilescreen = findViewById(R.id.back_to_profilescreen);
+        profileImage = findViewById(R.id.profileImage);
+        profilePhotoContainer = findViewById(R.id.profilePhotoContainer);
+        etUsername = findViewById(R.id.etUsername);
+        etUserId = findViewById(R.id.etUserId);
+        Bio = findViewById(R.id.Bio);
+        linkID = findViewById(R.id.linkID);
+        btn_save = findViewById(R.id.btn_save);
 
-        // Xử lý sự kiện click vào icon chỉnh sửa username
-        editName.setOnClickListener(view -> enableEditing(etUsername));
+        // Containers for click handling
+        nameContainer = findViewById(R.id.nameContainer);
+        usernameContainer = findViewById(R.id.usernameContainer);
+        bioContainer = findViewById(R.id.bioContainer);
+        instagramContainer = findViewById(R.id.instagramContainer);
+        youtubeContainer = findViewById(R.id.youtubeContainer);
+        tiktokStudioContainer = findViewById(R.id.tiktokStudioContainer);
+        ordersContainer = findViewById(R.id.ordersContainer);
+    }
 
-        // Xử lý sự kiện click vào icon chỉnh sửa user_id
-        editUsername.setOnClickListener(view -> enableEditing(etUserId));
+    private void setupClickListeners() {
+        // Back button
+        back_to_profilescreen.setOnClickListener(v -> {
+            if (hasChanges) {
+                showDiscardChangesDialog();
+            } else {
+                finish();
+            }
+        });
 
-        ImageView editBio = findViewById(R.id.etBio);
-        editBio.setOnClickListener(view -> enableEditing(etBio));
+        // Save button
+        btn_save.setOnClickListener(v -> updateUserData());
 
-        // Xử lý sự kiện bấm "Lưu"
-        btnSave.setOnClickListener(view -> updateUserData());
+        // Profile photo
+        profilePhotoContainer.setOnClickListener(v -> {
+            Toast.makeText(this, "Chức năng thay đổi ảnh chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
+        });
+
+        // Edit fields
+        nameContainer.setOnClickListener(v -> enableEditing(etUsername));
+        usernameContainer.setOnClickListener(v -> enableEditing(etUserId));
+        bioContainer.setOnClickListener(v -> enableEditing(Bio));
+
+        // Social media links
+        instagramContainer.setOnClickListener(v -> {
+            Toast.makeText(this, "Chức năng liên kết Instagram chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
+        });
+
+        youtubeContainer.setOnClickListener(v -> {
+            Toast.makeText(this, "Chức năng liên kết YouTube chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
+        });
+
+        // TikTok Studio and Orders
+        tiktokStudioContainer.setOnClickListener(v -> {
+            Toast.makeText(this, "Chức năng TikTok Studio chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
+        });
+
+        ordersContainer.setOnClickListener(v -> {
+            Toast.makeText(this, "Chức năng Đơn hàng chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
+        });
+
+        // Text change listeners
+        etUsername.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                checkForChanges();
+            }
+        });
+
+        etUserId.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                checkForChanges();
+                updateLinkID();
+            }
+        });
+
+        Bio.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                checkForChanges();
+            }
+        });
     }
 
     private void enableEditing(EditText editText) {
@@ -75,11 +151,41 @@ public class EditProfile extends AppCompatActivity {
         editText.setCursorVisible(true);
         editText.requestFocus();
 
-        // Hiển thị bàn phím
+        // Show keyboard
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
         }
+    }
+
+    private void updateLinkID() {
+        String idName = etUserId.getText().toString().trim();
+        if (!idName.isEmpty()) {
+            linkID.setText("tiktok.com/@" + idName);
+        }
+    }
+
+    private void checkForChanges() {
+        String newName = etUsername.getText().toString().trim();
+        String newIdName = etUserId.getText().toString().trim();
+        String newBio = Bio.getText().toString().trim();
+
+        hasChanges = !newName.equals(originalName) ||
+                !newIdName.equals(originalIdName) ||
+                !newBio.equals(originalBio);
+
+        // Enable/disable save button based on changes
+        btn_save.setEnabled(hasChanges);
+        btn_save.setAlpha(hasChanges ? 1.0f : 0.5f);
+    }
+
+    private void showDiscardChangesDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Hủy thay đổi?")
+                .setMessage("Bạn có muốn hủy các thay đổi đã thực hiện không?")
+                .setPositiveButton("Hủy thay đổi", (dialog, which) -> finish())
+                .setNegativeButton("Tiếp tục chỉnh sửa", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     private void getUserDataFromFirebase() {
@@ -88,15 +194,32 @@ public class EditProfile extends AppCompatActivity {
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     if (storedUsername != null && storedUsername.equals(username)) {
+                        String avt = userSnapshot.child("avatar").getValue(String.class);
                         String name = userSnapshot.child("name").getValue(String.class);
                         String idName = userSnapshot.child("idName").getValue(String.class);
-                        String bio = userSnapshot.child("bio").getValue(String.class); // Lấy Bio
+                        String bio = userSnapshot.child("bio").getValue(String.class);
 
-                        // Cập nhật giao diện
-                        etUsername.setText(name != null ? name : "Người dùng");
-                        etUserId.setText(idName != null ? idName : username);
-                        etBio.setText(bio != null ? bio : ""); // Hiển thị Bio
-                        tvLinkID.setText("tiktok.com@" + (idName != null ? idName : username));
+                        // Save original values
+                        originalName = name != null ? name : "";
+                        originalIdName = idName != null ? idName : "";
+                        originalBio = bio != null ? bio : "";
+
+                        // Update UI
+                        etUsername.setText(originalName);
+                        etUserId.setText(originalIdName);
+                        Bio.setText(originalBio);
+                        linkID.setText("tiktok.com/@" + originalIdName);
+
+                        // Load profile image
+                        if (avt != null && !avt.isEmpty()) {
+                            Glide.with(this)
+                                    .load(avt)
+                                    .placeholder(R.drawable.default_profile)
+                                    .error(R.drawable.default_profile)
+                                    .into(profileImage);
+                        } else {
+                            profileImage.setImageResource(R.drawable.default_profile);
+                        }
 
                         return;
                     }
@@ -108,11 +231,10 @@ public class EditProfile extends AppCompatActivity {
         });
     }
 
-
     private void updateUserData() {
         String newName = etUsername.getText().toString().trim();
         String newIdName = etUserId.getText().toString().trim();
-        String newBio = etBio.getText().toString().trim();
+        String newBio = Bio.getText().toString().trim();
 
         if (newName.isEmpty() || newIdName.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
@@ -132,7 +254,8 @@ public class EditProfile extends AppCompatActivity {
                         userKey[0] = userSnapshot.getKey();
                     }
 
-                    if (storedIdName != null && storedIdName.equals(newIdName) && !userSnapshot.getKey().equals(userKey[0])) {
+                    if (storedIdName != null && storedIdName.equals(newIdName) &&
+                            !newIdName.equals(originalIdName)) {
                         isIdNameTaken[0] = true;
                     }
                 }
@@ -147,17 +270,29 @@ public class EditProfile extends AppCompatActivity {
                     return;
                 }
 
-                // Cập nhật dữ liệu
+                // Update data
                 databaseReference.child(userKey[0]).child("name").setValue(newName);
                 databaseReference.child(userKey[0]).child("idName").setValue(newIdName);
-                databaseReference.child(userKey[0]).child("bio").setValue(newBio);
-                Toast.makeText(EditProfile.this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                databaseReference.child(userKey[0]).child("bio").setValue(newBio)
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(EditProfile.this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                            hasChanges = false;
+                            finish();
+                        })
+                        .addOnFailureListener(e ->
+                                Toast.makeText(EditProfile.this, "Lỗi khi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             } else {
                 Toast.makeText(EditProfile.this, "Lỗi khi tìm kiếm tài khoản!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-
-
+    @Override
+    public void onBackPressed() {
+        if (hasChanges) {
+            showDiscardChangesDialog();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

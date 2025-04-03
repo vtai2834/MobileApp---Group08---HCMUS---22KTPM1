@@ -29,6 +29,16 @@ public class Video {
 //        this.point = point;
     }
 
+    public Video(String videoUrl, String thumbnailUrl, String finalUserId, String title, String likes, String num_cmt, String music) {
+        this.videoUri = videoUrl;
+        this.thumbnailUrl = thumbnailUrl;
+        this.username = finalUserId;
+        this.title = title;
+        this.likes = likes;
+        this.comments = num_cmt;
+        this.music = music;
+    }
+
     // 🔹 Getters
     public String getTitle() { return title; }
     public String getVideoUri() { return videoUri; }

@@ -9,6 +9,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         applicationId = "com.example.tiktok"
         minSdk = 28
         targetSdk = 35
@@ -45,12 +46,13 @@ dependencies {
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
     implementation(libs.firebase.storage)
 
-    val camerax_version = "1.3.0-alpha04"
+    val camerax_version = "1.2.3"
     implementation("androidx.camera:camera-core:$camerax_version")
     implementation("androidx.camera:camera-camera2:$camerax_version")
     implementation("androidx.camera:camera-lifecycle:$camerax_version")
     implementation("androidx.camera:camera-video:$camerax_version")
     implementation("androidx.camera:camera-view:$camerax_version")
+    implementation("androidx.camera:camera-extensions:${camerax_version}")
 
     // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.2.1")

@@ -1,18 +1,18 @@
 package com.example.tiktok;
 
 import android.content.Intent;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageButton;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
-import android.widget.MediaController;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,101 +20,108 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class VideoPreviewActivity extends AppCompatActivity {
+    private static final String TAG = "VideoPreviewActivity";
+
     private VideoView videoView;
-    private ImageButton closeButton;
-    private Button uploadButton;
+    private ImageButton backButton;
+    private TextView chooseButton;
+    private Button autoCutButton;
+    private Button nextButton;
     private Uri videoUri;
 
-    //thong tin cua user
+    // User info
     private String userID;
     private String userIdName;
+    private long videoDuration = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_preview);
 
-        videoView = findViewById(R.id.videoView);
-        closeButton = findViewById(R.id.closeButton);
-        uploadButton = findViewById(R.id.uploadButton);
+        initializeViews();
 
-        // Get the userID from the intent
+        // Get user info from intent
         userID = getIntent().getStringExtra("USER_ID");
         userIdName = getIntent().getStringExtra("USER_ID_NAME");
 
-        // Get the video URI from the intent
+        // Get video URI from intent
         videoUri = getIntent().getParcelableExtra("video_uri");
         if (videoUri != null) {
-            videoView.setVideoURI(videoUri);
-            videoView.setMediaController(new MediaController(this));
+            setupVideoView();
+            getVideoDuration();
+        } else {
+            Toast.makeText(this, "Lỗi: Không tìm thấy video", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+        setupClickListeners();
+    }
+
+    private void initializeViews() {
+        videoView = findViewById(R.id.videoView);
+        backButton = findViewById(R.id.backButton);
+        chooseButton = findViewById(R.id.chooseButton);
+        autoCutButton = findViewById(R.id.autoCutButton);
+        nextButton = findViewById(R.id.nextButton);
+    }
+
+    private void setupVideoView() {
+        // Hide media controller
+        videoView.setMediaController(null);
+
+        // Set video URI
+        videoView.setVideoURI(videoUri);
+
+        // Start playing and loop
+        videoView.setOnPreparedListener(mp -> {
+            mp.setLooping(true);
             videoView.start();
-            videoView.setOnCompletionListener(mp -> videoView.start());
+        });
+
+        videoView.setOnErrorListener((mp, what, extra) -> {
+            Log.e(TAG, "Error playing video: " + what + ", " + extra);
+            Toast.makeText(VideoPreviewActivity.this, "Lỗi phát video", Toast.LENGTH_SHORT).show();
+            return true;
+        });
+    }
+
+    private void getVideoDuration() {
+        try {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(this, videoUri);
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            videoDuration = Long.parseLong(time) / 1000; // Convert to seconds
+            retriever.release();
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting video duration: " + e.getMessage());
         }
-
-        // Close the activity when the close button is clicked
-        closeButton.setOnClickListener(v -> finish());
-
-        // Upload the video when the upload button is clicked
-        uploadButton.setOnClickListener(v -> uploadVideo());
     }
 
-    private void uploadVideo() {
-        Toast.makeText(this, "Uploading video...", Toast.LENGTH_SHORT).show();
-        Log.d("Supabase", "Video URI: " + videoUri.toString());
+    private void setupClickListeners() {
+        backButton.setOnClickListener(v -> {
+            videoView.stopPlayback();
+            finish();
+        });
 
-        new Thread(() -> {
-            try {
-                // Use ContentResolver to open an input stream from the URI
-                InputStream inputStream = getContentResolver().openInputStream(videoUri);
-                File videoFile = createFileFromInputStream(inputStream);
+        chooseButton.setOnClickListener(v -> {
+            // For now, just show a toast
+            Toast.makeText(this, "Chức năng chọn chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
+        });
 
-                if (videoFile != null) {
-                    String videoUploadUrl = SpbaseSv.uploadVideo(videoFile);
-                    if (videoUploadUrl != null) {
-                        saveVideoToFirebase(videoUploadUrl);
-                    } else {
-                        runOnUiThread(() -> Toast.makeText(this, "Upload failed!", Toast.LENGTH_SHORT).show());
-                    }
-                } else {
-                    runOnUiThread(() -> Toast.makeText(this, "Error creating file!", Toast.LENGTH_SHORT).show());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.d("Supabase", "Uploading video error: " + e.getMessage());
-                });
-            }
-        }).start();
-    }
+        autoCutButton.setOnClickListener(v -> {
+            // For now, just show a toast
+            Toast.makeText(this, "Chức năng AutoCut chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
+        });
 
-    // Create a temporary file from the input stream
-    private File createFileFromInputStream(InputStream inputStream) throws IOException {
-        File tempFile = File.createTempFile("video", ".mp4", getCacheDir());
-        tempFile.deleteOnExit();
-
-        try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-        }
-
-        return tempFile;
-    }
-
-    // Save the video URL to Firebase
-    private void saveVideoToFirebase(String videoUrl) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("videos");
-        String videoId = databaseReference.push().getKey();
-
-        Video video = new Video(videoUrl, userIdName, "0", "0", "new music", "Title of new Video");
-        databaseReference.child(videoId).setValue(video)
-                .addOnSuccessListener(aVoid -> runOnUiThread(() -> {
-                    Toast.makeText(this, "Video uploaded: " + videoUrl, Toast.LENGTH_SHORT).show();
-                    finish();
-                }))
-                .addOnFailureListener(e -> runOnUiThread(() -> Toast.makeText(this, "Database error!", Toast.LENGTH_SHORT).show()));
+        nextButton.setOnClickListener(v -> {
+            // Go to post creation screen
+            Intent intent = new Intent(this, PostCreationActivity.class);
+            intent.putExtra("USER_ID", userID);
+            intent.putExtra("USER_ID_NAME", userIdName);
+            intent.putExtra("video_uri", videoUri);
+            intent.putExtra("video_duration", videoDuration);
+            startActivity(intent);
+        });
     }
 }

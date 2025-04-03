@@ -47,4 +47,32 @@ public class SpbaseSv {
             }
         }
     }
+
+    public static String uploadThumbnail(File thumbnailFile) throws IOException {
+        Log.d("Supabase", "Uploading thumbnail: " + thumbnailFile.getAbsolutePath());
+
+        String uniqueFileName = UUID.randomUUID().toString() + ".jpg"; // Generate UUID + file extension
+        RequestBody requestBody = RequestBody.create(thumbnailFile, MediaType.parse("image/jpeg"));
+
+        Request request = new Request.Builder()
+                .url(SUPABASE_URL + "/storage/v1/object/" + SUPABASE_BUCKET + "/" + uniqueFileName)
+                .addHeader("Authorization", "Bearer " + SUPABASE_API_KEY)
+                .addHeader("Content-Type", "multipart/form-data")
+                .post(requestBody)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                Log.d("Supabase", "Thumbnail uploaded successfully!");
+                return SUPABASE_URL + "/storage/v1/object/public/" + SUPABASE_BUCKET + "/" + uniqueFileName;
+            } else {
+                Log.e("Supabase", "Thumbnail upload failed: " + response.message());
+                Log.d(
+                        "Supabase",
+                        "Thumbnail upload failed: " + response.message()
+                );
+                return null;
+            }
+        }
+    }
 }

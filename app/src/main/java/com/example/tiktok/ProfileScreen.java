@@ -48,6 +48,7 @@ public class ProfileScreen extends AppCompatActivity {
     private Button edit_profile_btn;
     private LinearLayout tiktokStudioBtn, ordersBtn;
     private LinearLayout home_button, discover_button, upload_button, inbox_button, profile_button;
+    public List<String> videoIdsItems;
 
     private String username; // Account username (e.g., "zoi5161")
     private String userIdName; // Display username for UI
@@ -66,6 +67,9 @@ public class ProfileScreen extends AppCompatActivity {
         // Get username from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         username = sharedPreferences.getString("username", null);
+
+        // Get videos_list from HomeScreen
+        videoIdsItems = getIntent().getStringArrayListExtra("VIDEOS_ARRAY_JSON");
 
         if (username == null) {
             Toast.makeText(this, "Lỗi: Không tìm thấy tài khoản!", Toast.LENGTH_SHORT).show();
@@ -128,7 +132,7 @@ public class ProfileScreen extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         // Initialize adapter
-        videoAdapter = new ProfileVideoAdapter(videoList, this);
+        videoAdapter = new ProfileVideoAdapter(videoList, videoIds, videoIdsItems, this);
         recyclerView.setAdapter(videoAdapter);
     }
 

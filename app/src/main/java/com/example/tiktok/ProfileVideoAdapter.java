@@ -2,6 +2,7 @@ package com.example.tiktok;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,15 @@ import java.util.Map;
 public class ProfileVideoAdapter extends RecyclerView.Adapter<ProfileVideoAdapter.VideoViewHolder> {
 
     private List<Video> videoList;
+    private List<String> videoIds; // cho việc lấy ID video so sánh vs ID trong videoIdsItem -> lấy ra chỉ số trong list gốc
+    private List<String> videoIdsItems;
     private Context context;
     private Map<Integer, ExoPlayer> playerMap = new HashMap<>();
 
-    public ProfileVideoAdapter(List<Video> videoList, Context context) {
+    public ProfileVideoAdapter(List<Video> videoList, List<String> videoIds, List<String> videoIdsItems, Context context) {
         this.videoList = videoList;
+        this.videoIds = videoIds;
+        this.videoIdsItems = videoIdsItems;
         this.context = context;
     }
 
@@ -39,6 +44,7 @@ public class ProfileVideoAdapter extends RecyclerView.Adapter<ProfileVideoAdapte
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         Video video = videoList.get(position);
+        String videoId = videoIds.get(position);
 
         // Load thumbnail
         if (video.getThumbnailUrl() != null && !video.getThumbnailUrl().isEmpty()) {
@@ -63,10 +69,18 @@ public class ProfileVideoAdapter extends RecyclerView.Adapter<ProfileVideoAdapte
 
         // Set click listener to open video
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, HomeScreen.class);
-            intent.putExtra("SELECTED_VIDEO_POSITION", position);
-            intent.putExtra("FROM_PROFILE", true);
-            context.startActivity(intent);
+            int pos = videoIdsItems.indexOf(videoId);
+
+            if (pos != -1) {
+                // Send position back to HomeScreen
+                Intent intent = new Intent(context, HomeScreen.class);
+                intent.putExtra("SEARCH_VIDEO_POSITION", pos);
+                intent.putExtra("USER_ID", "-OLm4Zc1z1YSUyV7zHDm");
+                context.startActivity(intent);
+            } else {
+                // Case when videoId not found in the list
+                Log.e("ProfileVideoAdapter", "VideoId " + videoId + " not found in videoIdsFromHome");
+            }
         });
     }
 

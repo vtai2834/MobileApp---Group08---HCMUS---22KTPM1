@@ -86,7 +86,7 @@ public class HomeScreen extends AppCompatActivity {
 
                 // After data is loaded, set the correct item position
                 int pos = getIntent().getIntExtra("SEARCH_VIDEO_POSITION", 0);  // Default is 0 if not found
-                Log.d("check pos from search -> home", String.valueOf(pos));
+                Log.d("check pos from search | profile -> home", String.valueOf(pos));
 
                 videoAdapter.currentPositionPlayingVideo = pos;
 
@@ -184,6 +184,7 @@ public class HomeScreen extends AppCompatActivity {
 
                 // Không cần truyền USER_ID nữa, vì ProfileScreen đã lấy từ SharedPreferences
                 Intent intent = new Intent(HomeScreen.this, ProfileScreen.class);
+                intent.putExtra("VIDEOS_ARRAY_JSON", new ArrayList<>(videoIds));
                 startActivity(intent);
 
                 HomeScreen.this.finish();

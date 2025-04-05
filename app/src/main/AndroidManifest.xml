@@ -15,24 +15,31 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> <!-- Quyền truy cập bộ nhớ ngoài (Android 10 trở lên) -->
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
-
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TikTok"
-        tools:targetApi="31"
-        android:networkSecurityConfig="@xml/network_security_config">
-<!--        <activity-->
-<!--            android:name=".ItemVideoHomeScreen"-->
-<!--            android:exported="false" />-->
-        <activity android:name=".VideoPreviewActivity"
-            android:exported="false"/>
+        tools:targetApi="31">
+        <activity
+            android:name=".ChangeBio"
+            android:exported="false" />
+        <activity
+            android:name=".ChangeUsername"
+            android:exported="false" />
+        <activity
+            android:name=".ChangeTikTokID"
+            android:exported="false" /> <!-- <activity -->
+        <!-- android:name=".ItemVideoHomeScreen" -->
+        <!-- android:exported="false" /> -->
+        <activity
+            android:name=".VideoPreviewActivity"
+            android:exported="false" />
         <activity
             android:name=".SignUp"
             android:exported="true">
@@ -59,10 +66,9 @@
             android:exported="false" />
         <activity
             android:name=".SearchScreen"
-            android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".CommentScreen"-->
-<!--            android:exported="false" />-->
+            android:exported="false" /> <!-- <activity -->
+        <!-- android:name=".CommentScreen" -->
+        <!-- android:exported="false" /> -->
         <activity
             android:name=".LogIn"
             android:exported="false" />
@@ -75,17 +81,21 @@
         <activity
             android:name=".HomeScreen"
             android:exported="false">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
-
         <activity
             android:name=".PostCreationActivity"
             android:exported="false" />
-        <receiver android:name=".DownloadCompleteReceiver" android:exported="true">
+
+        <receiver
+            android:name=".DownloadCompleteReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
             </intent-filter>

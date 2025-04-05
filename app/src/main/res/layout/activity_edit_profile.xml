@@ -42,7 +42,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/saveButtonContainer"
         android:layout_below="@id/divider1">
 
         <LinearLayout
@@ -137,7 +136,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <EditText
+                    <TextView
                         android:id="@+id/etUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -149,7 +148,7 @@
                         android:textSize="16sp" />
 
                     <ImageView
-                        android:id="@+id/editName"
+                        android:id="@+id/editUsername"
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_marginStart="8dp"
@@ -192,7 +191,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <EditText
+                    <TextView
                         android:id="@+id/etUserId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -204,7 +203,7 @@
                         android:textSize="16sp" />
 
                     <ImageView
-                        android:id="@+id/editUsername"
+                        android:id="@+id/editUserId"
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_marginStart="8dp"
@@ -290,19 +289,23 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/Bio"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/etBio"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:hint="Thêm tiểu sử"
                     android:inputType="textMultiLine"
-                    android:maxLines="3"
+                    android:maxLines="1"
                     android:textColor="#888888"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:ellipsize="end"
+                    android:maxWidth="100dp"
+                    android:scrollHorizontally="true" />
+
 
                 <ImageView
-                    android:id="@+id/etBio"
+                    android:id="@+id/editBio"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_marginStart="8dp"
@@ -429,7 +432,7 @@
             <!-- Additional Settings Section -->
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
                 android:paddingHorizontal="16dp"
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp"
@@ -503,24 +506,4 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Save Button Container -->
-    <RelativeLayout
-        android:id="@+id/saveButtonContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/btn_save"
-            android:layout_width="70dp"
-            android:layout_height="48dp"
-            android:layout_centerInParent="true"
-            android:background="@drawable/button_primary_background"
-            android:text="Lưu"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
 </RelativeLayout>

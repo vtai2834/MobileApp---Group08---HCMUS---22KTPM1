@@ -27,10 +27,7 @@ public class EditProfile extends AppCompatActivity {
     private ImageView back_to_profilescreen;
     private CircleImageView profileImage;
     private FrameLayout profilePhotoContainer;
-    private EditText etUsername, etUserId, Bio;
-    private TextView linkID;
-    private TextView btn_save;
-    private RelativeLayout nameContainer, usernameContainer, bioContainer;
+    private TextView linkID, etUsername, etUserId, etBio;
     private RelativeLayout instagramContainer, youtubeContainer;
     private RelativeLayout tiktokStudioContainer, ordersContainer;
 
@@ -70,14 +67,13 @@ public class EditProfile extends AppCompatActivity {
         profilePhotoContainer = findViewById(R.id.profilePhotoContainer);
         etUsername = findViewById(R.id.etUsername);
         etUserId = findViewById(R.id.etUserId);
-        Bio = findViewById(R.id.Bio);
+        etBio = findViewById(R.id.etBio);
         linkID = findViewById(R.id.linkID);
-        btn_save = findViewById(R.id.btn_save);
+
+        // New ImageView for editing name
+        ImageView editName = findViewById(R.id.editUsername);
 
         // Containers for click handling
-        nameContainer = findViewById(R.id.nameContainer);
-        usernameContainer = findViewById(R.id.usernameContainer);
-        bioContainer = findViewById(R.id.bioContainer);
         instagramContainer = findViewById(R.id.instagramContainer);
         youtubeContainer = findViewById(R.id.youtubeContainer);
         tiktokStudioContainer = findViewById(R.id.tiktokStudioContainer);
@@ -85,7 +81,6 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        // Back button
         back_to_profilescreen.setOnClickListener(v -> {
             if (hasChanges) {
                 showDiscardChangesDialog();
@@ -94,20 +89,10 @@ public class EditProfile extends AppCompatActivity {
             }
         });
 
-        // Save button
-        btn_save.setOnClickListener(v -> updateUserData());
-
-        // Profile photo
         profilePhotoContainer.setOnClickListener(v -> {
             Toast.makeText(this, "Chức năng thay đổi ảnh chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
         });
 
-        // Edit fields
-        nameContainer.setOnClickListener(v -> enableEditing(etUsername));
-        usernameContainer.setOnClickListener(v -> enableEditing(etUserId));
-        bioContainer.setOnClickListener(v -> enableEditing(Bio));
-
-        // Social media links
         instagramContainer.setOnClickListener(v -> {
             Toast.makeText(this, "Chức năng liên kết Instagram chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
         });
@@ -116,7 +101,6 @@ public class EditProfile extends AppCompatActivity {
             Toast.makeText(this, "Chức năng liên kết YouTube chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
         });
 
-        // TikTok Studio and Orders
         tiktokStudioContainer.setOnClickListener(v -> {
             Toast.makeText(this, "Chức năng TikTok Studio chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
         });
@@ -125,24 +109,93 @@ public class EditProfile extends AppCompatActivity {
             Toast.makeText(this, "Chức năng Đơn hàng chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
         });
 
-        // Text change listeners
-        etUsername.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                checkForChanges();
-            }
+        // Khi nhấn vào EditUsername, truyền idName vào ChangeTikTokID
+        ImageView editUserId = findViewById(R.id.editUserId);
+        editUserId.setOnClickListener(v -> {
+            String idName = etUserId.getText().toString().trim();
+
+            FirebaseDatabase.getInstance().getReference("Users")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
+                                String storedIdName = userSnapshot.child("idName").getValue(String.class);
+                                if (storedIdName != null && storedIdName.equals(idName)) {
+                                    String userKey = userSnapshot.getKey();
+
+                                    Intent intent = new Intent(EditProfile.this, ChangeTikTokID.class);
+                                    intent.putExtra("idName", idName);
+                                    intent.putExtra("userKey", userKey);
+                                    startActivity(intent);
+                                    return;
+                                }
+                            }
+
+                            Toast.makeText(EditProfile.this, "Không tìm thấy userKey tương ứng với ID!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(EditProfile.this, "Lỗi khi tìm userKey từ Firebase!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         });
 
-        etUserId.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                checkForChanges();
-                updateLinkID();
-            }
+        // Khi nhấn vào EditName, mở ChangeUsername và truyền currentUsername
+        ImageView editName = findViewById(R.id.editUsername);
+        editName.setOnClickListener(v -> {
+            String currentUsername = etUsername.getText().toString().trim();
+            String idName = etUserId.getText().toString().trim();
+
+            FirebaseDatabase.getInstance().getReference("Users")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
+                                String storedIdName = userSnapshot.child("idName").getValue(String.class);
+                                if (storedIdName != null && storedIdName.equals(idName)) {
+                                    String userKey = userSnapshot.getKey();
+
+                                    Intent intent = new Intent(EditProfile.this, ChangeUsername.class);
+                                    intent.putExtra("currentUsername", currentUsername);
+                                    intent.putExtra("userKey", userKey);
+                                    startActivity(intent);
+                                    return;
+                                }
+                            }
+
+                            Toast.makeText(EditProfile.this, "Không tìm thấy userKey tương ứng với ID!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(EditProfile.this, "Lỗi khi tìm userKey từ Firebase!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         });
 
-        Bio.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                checkForChanges();
-            }
+        // Khi nhấn vào EditBio, mở ChangeBio và truyền currentBio
+        ImageView editBio = findViewById(R.id.editBio);
+        editBio.setOnClickListener(v -> {
+            String currentBio = etBio.getText().toString().trim(); // Lấy bio hiện tại
+            String idName = etUserId.getText().toString().trim(); // lấy idName hiện tại
+
+            FirebaseDatabase.getInstance().getReference("Users")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
+                                String storedIdName = userSnapshot.child("idName").getValue(String.class);
+                                if (storedIdName != null && storedIdName.equals(idName)) {
+                                    String userKey = userSnapshot.getKey();
+
+                                    Intent intent = new Intent(EditProfile.this, ChangeBio.class);
+                                    intent.putExtra("currentBio", currentBio);  // Truyền bio vào ChangeBio
+                                    intent.putExtra("userKey", userKey);  // Truyền userKey vào ChangeBio
+                                    startActivity(intent);
+                                    return;
+                                }
+                            }
+
+                            Toast.makeText(EditProfile.this, "Không tìm thấy userKey tương ứng với ID!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(EditProfile.this, "Lỗi khi tìm userKey từ Firebase!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         });
     }
 
@@ -168,15 +221,11 @@ public class EditProfile extends AppCompatActivity {
     private void checkForChanges() {
         String newName = etUsername.getText().toString().trim();
         String newIdName = etUserId.getText().toString().trim();
-        String newBio = Bio.getText().toString().trim();
+        String newBio = etBio.getText().toString().trim();
 
         hasChanges = !newName.equals(originalName) ||
                 !newIdName.equals(originalIdName) ||
                 !newBio.equals(originalBio);
-
-        // Enable/disable save button based on changes
-        btn_save.setEnabled(hasChanges);
-        btn_save.setAlpha(hasChanges ? 1.0f : 0.5f);
     }
 
     private void showDiscardChangesDialog() {
@@ -207,7 +256,7 @@ public class EditProfile extends AppCompatActivity {
                         // Update UI
                         etUsername.setText(originalName);
                         etUserId.setText(originalIdName);
-                        Bio.setText(originalBio);
+                        etBio.setText(originalBio);
                         linkID.setText("tiktok.com/@" + originalIdName);
 
                         // Load profile image
@@ -234,7 +283,7 @@ public class EditProfile extends AppCompatActivity {
     private void updateUserData() {
         String newName = etUsername.getText().toString().trim();
         String newIdName = etUserId.getText().toString().trim();
-        String newBio = Bio.getText().toString().trim();
+        String newBio = etBio.getText().toString().trim();
 
         if (newName.isEmpty() || newIdName.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
@@ -295,4 +344,11 @@ public class EditProfile extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUserDataFromFirebase();
+    }
+
 }

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditProfile">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".HomeScreen">
+
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:layout_marginTop="20dp"
+            android:paddingHorizontal="10dp">
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hủy"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginEnd="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TikTok ID"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lưu"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/red"/>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/hr"
+            android:layout_width="match_parent"
+            android:layout_height="0.7dp"
+            android:layout_below="@id/topBar"
+            android:layout_marginTop="4dp"
+            android:background="@android:color/darker_gray" />
+
+        <LinearLayout
+            android:id="@+id/profileOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/hr"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/changePhoto"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/username"
+            android:layout_below="@+id/hr"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="20dp"
+            android:gravity="center_horizontal">
+
+            <EditText
+                android:id="@+id/etUserId"
+                android:layout_width="300dp"
+                android:layout_height="48dp"
+                android:textSize="14sp"
+                android:background="@android:color/transparent"
+                android:inputType="text"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nhập TikTok ID" />
+
+
+            <View
+                android:layout_width="370dp"
+                android:layout_height="1dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#CCCCCC" />
+        </LinearLayout>
+
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/link"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="20dp"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:layout_below="@+id/username"-->
+<!--            android:paddingVertical="12dp"-->
+<!--            android:paddingHorizontal="20dp"-->
+<!--            android:background="@color/white">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/tvLinkPreview"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="www.tiktok.com/@yourid" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/linkID"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textSize="14sp"/>-->
+
+<!--        </LinearLayout>-->
+
+        <LinearLayout
+            android:id="@+id/aboutTikTokID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:layout_below="@+id/username"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="20dp"
+            android:background="@color/white">
+
+            <TextView
+                android:id="@+id/constrainTikTokID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TikTok ID chỉ có thể bao gồm chữ cái, chữ số, dấu gạch dưới và dấu chấm. Khi thay đổi TikTok ID, liên kết hồ sơ của bạn cũng sẽ thay đổi."
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/light_gray"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Bạn có thể thay đổi TikTok ID của mình một lần trong mỗi 30 ngày."
+                android:textSize="15sp"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                android:textColor="@color/light_gray"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

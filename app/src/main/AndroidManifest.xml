@@ -27,6 +27,12 @@
         android:theme="@style/Theme.TikTok"
         tools:targetApi="31">
         <activity
+            android:name=".NewFollowersScreen"
+            android:exported="false" />
+        <activity
+            android:name=".InboxScreen"
+            android:exported="false" />
+        <activity
             android:name=".ChangeBio"
             android:exported="false" />
         <activity

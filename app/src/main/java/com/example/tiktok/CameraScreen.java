@@ -86,8 +86,14 @@ public class CameraScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_screen);
 
-        userID = getIntent().getStringExtra("USER_ID");
-        userIdName = getIntent().getStringExtra("USER_ID_NAME");
+//        userID = getIntent().getStringExtra("USER_ID");
+//        userIdName = getIntent().getStringExtra("USER_ID_NAME");
+
+        User currentUser = UserManager.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            userID = currentUser.getUserID();
+            userIdName = currentUser.getIdName();
+        }
 
 
         initializeViews();
@@ -145,7 +151,7 @@ public class CameraScreen extends AppCompatActivity {
 
         closeButton.setOnClickListener(v -> {
             Intent intent = new Intent(CameraScreen.this, HomeScreen.class);
-            intent.putExtra("USER_ID", userID);
+//            intent.putExtra("USER_ID", userID);
             startActivity(intent);
             finish();
         });
@@ -256,8 +262,8 @@ public class CameraScreen extends AppCompatActivity {
                 Uri selectedVideoUri = data.getData();
                 if (selectedVideoUri != null) {
                     Intent intent = new Intent(this, VideoPreviewActivity.class);
-                    intent.putExtra("USER_ID", userID);
-                    intent.putExtra("USER_ID_NAME", userIdName);
+//                    intent.putExtra("USER_ID", userID);
+//                    intent.putExtra("USER_ID_NAME", userIdName);
                     intent.putExtra("video_uri", selectedVideoUri);
                     startActivity(intent);
                 }

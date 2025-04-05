@@ -188,7 +188,7 @@ public class ProfileScreen extends AppCompatActivity {
         // Navigation
         home_button.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileScreen.this, HomeScreen.class);
-            intent.putExtra("USER_ID", username);
+//            intent.putExtra("USER_ID", username);
             startActivity(intent);
         });
 
@@ -199,8 +199,8 @@ public class ProfileScreen extends AppCompatActivity {
 
         upload_button.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileScreen.this, CameraScreen.class);
-            intent.putExtra("USER_ID", username);
-            intent.putExtra("USER_ID_NAME", userIdName != null ? userIdName : username);
+//            intent.putExtra("USER_ID", username);
+//            intent.putExtra("USER_ID_NAME", userIdName != null ? userIdName : username);
             startActivity(intent);
         });
 

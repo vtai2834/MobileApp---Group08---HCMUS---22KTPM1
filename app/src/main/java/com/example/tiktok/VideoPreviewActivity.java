@@ -42,8 +42,14 @@ public class VideoPreviewActivity extends AppCompatActivity {
         initializeViews();
 
         // Get user info from intent
-        userID = getIntent().getStringExtra("USER_ID");
-        userIdName = getIntent().getStringExtra("USER_ID_NAME");
+//        userID = getIntent().getStringExtra("USER_ID");
+//        userIdName = getIntent().getStringExtra("USER_ID_NAME");
+
+        User currentUser = UserManager.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            userID = currentUser.getUserID();
+            userIdName = currentUser.getIdName();
+        }
 
         // Get video URI from intent
         videoUri = getIntent().getParcelableExtra("video_uri");
@@ -117,8 +123,8 @@ public class VideoPreviewActivity extends AppCompatActivity {
         nextButton.setOnClickListener(v -> {
             // Go to post creation screen
             Intent intent = new Intent(this, PostCreationActivity.class);
-            intent.putExtra("USER_ID", userID);
-            intent.putExtra("USER_ID_NAME", userIdName);
+//            intent.putExtra("USER_ID", userID);
+//            intent.putExtra("USER_ID_NAME", userIdName);
             intent.putExtra("video_uri", videoUri);
             intent.putExtra("video_duration", videoDuration);
             startActivity(intent);

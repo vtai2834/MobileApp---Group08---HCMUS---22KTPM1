@@ -11,6 +11,8 @@ public class User {
     private String idName;
     private String bio; // Thêm trường bio
 
+    private String userID;
+
     // Constructor mặc định (bắt buộc cho Firebase)
     public User() {
     }
@@ -28,7 +30,22 @@ public class User {
         this.bio = bio;
     }
 
+    public User(String userID, String account, String password, int followerCount, int followingCount, int likeCount, String avatar, String name, String idName, String bio) {
+        this.account = account;
+        this.password = password;
+        this.followerCount = followerCount;
+        this.followingCount = followingCount;
+        this.likeCount = likeCount;
+        this.avatar = avatar;
+        this.name = name;
+        this.idName = idName;
+        this.bio = bio;
+
+        this.userID = userID;
+    }
+
     // Getter và Setter cho bio
+    public String getUserID() { return userID; }
     public String getBio() {
         return bio;
     }

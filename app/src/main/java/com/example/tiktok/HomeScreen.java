@@ -54,8 +54,15 @@ public class HomeScreen extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
 
         // Lấy userId từ Intent
-        userID = getIntent().getStringExtra("USER_ID");
-        userIdName = getIntent().getStringExtra("USER_ID_NAME");
+//        userID = getIntent().getStringExtra("USER_ID");
+//        userIdName = getIntent().getStringExtra("USER_ID_NAME");
+
+        // Lấy thông tin người dùng từ UserManager
+        User currentUser = UserManager.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            userID = currentUser.getUserID();
+            userIdName = currentUser.getIdName();
+        }
 
         videoItems = new ArrayList<>();
 
@@ -141,7 +148,7 @@ public class HomeScreen extends AppCompatActivity {
 
                 Intent intent = new Intent(HomeScreen.this, SearchScreen.class);
                 intent.putExtra("VIDEOS_ARRAY_JSON", new ArrayList<>(videoIds));
-                intent.putExtra("USER_ID", userID);
+//                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
                 finish();
             }
@@ -154,8 +161,8 @@ public class HomeScreen extends AppCompatActivity {
                 videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
 
                 Intent intent = new Intent(HomeScreen.this, CameraScreen.class);
-                intent.putExtra("USER_ID", userID);
-                intent.putExtra("USER_ID_NAME", userIdName);
+//                intent.putExtra("USER_ID", userID);
+//                intent.putExtra("USER_ID_NAME", userIdName);
                 startActivity(intent);
 
                 HomeScreen.this.finish();
@@ -169,7 +176,7 @@ public class HomeScreen extends AppCompatActivity {
                 videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
 
                 Intent intent = new Intent(HomeScreen.this, NotificationScreen.class);
-                intent.putExtra("USER_ID", userID);
+//                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
 
                 HomeScreen.this.finish();

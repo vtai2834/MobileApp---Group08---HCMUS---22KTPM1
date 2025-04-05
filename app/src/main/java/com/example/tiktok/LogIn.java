@@ -68,27 +68,52 @@ public class LogIn extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 boolean userFound = false;
                 String userID = "";
-                String userIdName = "";
+
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     String storedPassword = userSnapshot.child("password").getValue(String.class);
-                    userIdName = userSnapshot.child("idName").getValue(String.class);
 
                     if (storedUsername != null && storedUsername.equals(username)) {
                         userFound = true;
                         if (storedPassword != null && storedPassword.equals(password)) {
+                            // Lấy thông tin user từ Firebase
+                            userID = userSnapshot.getKey();
+                            String userIdName = userSnapshot.child("idName").getValue(String.class);
+                            String name = userSnapshot.child("name").getValue(String.class);
+                            String avatar = userSnapshot.child("avatar").getValue(String.class);
+                            String bio = userSnapshot.child("bio").getValue(String.class);
+                            int followerCount = 0;
+                            int followingCount = 0;
+                            int likeCount = 0;
+
+                            if (userSnapshot.child("followerCount").exists()) {
+                                followerCount = userSnapshot.child("followerCount").getValue(Integer.class);
+                            }
+                            if (userSnapshot.child("followingCount").exists()) {
+                                followingCount = userSnapshot.child("followingCount").getValue(Integer.class);
+                            }
+                            if (userSnapshot.child("likeCount").exists()) {
+                                likeCount = userSnapshot.child("likeCount").getValue(Integer.class);
+                            }
+
+                            // Tạo đối tượng User và lưu vào UserManager
+                            User currentUser = new User(userID ,username, password, followerCount, followingCount,
+                                    likeCount, avatar, name, userIdName, bio);
+                            UserManager.getInstance().setCurrentUser(currentUser);
+
                             // Lưu username vào SharedPreferences
                             SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("username", username);
+                            editor.putString("userID", userID);
                             editor.apply();
 
                             Toast.makeText(LogIn.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
-                            // Chuyển sang ProfileScreen
+                            // Chuyển sang HomeScreen
                             Intent intent = new Intent(LogIn.this, HomeScreen.class);
-                            intent.putExtra("USER_ID", userID);
-                            intent.putExtra("USER_ID_NAME", userIdName);
+//                            intent.putExtra("USER_ID", userID);
+//                            intent.putExtra("USER_ID_NAME", userIdName);
                             startActivity(intent);
                             finish();
                         } else {
@@ -106,3 +131,4 @@ public class LogIn extends AppCompatActivity {
         });
     }
 }
+

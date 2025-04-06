@@ -22,7 +22,6 @@ public class LogIn extends AppCompatActivity {
     private TextView tvSignUp;
     private DatabaseReference databaseReference;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,17 +67,25 @@ public class LogIn extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 boolean userFound = false;
                 String userID = "";
+                String userIdName = "";
+                String userKey = "";
+
+                // Duyệt qua các user trong database
 
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     String storedPassword = userSnapshot.child("password").getValue(String.class);
+                    userIdName = userSnapshot.child("idName").getValue(String.class);
 
                     if (storedUsername != null && storedUsername.equals(username)) {
                         userFound = true;
                         if (storedPassword != null && storedPassword.equals(password)) {
+                            // Lấy userKey (ID của người dùng trong Firebase)
+                            userKey = userSnapshot.getKey();  // Lấy userKey từ Firebase (ID của người dùng)
+
+                            // Lưu username và userKey vào SharedPreferences
                             // Lấy thông tin user từ Firebase
                             userID = userSnapshot.getKey();
-                            String userIdName = userSnapshot.child("idName").getValue(String.class);
                             String name = userSnapshot.child("name").getValue(String.class);
                             String avatar = userSnapshot.child("avatar").getValue(String.class);
                             String bio = userSnapshot.child("bio").getValue(String.class);
@@ -105,15 +112,16 @@ public class LogIn extends AppCompatActivity {
                             SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("username", username);
+                            editor.putString("userKey", userKey);  // Lưu userKey
                             editor.putString("userID", userID);
                             editor.apply();
 
                             Toast.makeText(LogIn.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
-                            // Chuyển sang HomeScreen
+                            // Chuyển sang ProfileScreen
                             Intent intent = new Intent(LogIn.this, HomeScreen.class);
-//                            intent.putExtra("USER_ID", userID);
-//                            intent.putExtra("USER_ID_NAME", userIdName);
+                            intent.putExtra("USER_ID", userID);
+                            intent.putExtra("USER_ID_NAME", userIdName);
                             startActivity(intent);
                             finish();
                         } else {

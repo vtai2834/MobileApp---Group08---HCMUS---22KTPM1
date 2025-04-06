@@ -208,7 +208,6 @@ public class HomeScreen extends AppCompatActivity {
                 videoAdapter.playVideoAt(position); // Gọi phương thức phát video
             }
         });
-
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.example.tiktok;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class User {
     private String account;
     private String password;
@@ -9,14 +12,14 @@ public class User {
     private String avatar;
     private String name;
     private String idName;
-    private String bio; // Thêm trường bio
+    private String bio;
+    private Map<String, Boolean> followers;
+    private Map<String, Boolean> following;
 
-    // Constructor mặc định (bắt buộc cho Firebase)
     public User() {
     }
 
-    // Constructor có tham số (cập nhật để bao gồm bio)
-    public User(String account, String password, int followerCount, int followingCount, int likeCount, String avatar, String name, String idName, String bio) {
+    public User(String account, String password, int followerCount, int followingCount, int likeCount, String avatar, String name, String idName, String bio, Map<String, Boolean> followers, Map<String, Boolean> following) {
         this.account = account;
         this.password = password;
         this.followerCount = followerCount;
@@ -26,9 +29,11 @@ public class User {
         this.name = name;
         this.idName = idName;
         this.bio = bio;
+        this.followers = followers;
+        this.following = following;
     }
 
-    // Getter và Setter cho bio
+
     public String getBio() {
         return bio;
     }
@@ -37,7 +42,6 @@ public class User {
         this.bio = bio;
     }
 
-    // Các Getter và Setter khác
     public String getAccount() {
         return account;
     }
@@ -100,5 +104,21 @@ public class User {
 
     public void setIdName(String idName) {
         this.idName = idName;
+    }
+
+    public Map<String, Boolean> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Map<String, Boolean> followers) {
+        this.followers = followers;
+    }
+
+    public Map<String, Boolean> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Map<String, Boolean> following) {
+        this.following = following;
     }
 }

@@ -22,7 +22,6 @@ public class LogIn extends AppCompatActivity {
     private TextView tvSignUp;
     private DatabaseReference databaseReference;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +68,8 @@ public class LogIn extends AppCompatActivity {
                 boolean userFound = false;
                 String userID = "";
                 String userIdName = "";
+
+                // Duyệt qua các user trong database
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     String storedPassword = userSnapshot.child("password").getValue(String.class);
@@ -77,15 +78,19 @@ public class LogIn extends AppCompatActivity {
                     if (storedUsername != null && storedUsername.equals(username)) {
                         userFound = true;
                         if (storedPassword != null && storedPassword.equals(password)) {
-                            // Lưu username vào SharedPreferences
+                            // Lấy userKey (ID của người dùng trong Firebase)
+                            userID = userSnapshot.getKey();  // Lấy userKey từ Firebase (ID của người dùng)
+
+                            // Lưu username và userKey vào SharedPreferences
                             SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("username", username);
+                            editor.putString("userKey", userID);  // Lưu userKey
                             editor.apply();
 
                             Toast.makeText(LogIn.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
-                            // Chuyển sang ProfileScreen
+                            // Chuyển sang màn hình HomeScreen và truyền userKey và userIdName
                             Intent intent = new Intent(LogIn.this, HomeScreen.class);
                             intent.putExtra("USER_ID", userID);
                             intent.putExtra("USER_ID_NAME", userIdName);

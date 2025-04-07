@@ -8,6 +8,7 @@ import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,9 +46,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class SearchScreen extends AppCompatActivity {
 
@@ -98,7 +105,7 @@ public class SearchScreen extends AppCompatActivity {
         initViews();
         setupListeners();
         setupRecyclerViews();
-        loadRecommendedItems();
+        loadRecommendedItems("");
     }
 
     private void initViews() {
@@ -215,15 +222,19 @@ public class SearchScreen extends AppCompatActivity {
     }
 
     private void showSuggestionsAndRecommendations() {
-        searchSuggestionsList.setVisibility(View.VISIBLE);
-        youMightLikeSection.setVisibility(View.VISIBLE);
-        searchResultsList.setVisibility(View.GONE);
-        searchTabLayout.setVisibility(View.GONE);
-        noResultsText.setVisibility(View.GONE);
-
-        // Make sure we're showing the recommended adapter
-        searchResultsList.setLayoutManager(new LinearLayoutManager(this));
-        searchResultsList.setAdapter(recommendedAdapter);
+//        Log.d(
+//                "search",
+//                "showSuggestionsAndRecommendations function called"
+//        );
+//        searchSuggestionsList.setVisibility(View.VISIBLE);
+//        youMightLikeSection.setVisibility(View.VISIBLE);
+//        searchResultsList.setVisibility(View.GONE);
+//        searchTabLayout.setVisibility(View.GONE);
+//        noResultsText.setVisibility(View.GONE);
+//
+//        // Make sure we're showing the recommended adapter
+//        searchResultsList.setLayoutManager(new LinearLayoutManager(this));
+//        searchResultsList.setAdapter(recommendedAdapter);
     }
 
     private void showSearchResults() {
@@ -305,30 +316,15 @@ public class SearchScreen extends AppCompatActivity {
     private void updateSearchSuggestions(String query) {
         // If we have a query, fetch suggestions from Google
         if (!query.isEmpty()) {
-            GoogleSuggestionsProvider.getSuggestions(query, new GoogleSuggestionsProvider.OnSuggestionsLoadedListener() {
-                @Override
-                public void onSuggestionsLoaded(List<String> suggestions) {
-                    runOnUiThread(() -> {
-                        suggestionsAdapter.updateSuggestions(suggestions);
-                    });
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    // If error, use local suggestions
-                    runOnUiThread(() -> {
-                        List<String> fallbackSuggestions = new ArrayList<>();
-                        fallbackSuggestions.add(query + " bên cồn");
-                        fallbackSuggestions.add(query + " tutorial");
-                        fallbackSuggestions.add(query + " dance");
-                        fallbackSuggestions.add(query + " trend");
-                        fallbackSuggestions.add(query + " music");
-                        suggestionsAdapter.updateSuggestions(fallbackSuggestions);
-                    });
-                }
-            });
+            loadRecommendedItems(query);
+            List<String> recommendedItemsName = new ArrayList<>();
+            for (RecommendedItem item : recommendedItems) {
+                recommendedItemsName.add(item.getTitle());
+            }
+            suggestionsAdapter.updateSuggestions(recommendedItemsName);
         } else {
             // If empty query, clear suggestions
+//            recommendedItems.clear();
             suggestionsAdapter.updateSuggestions(new ArrayList<>());
         }
 
@@ -341,59 +337,331 @@ public class SearchScreen extends AppCompatActivity {
         });
     }
 
-    private void loadRecommendedItems() {
-        // Fetch trending searches from Google
-        GoogleSuggestionsProvider.getTrendingSearches(new GoogleSuggestionsProvider.OnSuggestionsLoadedListener() {
+    private void loadRecommendedItems(String searchQuery) {
+        recommendedItems.clear();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference videosRef = database.getReference("videos");
+        Log.d(
+                "search",
+                "loadRecommendedItems function called with query: " + searchQuery
+        );
+        videosRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onSuggestionsLoaded(List<String> suggestions) {
+            public void onDataChange(DataSnapshot videoSnapshot) {
+                List<String> videoTitles = new ArrayList<>();
+                List<String> corpus = new ArrayList<>();  // Gồm query + tiêu đề
+                corpus.add(normalizeText(searchQuery));
+
+                for (DataSnapshot videoData : videoSnapshot.getChildren()) {
+                    String title = videoData.child("title").getValue(String.class);
+                    Log.d(
+                            "search",
+                            "title: " + title
+                    );
+                    if (title != null) {
+                        videoTitles.add(title);
+                        corpus.add(normalizeText(title));
+                    }
+                }
+
+                // Xây dictionary
+                Set<String> vocabSet = new LinkedHashSet<>();
+                for (String doc : corpus) {
+                    Collections.addAll(vocabSet, doc.split("\\s+"));
+                }
+                List<String> dictionary = new ArrayList<>(vocabSet);
+
+                // Vector TF-IDF cho toàn bộ văn bản
+                List<Map<String, Double>> tfidfVectors = new ArrayList<>();
+                for (String doc : corpus) {
+                    tfidfVectors.add(computeTFIDFVector(doc, corpus));
+                }
+
+                double[] queryVector = toVectorArray(tfidfVectors.get(0), dictionary);  // index 0 là query
+//                List<RecommendedItem> recommendedItems = new ArrayList<>();
+                Log.d(
+                        "search",
+                        "queryVector: " + Arrays.toString(queryVector)
+                );
+                Log.d(
+                        "search",
+                        "tfidfVectors: " + Arrays.toString(tfidfVectors.toArray())
+                );
+                Log.d(
+                        "search",
+                        "dictionary: " + Arrays.toString(dictionary.toArray())
+                );
+
+                List<Pair<Double, RecommendedItem>> scoredItems = new ArrayList<>();
+
+                for (int i = 1; i < tfidfVectors.size(); i++) {
+                    double[] titleVector = toVectorArray(tfidfVectors.get(i), dictionary);
+                    double similarity = cosineSimilarity(queryVector, titleVector);
+                    Log.d("search", "title: " + videoTitles.get(i - 1) + ", similarity: " + similarity);
+
+                    if (similarity >= 0) {
+                        String title = videoTitles.get(i - 1); // do query là index 0
+                        RecommendedItem item = new RecommendedItem(
+                                title,
+                                i % 3 == 0 ? "Gợi ý hàng đầu" : "",
+                                i < 3,
+                                "" // thumbnail hoặc dữ liệu bổ sung nếu có
+                        );
+                        scoredItems.add(new Pair<>(similarity, item));
+                    }
+                }
+
+                Collections.shuffle(scoredItems); // shuffle nhẹ để kết quả có tính ngẫu nhiên
+                // Sắp xếp theo similarity giảm dần
+                Collections.sort(scoredItems, (a, b) -> Double.compare(b.first, a.first));
+
+                // Lấy tối đa 5 item rồi shuffle
+                List<RecommendedItem> topItems = new ArrayList<>();
+                int limit = Math.min(5, scoredItems.size());
+                for (int i = 0; i < limit; i++) {
+                    topItems.add(scoredItems.get(i).second);
+                }
+
+                // Đưa vào danh sách chính
                 recommendedItems.clear();
+                recommendedItems.addAll(topItems);
 
-                // Convert suggestions to RecommendedItem objects
-                for (int i = 0; i < Math.min(suggestions.size(), 10); i++) {
-                    String suggestion = suggestions.get(i);
-                    boolean isHighlighted = i < 2; // Highlight first two items
 
-                    recommendedItems.add(new RecommendedItem(
-                            suggestion,
-                            i % 3 == 0 ? "Vừa xem" : "", // Add "Vừa xem" to some items
-                            isHighlighted,
-                            "" // No thumbnail URL for now
-                    ));
-                }
 
-                // If we got fewer than 5 suggestions, add some defaults
                 if (recommendedItems.size() < 5) {
-                    addDefaultRecommendedItems();
+                    Log.d(
+                            "search",
+                            "addDefaultRecommendedItems function called because recommendedItems.size() < 5"
+                    );
+
                 }
 
-                // Update the UI
                 runOnUiThread(() -> {
                     recommendedAdapter.notifyDataSetChanged();
                     fetchThumbnailsForRecommendedItems();
                 });
+                String tmp_rcm = "";
+                for (RecommendedItem item : recommendedItems) {
+                    tmp_rcm += item.getTitle() + '\n';
+                }
+                Log.d(
+                        "search",
+                        "Recommended items: " + tmp_rcm
+                );
+                /////
             }
 
             @Override
-            public void onError(Exception e) {
-                // If there's an error, use default items
-                recommendedItems.clear();
-                addDefaultRecommendedItems();
-
-                // Update the UI
+            public void onCancelled(DatabaseError databaseError) {
                 runOnUiThread(() -> {
+                    Log.d(
+                            "search",
+                            "Error fetching recommended items: " + databaseError.getMessage()
+                    );
+                    addDefaultRecommendedItems();
                     recommendedAdapter.notifyDataSetChanged();
                 });
             }
         });
     }
 
-    private void addDefaultRecommendedItems() {
-        recommendedItems.add(new RecommendedItem("Live Liên Quân Trực Tiếp", "Vừa xem", true, ""));
-        recommendedItems.add(new RecommendedItem("fpt flash hôm nay trận 1", "", true, ""));
-        recommendedItems.add(new RecommendedItem("fpt vs one star", "Vừa xem", false, ""));
-        recommendedItems.add(new RecommendedItem("cao thủ liên quân official", "", false, ""));
-        recommendedItems.add(new RecommendedItem("1s vs sgp mới nhất", "", false, ""));
+    private static List<String> tokenize(String text) {
+        List<String> tokens = new ArrayList<>();
+        text = text.toLowerCase().replaceAll("[^\\p{L}\\p{Nd}]+", " "); // chỉ giữ lại chữ và số
+        String[] rawWords = text.trim().split("\\s+");
+
+        for (String raw : rawWords) {
+            if (raw.length() >= 4) {
+                // Cắt các phần từ độ dài 2 đến raw.length() - 1
+                for (int i = 2; i < raw.length(); i++) {
+                    String left = raw.substring(0, i);
+                    String right = raw.substring(i);
+                    if (left.length() >= 2 && right.length() >= 2) {
+                        tokens.add(left);
+                        tokens.add(right);
+                    }
+                }
+            }
+            tokens.add(raw); // luôn thêm từ gốc vào
+        }
+
+        Log.d(
+                "search",
+                "tokens: " + Arrays.toString(tokens.toArray())
+        );
+        return tokens;
     }
+
+    // Tính TF-IDF vector cho văn bản "text" dựa trên "corpus"
+    private Map<String, Double> computeTFIDFVector(String text, List<String> corpus) {
+        Map<String, Double> tfidf = new HashMap<>();
+        List<String> words = tokenize(text);
+
+        Map<String, Integer> tf = new HashMap<>();
+        for (String word : words) {
+            tf.put(word, tf.getOrDefault(word, 0) + 1);
+        }
+
+        for (String word : tf.keySet()) {
+            double tfVal = tf.get(word);
+
+            double df = 0;
+            for (String doc : corpus) {
+                List<String> docWords = tokenize(doc);
+                if (docWords.contains(word)) {
+                    df++;
+                }
+            }
+
+            double idf = Math.log((double) corpus.size() / (df + 1)); // tránh chia 0
+            tfidf.put(word, tfVal * idf);
+        }
+
+        return tfidf;
+    }
+
+//    private Map<String, Double> computeTFIDFVector(String text, List<String> corpus) {
+//        Map<String, Double> tfidf = new HashMap<>();
+//        String[] words = text.split("\\s+");
+//        Map<String, Integer> tf = new HashMap<>();
+//
+//        for (String word : words) {
+//            tf.put(word, tf.getOrDefault(word, 0) + 1);
+//        }
+//
+//        for (String word : tf.keySet()) {
+//            double tfVal = tf.get(word);
+//            double df = 0;
+//            for (String doc : corpus) {
+//                if (doc.contains(word)) {
+//                    df++;
+//                }
+//            }
+//            double idf = Math.log((double) corpus.size() / (df + 1)); // tránh chia 0
+//            tfidf.put(word, tfVal * idf);
+//        }
+//
+//        return tfidf;
+//    }
+
+
+    private double[] toVectorArray(Map<String, Double> tfidfMap, List<String> dictionary) {
+        double[] vector = new double[dictionary.size()];
+        for (int i = 0; i < dictionary.size(); i++) {
+            vector[i] = tfidfMap.getOrDefault(dictionary.get(i), 0.0);
+        }
+        return vector;
+    }
+
+
+    private double cosineSimilarity(double[] a, double[] b) {
+        double dot = 0.0, normA = 0.0, normB = 0.0;
+        for (int i = 0; i < a.length; i++) {
+            dot += a[i] * b[i];
+            normA += a[i] * a[i];
+            normB += b[i] * b[i];
+        }
+        if (normA == 0 || normB == 0) return 0.0;
+        return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
+
+    private String normalizeText(String input) {
+        return input.toLowerCase().replaceAll("[^a-zA-Z0-9à-ỹÀ-Ỹ\\s]", "").trim();
+    }
+
+    //    private void addDefaultRecommendedItems(List<RecommendedItem> recommendedItems) {
+//        // Thêm một số video mặc định nếu không đủ gợi ý
+//        recommendedItems.add(new RecommendedItem("Video mặc định 1", "", false, ""));
+//        recommendedItems.add(new RecommendedItem("Video mặc định 2", "", false, ""));
+//        recommendedItems.add(new RecommendedItem("Video mặc định 3", "", false, ""));
+//    }
+//    private void loadRecommendedItems() {
+//        // Fetch trending searches from Google
+//        GoogleSuggestionsProvider.getTrendingSearches(new GoogleSuggestionsProvider.OnSuggestionsLoadedListener() {
+//            @Override
+//            public void onSuggestionsLoaded(List<String> suggestions) {
+//                recommendedItems.clear();
+//
+//                // Convert suggestions to RecommendedItem objects
+//                for (int i = 0; i < Math.min(suggestions.size(), 10); i++) {
+//                    String suggestion = suggestions.get(i);
+//                    boolean isHighlighted = i < 2; // Highlight first two items
+//
+//                    recommendedItems.add(new RecommendedItem(
+//                            suggestion,
+//                            i % 3 == 0 ? "Vừa xem" : "", // Add "Vừa xem" to some items
+//                            isHighlighted,
+//                            "" // No thumbnail URL for now
+//                    ));
+//                }
+//
+//                // If we got fewer than 5 suggestions, add some defaults
+//                if (recommendedItems.size() < 5) {
+//                    addDefaultRecommendedItems();
+//                }
+//
+//                // Update the UI
+//                runOnUiThread(() -> {
+//                    recommendedAdapter.notifyDataSetChanged();
+//                    fetchThumbnailsForRecommendedItems();
+//                });
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                // If there's an error, use default items
+//                recommendedItems.clear();
+//                addDefaultRecommendedItems();
+//
+//                // Update the UI
+//                runOnUiThread(() -> {
+//                    recommendedAdapter.notifyDataSetChanged();
+//                });
+//            }
+//        });
+//    }
+//
+    private void addDefaultRecommendedItems() {
+        recommendedItems.clear();
+        videosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<RecommendedItem> allVideos = new ArrayList<>();
+
+                for (DataSnapshot videoData : snapshot.getChildren()) {
+                    String title = videoData.child("title").getValue(String.class);
+                    String thumbnailUrl = videoData.child("thumbnailUrl").getValue(String.class);
+
+                    allVideos.add(new RecommendedItem(title, "", false, thumbnailUrl));
+                }
+
+                // Shuffle danh sách để lấy random
+                Collections.shuffle(allVideos);
+
+                // Lấy tối đa 5 video ngẫu nhiên
+                int limit = Math.min(Math.max(5 - recommendedItems.size(), 0), allVideos.size());
+                for (int i = 0; i < limit; i++) {
+                    String title = allVideos.get(i).getTitle();
+                    String thumbnailUrl = allVideos.get(i).getThumbnailUrl();
+                    recommendedItems.add(new RecommendedItem(title, "", (i%3==0), thumbnailUrl));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error fetching recommended items: " + error.getMessage());
+            }
+        });
+    }
+
+//        recommendedItems.add(new RecommendedItem("Live Liên Quân Trực Tiếp", "Vừa xem", true, ""));
+//        recommendedItems.add(new RecommendedItem("fpt flash hôm nay trận 1", "", true, ""));
+//        recommendedItems.add(new RecommendedItem("fpt vs one star", "Vừa xem", false, ""));
+//        recommendedItems.add(new RecommendedItem("cao thủ liên quân official", "", false, ""));
+//        recommendedItems.add(new RecommendedItem("1s vs sgp mới nhất", "", false, ""));
+//    }
 
     private void fetchThumbnailsForRecommendedItems() {
         for (RecommendedItem item : recommendedItems) {

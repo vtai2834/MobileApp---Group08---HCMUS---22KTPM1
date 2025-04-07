@@ -175,8 +175,9 @@ public class HomeScreen extends AppCompatActivity {
             public void onClick(View view) {
                 videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
 
-                Intent intent = new Intent(HomeScreen.this, NotificationScreen.class);
-//                intent.putExtra("USER_ID", userID);
+
+                Intent intent = new Intent(HomeScreen.this, InboxScreen.class);
+                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
 
                 HomeScreen.this.finish();

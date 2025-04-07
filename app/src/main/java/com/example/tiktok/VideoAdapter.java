@@ -52,7 +52,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private Map<Integer, ExoPlayer> playerMap = new HashMap<>();
 
     private String userID = "";
-
+    private NotificationManager notificationManager;
 
     public int currentPositionPlayingVideo = -1;
 
@@ -63,6 +63,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         this.videoIds = videoIds;
         this.context = context;
         this.userID = userID;
+        this.notificationManager = NotificationManager.getInstance();
     }
 
     @NonNull
@@ -90,12 +91,23 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         like_img.clearColorFilter(); // Reset color
                         videoRef.child("likes").setValue(String.valueOf(Integer.parseInt(videoItem.getLikes()) - 1));
                         like_cnt.setText(String.valueOf(Integer.parseInt(like_cnt.getText().toString()) - 1));
+                        videoItem.setLikes(String.valueOf(Integer.parseInt(like_cnt.getText().toString())));
                     } else {
                         // User has not liked, so add the like
                         likeRef.setValue(true);
                         like_img.setColorFilter(Color.parseColor("#FF0007")); // Change to red
                         videoRef.child("likes").setValue(String.valueOf(Integer.parseInt(videoItem.getLikes()) + 1));
                         like_cnt.setText(String.valueOf(Integer.parseInt(like_cnt.getText().toString()) + 1));
+                        videoItem.setLikes(String.valueOf(Integer.parseInt(like_cnt.getText().toString())));
+
+                        // Create notification for like
+                        if (!videoItem.getUsername().equals(userId)) {
+                            notificationManager.createLikeNotification(
+                                    userId,
+                                    videoId,
+                                    videoItem.getUsername()
+                            );
+                        }
                     }
                 }
 
@@ -115,22 +127,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
             CommentBottomSheet commentBottomSheet = new CommentBottomSheet(videoIds.get(position_vid), userID);
             commentBottomSheet.show(fragmentManager, commentBottomSheet.getTag());
-            //            stopVideoAtPosition(position_vid);
-//            Intent intent = new Intent(view.getContext(), CommentScreen.class);
-//            intent.putExtra("VIDEO_URI", videoItem.getVideoUri());
-//            view.getContext().startActivity(intent);
         });
 
         RelativeLayout share = view.findViewById(R.id.share);
         share.setOnClickListener(v -> {
-//            stopVideoAtPosition(position_vid);
-
-//            shareVideo(view, videoItem.getVideoUri());
             ShareDialog dialog = new ShareDialog(context, videoItem.getVideoUri(), url -> {
                 showReportDialog(videoItem.getVideoUri());
             });
             dialog.show();
-
         });
 
         RelativeLayout download = view.findViewById(R.id.download);
@@ -245,8 +249,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         // After showing the dialog, you can modify button colors
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(Color.BLUE);
         dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.RED);
-
-
     }
 
     // Method to simulate video download
@@ -550,12 +552,13 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         }
                     });
                 });
-
+              
                 // Truyền position vào processClick
                 processClick(holder.itemView, position, videoItem);
             }
         });
     }
+
 
     private void checkFollowStatusAndUpdateIcon(String currentUserIdName, String videoOwnerIdName, ImageView plusImageView) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
@@ -660,3 +663,4 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         }
     }
 }
+

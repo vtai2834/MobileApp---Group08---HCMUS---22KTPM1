@@ -56,8 +56,15 @@ public class PostCreationActivity extends AppCompatActivity {
         initializeViews();
 
         // Get data from intent
-        userID = getIntent().getStringExtra("USER_ID");
-        userIdName = getIntent().getStringExtra("USER_ID_NAME");
+//        userID = getIntent().getStringExtra("USER_ID");
+//        userIdName = getIntent().getStringExtra("USER_ID_NAME");
+
+        User currentUser = UserManager.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            userID = currentUser.getUserID();
+            userIdName = currentUser.getIdName();
+        }
+
         videoUri = getIntent().getParcelableExtra("video_uri");
         videoDuration = getIntent().getLongExtra("video_duration", 0);
 
@@ -127,8 +134,8 @@ public class PostCreationActivity extends AppCompatActivity {
         previewButton.setOnClickListener(v -> {
             // Open video preview
             Intent intent = new Intent(this, VideoPreviewActivity.class);
-            intent.putExtra("USER_ID", userID);
-            intent.putExtra("USER_ID_NAME", userIdName);
+//            intent.putExtra("USER_ID", userID);
+//            intent.putExtra("USER_ID_NAME", userIdName);
             intent.putExtra("video_uri", videoUri);
             startActivity(intent);
         });
@@ -278,7 +285,7 @@ public class PostCreationActivity extends AppCompatActivity {
 
                     // Return to home screen
                     Intent intent = new Intent(this, HomeScreen.class);
-                    intent.putExtra("USER_ID", userID);
+//                    intent.putExtra("USER_ID", userID);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();

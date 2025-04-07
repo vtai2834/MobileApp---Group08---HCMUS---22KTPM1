@@ -22,7 +22,6 @@ public class LogIn extends AppCompatActivity {
     private TextView tvSignUp;
     private DatabaseReference databaseReference;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +68,10 @@ public class LogIn extends AppCompatActivity {
                 boolean userFound = false;
                 String userID = "";
                 String userIdName = "";
+                String userKey = "";
+
+                // Duyệt qua các user trong database
+
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     String storedPassword = userSnapshot.child("password").getValue(String.class);
@@ -77,10 +80,40 @@ public class LogIn extends AppCompatActivity {
                     if (storedUsername != null && storedUsername.equals(username)) {
                         userFound = true;
                         if (storedPassword != null && storedPassword.equals(password)) {
+                            // Lấy userKey (ID của người dùng trong Firebase)
+                            userKey = userSnapshot.getKey();  // Lấy userKey từ Firebase (ID của người dùng)
+
+                            // Lưu username và userKey vào SharedPreferences
+                            // Lấy thông tin user từ Firebase
+                            userID = userSnapshot.getKey();
+                            String name = userSnapshot.child("name").getValue(String.class);
+                            String avatar = userSnapshot.child("avatar").getValue(String.class);
+                            String bio = userSnapshot.child("bio").getValue(String.class);
+                            int followerCount = 0;
+                            int followingCount = 0;
+                            int likeCount = 0;
+
+                            if (userSnapshot.child("followerCount").exists()) {
+                                followerCount = userSnapshot.child("followerCount").getValue(Integer.class);
+                            }
+                            if (userSnapshot.child("followingCount").exists()) {
+                                followingCount = userSnapshot.child("followingCount").getValue(Integer.class);
+                            }
+                            if (userSnapshot.child("likeCount").exists()) {
+                                likeCount = userSnapshot.child("likeCount").getValue(Integer.class);
+                            }
+
+                            // Tạo đối tượng User và lưu vào UserManager
+                            User currentUser = new User(userID ,username, password, followerCount, followingCount,
+                                    likeCount, avatar, name, userIdName, bio);
+                            UserManager.getInstance().setCurrentUser(currentUser);
+
                             // Lưu username vào SharedPreferences
                             SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("username", username);
+                            editor.putString("userKey", userKey);  // Lưu userKey
+                            editor.putString("userID", userID);
                             editor.apply();
 
                             Toast.makeText(LogIn.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
@@ -106,3 +139,4 @@ public class LogIn extends AppCompatActivity {
         });
     }
 }
+

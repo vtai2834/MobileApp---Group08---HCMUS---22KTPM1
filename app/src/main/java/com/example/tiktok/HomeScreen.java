@@ -54,8 +54,15 @@ public class HomeScreen extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
 
         // Lấy userId từ Intent
-        userID = getIntent().getStringExtra("USER_ID");
-        userIdName = getIntent().getStringExtra("USER_ID_NAME");
+//        userID = getIntent().getStringExtra("USER_ID");
+//        userIdName = getIntent().getStringExtra("USER_ID_NAME");
+
+        // Lấy thông tin người dùng từ UserManager
+        User currentUser = UserManager.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            userID = currentUser.getUserID();
+            userIdName = currentUser.getIdName();
+        }
 
         videoItems = new ArrayList<>();
 
@@ -86,7 +93,7 @@ public class HomeScreen extends AppCompatActivity {
 
                 // After data is loaded, set the correct item position
                 int pos = getIntent().getIntExtra("SEARCH_VIDEO_POSITION", 0);  // Default is 0 if not found
-                Log.d("check pos from search -> home", String.valueOf(pos));
+                Log.d("check pos from search | profile -> home", String.valueOf(pos));
 
                 videoAdapter.currentPositionPlayingVideo = pos;
 
@@ -141,7 +148,7 @@ public class HomeScreen extends AppCompatActivity {
 
                 Intent intent = new Intent(HomeScreen.this, SearchScreen.class);
                 intent.putExtra("VIDEOS_ARRAY_JSON", new ArrayList<>(videoIds));
-                intent.putExtra("USER_ID", userID);
+//                intent.putExtra("USER_ID", userID);
                 startActivity(intent);
                 finish();
             }
@@ -154,8 +161,8 @@ public class HomeScreen extends AppCompatActivity {
                 videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
 
                 Intent intent = new Intent(HomeScreen.this, CameraScreen.class);
-                intent.putExtra("USER_ID", userID);
-                intent.putExtra("USER_ID_NAME", userIdName);
+//                intent.putExtra("USER_ID", userID);
+//                intent.putExtra("USER_ID_NAME", userIdName);
                 startActivity(intent);
 
                 HomeScreen.this.finish();
@@ -167,6 +174,7 @@ public class HomeScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 videoAdapter.stopVideoAtPosition(videoAdapter.getCurrentPositionVideo());
+
 
                 Intent intent = new Intent(HomeScreen.this, InboxScreen.class);
                 intent.putExtra("USER_ID", userID);
@@ -184,6 +192,7 @@ public class HomeScreen extends AppCompatActivity {
 
                 // Không cần truyền USER_ID nữa, vì ProfileScreen đã lấy từ SharedPreferences
                 Intent intent = new Intent(HomeScreen.this, ProfileScreen.class);
+                intent.putExtra("VIDEOS_ARRAY_JSON", new ArrayList<>(videoIds));
                 startActivity(intent);
 
                 HomeScreen.this.finish();
@@ -200,7 +209,6 @@ public class HomeScreen extends AppCompatActivity {
                 videoAdapter.playVideoAt(position); // Gọi phương thức phát video
             }
         });
-
     }
 
     @Override

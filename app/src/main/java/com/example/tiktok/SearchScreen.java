@@ -82,7 +82,12 @@ public class SearchScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
 
-        userID = getIntent().getStringExtra("USER_ID");
+//        userID = getIntent().getStringExtra("USER_ID");
+        User currentUser = UserManager.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            userID = currentUser.getUserID();
+//            userIdName = currentUser.getIdName();
+        }
 
         // Get videos_list from HomeScreen
         videoIdsItems = getIntent().getStringArrayListExtra("VIDEOS_ARRAY_JSON");
@@ -119,7 +124,7 @@ public class SearchScreen extends AppCompatActivity {
     private void setupListeners() {
         btnBack.setOnClickListener(view -> {
             Intent intent = new Intent(SearchScreen.this, HomeScreen.class);
-            intent.putExtra("USER_ID", userID);
+//            intent.putExtra("USER_ID", userID);
             startActivity(intent);
             finish();
         });
@@ -693,7 +698,7 @@ public class SearchScreen extends AppCompatActivity {
                     // Send position back to HomeScreen
                     Intent intent = new Intent(SearchScreen.this, HomeScreen.class);
                     intent.putExtra("SEARCH_VIDEO_POSITION", pos);
-                    intent.putExtra("USER_ID", userID);
+//                    intent.putExtra("USER_ID", userID);
                     startActivity(intent);
                     finish();
                 } else {

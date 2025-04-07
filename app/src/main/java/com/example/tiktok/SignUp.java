@@ -14,6 +14,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SignUp extends AppCompatActivity {
 
     private EditText edtAccount, edtPassword;
@@ -26,13 +29,11 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        // Ánh xạ View
         edtAccount = findViewById(R.id.account);
         edtPassword = findViewById(R.id.password);
         btnContinue = findViewById(R.id.btnContinue);
         tvLoginLink = findViewById(R.id.tvLoginLink);
 
-        // Khởi tạo Firebase Database
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
 
         btnContinue.setOnClickListener(new View.OnClickListener() {
@@ -42,13 +43,12 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        // Xử lý sự kiện nhấn vào "Đăng ký" để chuyển đến màn hình đăng nhập
         tvLoginLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SignUp.this, SignIn.class);
                 startActivity(intent);
-                finish(); // Đóng màn hình đăng ký
+                finish();
             }
         });
     }
@@ -63,6 +63,9 @@ public class SignUp extends AppCompatActivity {
         int followerCount = 0;
         int followingCount = 0;
         int likeCount = 0;
+        Map<String, Boolean> followers = new HashMap<>();
+        Map<String, Boolean> following = new HashMap<>();
+
 
         if (account.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đủ thông tin!", Toast.LENGTH_SHORT).show();
@@ -92,7 +95,7 @@ public class SignUp extends AppCompatActivity {
                     Toast.makeText(SignUp.this, "Tài khoản đã tồn tại!", Toast.LENGTH_SHORT).show();
                 } else {
                     String userId = databaseReference.push().getKey();
-                    User user = new User(account, password, followerCount, followingCount, likeCount, avatar, name, idName, bio);
+                    User user = new User(account, password, followerCount, followingCount, likeCount, avatar, name, idName, bio, followers, following);
                     databaseReference.child(userId).setValue(user)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(SignUp.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();

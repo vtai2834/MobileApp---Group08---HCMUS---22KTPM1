@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
@@ -34,6 +35,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -277,6 +279,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         Video videoItem = videoItems.get(position);
         ExoPlayer player = playerMap.get(position);
+        ImageView plusImageView = holder.itemView.findViewById(R.id.plus);
 
         if (player == null) {
             player = new ExoPlayer.Builder(context).build();
@@ -285,6 +288,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             player.setMediaItem(mediaItem);
             player.prepare();
         }
+
         holder.playerView.setUseController(true);
         holder.playerView.setControllerShowTimeoutMs(0);
         ExoPlayer finalPlayer = player;
@@ -297,44 +301,45 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
                 currentPositionPlayingVideo = holder.getAdapterPosition();
 
-                TextView username = holder.itemView.findViewById(R.id.username);
+                TextView usernameView = holder.itemView.findViewById(R.id.username);
                 TextView like_cnt = holder.itemView.findViewById(R.id.like);
                 TextView cmt_cnt = holder.itemView.findViewById(R.id.cmt_num);
                 TextView music = holder.itemView.findViewById(R.id.music);
                 TextView content = holder.itemView.findViewById(R.id.content);
                 ImageView like_img = holder.itemView.findViewById(R.id.like_img);
 
-                if (videoItem.getUsername().substring(0, 3).equals("-OL")) {
-                    // This is a Firebase user ID, fetch the actual username from Firebase
-                    String userId = videoItem.getUsername(); // The full ID like "-OLm4Zc1z1YSUyV7zHDm"
-                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+                // Lấy thông tin người dùng từ Firebase bằng cách kiểm tra nếu username là user ID
+                String videoUsername = videoItem.getUsername();  // Tên người dùng từ videoItem
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
 
-                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                if (videoUsername.substring(0, 3).equals("-OL")) {
+                    // Đây là Firebase user ID, truy xuất idName từ Firebase của người đăng video
+                    userRef.child(videoUsername).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists()) {
-                                // Get the idName field from the user data
-                                String idName = snapshot.child("idName").getValue(String.class);
-                                if (idName != null && !idName.isEmpty()) {
-                                    username.setText(idName);
+                                String videoOwnerIdName = snapshot.child("idName").getValue(String.class);
+                                if (videoOwnerIdName != null && !videoOwnerIdName.isEmpty()) {
+                                    // Hiển thị idName của người đăng video
+                                    usernameView.setText(videoOwnerIdName);
+                                    Toast.makeText(context, "Video Owner idName: " + videoOwnerIdName, Toast.LENGTH_SHORT).show();
                                 } else {
-                                    // Fallback in case idName is not available
-                                    username.setText(videoItem.getUsername());
+                                    usernameView.setText(videoItem.getUsername());
                                 }
                             } else {
-                                // User not found in database, use original username
-                                username.setText(videoItem.getUsername());
+                                usernameView.setText(videoItem.getUsername());
                             }
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
                             Log.d("Firebase", "Error fetching user data: " + error.getMessage());
-                            username.setText(videoItem.getUsername());
+                            usernameView.setText(videoItem.getUsername());
                         }
                     });
                 } else {
-                    username.setText(videoItem.getUsername());
+                    // Nếu không phải user ID Firebase, chỉ hiển thị username
+                    usernameView.setText(videoItem.getUsername());
                 }
 
                 like_cnt.setText(videoItem.getLikes());
@@ -342,35 +347,249 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 music.setText(videoItem.getMusic());
                 content.setText(videoItem.getTitle());
 
-                Log.d(
-                        "Firebase",
-                        "Video: " + videoItem.getTitle() + "Id: " + videoIds.get(position) + "Position: " + position + ""
-                );
+                // Lấy userKey từ SharedPreferences (đã lưu từ LogIn.java)
+                SharedPreferences sharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                String userKey = sharedPreferences.getString("userKey", null);
 
-                String userId = userID;
-                DatabaseReference likeRef = FirebaseDatabase.getInstance().getReference("likes").child(videoIds.get(position)).child(userId);
-                likeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            like_img.setColorFilter(Color.parseColor("#FF0007")); // Change to red
-                        } else {
-                            like_img.clearColorFilter(); // Reset color
+                if (userKey != null) {
+                    userRef.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                String currentUserIdName = snapshot.child("idName").getValue(String.class);
+                                if (currentUserIdName != null && !currentUserIdName.isEmpty()) {
+                                    String videoUsername = videoItem.getUsername();
+
+                                    if (videoUsername.startsWith("-OL")) {
+                                        // Nếu là user ID, lấy idName của người đăng video
+                                        userRef.child(videoUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot ownerSnapshot) {
+                                                if (ownerSnapshot.exists()) {
+                                                    String videoOwnerIdName = ownerSnapshot.child("idName").getValue(String.class);
+                                                    if (videoOwnerIdName != null) {
+                                                        // Kiểm tra xem người dùng hiện tại có phải là người đăng video không
+                                                        if (currentUserIdName.equals(videoOwnerIdName)) {
+                                                            // Nếu người đăng video là chính mình, không hiển thị icon
+                                                            plusImageView.setVisibility(View.INVISIBLE);  // Ẩn icon
+                                                        } else {
+                                                            // Nếu không phải, kiểm tra trạng thái follow
+                                                            checkFollowStatusAndUpdateIcon(currentUserIdName, videoOwnerIdName, plusImageView);
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) { }
+                                        });
+                                    } else {
+                                        // Nếu video username không phải là Firebase userId mà đã là idName
+                                        if (currentUserIdName.equals(videoUsername)) {
+                                            // Nếu người đăng video là chính mình, không hiển thị icon
+                                            plusImageView.setVisibility(View.INVISIBLE);  // Ẩn icon
+                                        } else {
+                                            // Nếu không phải, kiểm tra trạng thái follow
+                                            checkFollowStatusAndUpdateIcon(currentUserIdName, videoUsername, plusImageView);
+                                        }
+                                    }
+                                }
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        Log.d(
-                                "Firebase",
-                                "Error: " + error.getMessage()
-                        );
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) { }
+                    });
+                }
+
+                if (userKey != null) {
+                    // Lấy thông tin "like" của người dùng từ Firebase
+                    DatabaseReference likeRef = FirebaseDatabase.getInstance().getReference("likes")
+                            .child(videoIds.get(position)).child(userKey);
+                    likeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                like_img.setColorFilter(Color.parseColor("#FF0007")); // Đổi màu thành đỏ
+                            } else {
+                                like_img.clearColorFilter(); // Reset màu
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.d("Firebase", "Error: " + error.getMessage());
+                        }
+                    });
+                }
+
+                // Lấy idName của người dùng hiện tại (người xem)
+                if (userKey != null) {
+                    userRef.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                String currentUserIdName = snapshot.child("idName").getValue(String.class);
+//                                if (currentUserIdName != null && !currentUserIdName.isEmpty()) {
+//                                    Toast.makeText(context, "Your idName: " + currentUserIdName, Toast.LENGTH_SHORT).show();
+//                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(context, "Lỗi khi lấy idName của bạn", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                // Thiết lập sự kiện nhấn vào ImageView để thông báo userKey
+                plusImageView.setOnClickListener(v -> {
+                    userRef.orderByChild("account").equalTo(videoItem.getUsername()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                                    String videoOwnerUserKey = userSnapshot.getKey();  // userKey của người đăng video
+                                    String videoOwnerIdName = userSnapshot.child("idName").getValue(String.class);
+
+                                    if (videoOwnerIdName != null && !videoOwnerIdName.isEmpty()) {
+                                        String currentUserKey = sharedPreferences.getString("userKey", null);
+
+                                        if (currentUserKey != null) {
+                                            userRef.child(currentUserKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if (snapshot.exists()) {
+                                                        String currentUserIdName = snapshot.child("idName").getValue(String.class);
+
+                                                        if (currentUserIdName != null && !currentUserIdName.isEmpty()) {
+                                                            // ======= Kiểm tra nếu người dùng không thể follow chính mình =======
+                                                            if (currentUserIdName.equals(videoOwnerIdName)) {
+                                                                Toast.makeText(context, "Bạn không thể follow chính mình", Toast.LENGTH_SHORT).show();
+                                                                return;
+                                                            }
+
+                                                            // ======= Kiểm tra xem đã follow người đó chưa =======
+                                                            DatabaseReference followerRef = userRef.child(videoOwnerUserKey).child("follower");
+                                                            followerRef.child(currentUserIdName).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot followerSnapshot) {
+                                                                    if (followerSnapshot.exists()) {
+                                                                        // Đã follow rồi, thực hiện unfollow
+                                                                        followerRef.child(currentUserIdName).removeValue().addOnCompleteListener(task -> {
+                                                                            if (task.isSuccessful()) {
+                                                                                // Giảm followerCount của người đăng video
+                                                                                DatabaseReference followerCountRef = userRef.child(videoOwnerUserKey).child("followerCount");
+                                                                                followerCountRef.setValue(ServerValue.increment(-1));
+
+                                                                                // Xóa người đăng video khỏi list following của người dùng hiện tại
+                                                                                DatabaseReference followingRef = userRef.child(currentUserKey).child("following");
+                                                                                followingRef.child(videoOwnerIdName).removeValue().addOnCompleteListener(task1 -> {
+                                                                                    if (task1.isSuccessful()) {
+                                                                                        // Giảm followingCount của người dùng hiện tại
+                                                                                        DatabaseReference followingCountRef = userRef.child(currentUserKey).child("followingCount");
+                                                                                        followingCountRef.setValue(ServerValue.increment(-1));
+
+                                                                                        // Cập nhật lại icon và thông báo
+                                                                                        plusImageView.setImageResource(R.drawable.plus_icon); // Đổi icon thành plus
+                                                                                        Toast.makeText(context, "Đã hủy follow", Toast.LENGTH_SHORT).show();
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        });
+                                                                    } else {
+                                                                        // Chưa follow, thực hiện follow
+                                                                        followerRef.child(currentUserIdName).setValue(true).addOnCompleteListener(task -> {
+                                                                            if (task.isSuccessful()) {
+                                                                                // Tăng followerCount của người đăng video
+                                                                                DatabaseReference followerCountRef = userRef.child(videoOwnerUserKey).child("followerCount");
+                                                                                followerCountRef.setValue(ServerValue.increment(1));
+
+                                                                                // Thêm người đăng video vào list following của người dùng hiện tại
+                                                                                DatabaseReference followingRef = userRef.child(currentUserKey).child("following");
+                                                                                followingRef.child(videoOwnerIdName).setValue(true).addOnCompleteListener(task1 -> {
+                                                                                    if (task1.isSuccessful()) {
+                                                                                        // Tăng followingCount của người dùng hiện tại
+                                                                                        DatabaseReference followingCountRef = userRef.child(currentUserKey).child("followingCount");
+                                                                                        followingCountRef.setValue(ServerValue.increment(1));
+
+                                                                                        // Cập nhật lại icon và thông báo
+                                                                                        plusImageView.setImageResource(R.drawable.minus_icon); // Đổi icon thành minus
+                                                                                        Toast.makeText(context, "Follow thành công", Toast.LENGTH_SHORT).show();
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                                    Toast.makeText(context, "Lỗi khi kiểm tra trạng thái follow", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                    Toast.makeText(context, "Lỗi khi lấy idName người dùng hiện tại", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            } else {
+                                Toast.makeText(context, "Không tìm thấy người đăng video", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(context, "Lỗi khi truy vấn người đăng video", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 });
-
+              
                 // Truyền position vào processClick
                 processClick(holder.itemView, position, videoItem);
             }
+        });
+    }
+
+
+    private void checkFollowStatusAndUpdateIcon(String currentUserIdName, String videoOwnerIdName, ImageView plusImageView) {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
+
+        usersRef.orderByChild("idName").equalTo(videoOwnerIdName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                        String videoOwnerUserKey = userSnapshot.getKey();
+
+                        usersRef.child(videoOwnerUserKey).child("follower").child(currentUserIdName)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot followerSnapshot) {
+                                        if (followerSnapshot.exists()) {
+                                            plusImageView.setImageResource(R.drawable.minus_icon); // Đã follow -> icon minus
+                                        } else {
+                                            plusImageView.setImageResource(R.drawable.plus_icon); // Chưa follow -> icon plus
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) { }
+                                });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
     }
 

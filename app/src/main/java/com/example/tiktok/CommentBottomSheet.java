@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.example.tiktok.R;
+
 public class CommentBottomSheet extends BottomSheetDialogFragment {
 
     private RecyclerView recyclerViewComments;
@@ -45,7 +47,7 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate layout
-        View view = inflater.inflate(R.layout.activity_comment_screen, container, false);
+        View view = inflater.inflate(R.layout.activity_comment_bottom_sheet, container, false);
 
         // Initialize views
         recyclerViewComments = view.findViewById(R.id.rv_comments);
@@ -195,12 +197,14 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        // Optional: Set the bottom sheet to expanded state when opened
+        // Set the bottom sheet to expanded state when opened
         if (getDialog() != null) {
-            View bottomSheet = getDialog().findViewById(com.google.android.material.R.id.design_bottom_sheet);
-            if (bottomSheet != null) {
-                bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-                bottomSheet.requestLayout();
+            // Better approach: Use BottomSheetBehavior instead of trying to find the design_bottom_sheet
+            View view = getView();
+            if (view != null) {
+                ViewGroup.LayoutParams params = view.getLayoutParams();
+                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                view.setLayoutParams(params);
             }
         }
     }

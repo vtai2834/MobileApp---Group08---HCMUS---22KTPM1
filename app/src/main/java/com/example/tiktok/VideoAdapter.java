@@ -89,12 +89,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         like_img.clearColorFilter(); // Reset color
                         videoRef.child("likes").setValue(String.valueOf(Integer.parseInt(videoItem.getLikes()) - 1));
                         like_cnt.setText(String.valueOf(Integer.parseInt(like_cnt.getText().toString()) - 1));
+                        videoItem.setLikes(String.valueOf(Integer.parseInt(like_cnt.getText().toString())));
                     } else {
                         // User has not liked, so add the like
                         likeRef.setValue(true);
                         like_img.setColorFilter(Color.parseColor("#FF0007")); // Change to red
                         videoRef.child("likes").setValue(String.valueOf(Integer.parseInt(videoItem.getLikes()) + 1));
                         like_cnt.setText(String.valueOf(Integer.parseInt(like_cnt.getText().toString()) + 1));
+                        videoItem.setLikes(String.valueOf(Integer.parseInt(like_cnt.getText().toString())));
 
                         // Create notification for like
                         if (!videoItem.getUsername().equals(userId)) {

@@ -1,60 +1,313 @@
 package com.example.tiktok;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
+import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-
 
 public class NotificationScreen extends AppCompatActivity {
 
-    private RecyclerView notificationRecyclerView;
-    private NotificationAdapter notificationAdapter;
-    private List<NotificationAdapter.Notification> notifications;
+    private static final String TAG = "NotificationScreen";
 
-    ImageButton cls_button;
+    private RecyclerView notificationRecyclerView;
+    private ActivityNotificationAdapter notificationAdapter;
+    private List<Notification> notifications;
+    private List<Notification> filteredNotifications;
+
+    private TextView titleText;
+    private ImageButton backButton;
+    private TabLayout tabLayout;
+
+    private String currentUserId;
+    private DatabaseReference notificationsRef;
+    private String currentTab = "all"; // "all", "priority", "other"
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification_screen);
 
+        // Initialize views
         notificationRecyclerView = findViewById(R.id.notificationRecyclerView);
+        titleText = findViewById(R.id.titleText);
+        backButton = findViewById(R.id.backButton);
+        tabLayout = findViewById(R.id.tabLayout);
+
+        // Initialize Firebase
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        notificationsRef = database.getReference("notifications");
+
+        // Get current user ID
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        currentUserId = sharedPreferences.getString("username", null);
+
+        if (currentUserId == null) {
+            Toast.makeText(this, "Lỗi: Không tìm thấy tài khoản!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        // Initialize notifications list
         notifications = new ArrayList<>();
+        filteredNotifications = new ArrayList<>();
 
-        // Example notifications
-        notifications.add(new NotificationAdapter.Notification("User1 has followed you.", "data:image/jpeg;base64,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"));
-        notifications.add(new NotificationAdapter.Notification("User2 liked your video.", "data:image/jpeg;base64,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"));
-
-        notificationAdapter = new NotificationAdapter(notifications);
+        // Set up RecyclerView
+        notificationAdapter = new ActivityNotificationAdapter(filteredNotifications);
         notificationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         notificationRecyclerView.setAdapter(notificationAdapter);
 
+        // Set up TabLayout
+        setupTabLayout();
 
-        cls_button = findViewById(R.id.closeButton);
-        cls_button.setOnClickListener(new View.OnClickListener() {
+        // Set up back button
+        backButton.setOnClickListener(v -> {
+            onBackPressed();
+        });
+
+        // Load notifications
+        loadNotifications();
+    }
+
+    private void setupTabLayout() {
+        tabLayout.addTab(tabLayout.newTab().setText("Mức độ ưu tiên"));
+        tabLayout.addTab(tabLayout.newTab().setText("Khác"));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(NotificationScreen.this, HomeScreen.class);
-                startActivity(intent);
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        currentTab = "priority";
+                        break;
+                    case 1:
+                        currentTab = "other";
+                        break;
+                }
+                filterNotifications();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // Not needed
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // Not needed
             }
         });
     }
+
+    private void loadNotifications() {
+        // Check if notifications node exists, if not create sample data
+        notificationsRef.child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    createSampleNotifications();
+                } else {
+                    fetchNotifications();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error checking notifications", databaseError.toException());
+                Toast.makeText(NotificationScreen.this,
+                        "Lỗi khi tải thông báo", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchNotifications() {
+        notificationsRef.child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                notifications.clear();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Notification notification = snapshot.getValue(Notification.class);
+                    if (notification != null) {
+                        notifications.add(notification);
+                    }
+                }
+
+                // Sort notifications by timestamp (newest first)
+                Collections.sort(notifications, (n1, n2) ->
+                        Long.compare(n2.getTimestamp(), n1.getTimestamp()));
+
+                // Default to priority tab
+                tabLayout.selectTab(tabLayout.getTabAt(0));
+                currentTab = "priority";
+                filterNotifications();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error loading notifications", databaseError.toException());
+                Toast.makeText(NotificationScreen.this,
+                        "Lỗi khi tải thông báo", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void createSampleNotifications() {
+        // Create sample notifications
+        List<Notification> sampleNotifications = new ArrayList<>();
+
+        // Comment notification
+        sampleNotifications.add(new Notification(
+                "comment1",
+                "user1",
+                "Binhtinhluilai",
+                "https://via.placeholder.com/150",
+                currentUserId,
+                "comment",
+                "video1",
+                "đã bình luận: Anh tài ơi",
+                System.currentTimeMillis() - 3600000 // 1 hour ago
+        ));
+
+        // Like notifications
+        sampleNotifications.add(new Notification(
+                "like1",
+                "user2",
+                "Tuấn Phùng8252",
+                "https://via.placeholder.com/150",
+                currentUserId,
+                "like",
+                "video1",
+                "đã thích video của bạn",
+                System.currentTimeMillis() - 86400000 * 3 // 3 days ago
+        ));
+
+        sampleNotifications.add(new Notification(
+                "like2",
+                "user3",
+                "anhha",
+                "https://via.placeholder.com/150",
+                currentUserId,
+                "like",
+                "video2",
+                "đã thích video của bạn",
+                System.currentTimeMillis() - 86400000 * 5 // 5 days ago
+        ));
+
+        sampleNotifications.add(new Notification(
+                "like3",
+                "user4",
+                "Thảo ._.Ngân",
+                "https://via.placeholder.com/150",
+                currentUserId,
+                "like",
+                "video3",
+                "đã thích video của bạn",
+                System.currentTimeMillis() - 86400000 * 7 // 7 days ago
+        ));
+
+        sampleNotifications.add(new Notification(
+                "like4",
+                "user5",
+                "Thao Nguyen Nguyen 🌼",
+                "https://via.placeholder.com/150",
+                currentUserId,
+                "like",
+                "video4",
+                "đã thích video của bạn",
+                System.currentTimeMillis() - 86400000 * 8 // 8 days ago
+        ));
+
+        sampleNotifications.add(new Notification(
+                "like5",
+                "user6",
+                "qdung",
+                "https://via.placeholder.com/150",
+                currentUserId,
+                "like",
+                "video5",
+                "đã thích video của bạn",
+                System.currentTimeMillis() - 86400000 * 8 // 8 days ago
+        ));
+
+        sampleNotifications.add(new Notification(
+                "like6",
+                "user7",
+                "sua_tuoi",
+                "https://via.placeholder.com/150",
+                currentUserId,
+                "like",
+                "video6",
+                "đã thích video của bạn",
+                System.currentTimeMillis() - 86400000 * 9 // 9 days ago
+        ));
+
+        sampleNotifications.add(new Notification(
+                "like7",
+                "user8",
+                "sua_tuoi",
+                "https://via.placeholder.com/150",
+                currentUserId,
+                "like",
+                "video7",
+                "đã thích video của bạn",
+                System.currentTimeMillis() - 86400000 * 9 // 9 days ago
+        ));
+
+        sampleNotifications.add(new Notification(
+                "like8",
+                "user9",
+                "dầu tây nhiệt đới, Tiểu Hy",
+                "https://via.placeholder.com/150",
+                currentUserId,
+                "like",
+                "video8",
+                "đã thích video của bạn",
+                System.currentTimeMillis() - 86400000 * 10 // 10 days ago
+        ));
+
+        // Save sample notifications to Firebase
+        for (Notification notification : sampleNotifications) {
+            notificationsRef.child(currentUserId).child(notification.getId()).setValue(notification);
+        }
+
+        // Load the notifications
+        fetchNotifications();
+    }
+
+    private void filterNotifications() {
+        filteredNotifications.clear();
+
+        for (Notification notification : notifications) {
+            if (currentTab.equals("priority") && notification.getType().equals("comment")) {
+                filteredNotifications.add(notification);
+            } else if (currentTab.equals("other") && !notification.getType().equals("comment")) {
+                filteredNotifications.add(notification);
+            }
+        }
+
+        notificationAdapter.notifyDataSetChanged();
+    }
 }
+

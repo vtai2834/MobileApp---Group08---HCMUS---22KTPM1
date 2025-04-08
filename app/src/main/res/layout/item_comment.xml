@@ -1,43 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="12dp">
+    android:paddingStart="16dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="4dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iv_profile"
+        android:id="@+id/iv_comment_avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/default_profile"/>
+        android:src="@drawable/default_profile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_comment_username"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/tv_comment_time"
+        app:layout_constraintStart_toEndOf="@id/iv_comment_avatar"
+        app:layout_constraintTop_toTopOf="@id/iv_comment_avatar"
+        tools:text="username" />
+
+    <TextView
+        android:id="@+id/tv_comment_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_comment_avatar"
+        app:layout_constraintTop_toBottomOf="@id/tv_comment_username"
+        tools:text="This is a comment text that might be long and span multiple lines." />
+
+    <TextView
+        android:id="@+id/tv_comment_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#9E9E9E"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_comment_username"
+        tools:text="2d" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/comment_actions"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="10dp">
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toEndOf="@id/iv_comment_avatar"
+        app:layout_constraintTop_toBottomOf="@id/tv_comment_text">
 
         <TextView
-            android:id="@+id/tv_username"
+            android:id="@+id/tv_reply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="Username"
-            android:textColor="@color/black"/>
+            android:text="Reply"
+            android:textColor="#9E9E9E"
+            android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/tv_comment"
+            android:id="@+id/tv_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nội dung bình luận"
-            android:textColor="@color/black"/>
-
-        <TextView
-            android:id="@+id/tv_timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/darker_gray"
-            android:text="2 giờ trước" />
+            android:layout_marginStart="16dp"
+            android:text="Like"
+            android:textColor="#9E9E9E"
+            android:textSize="12sp" />
     </LinearLayout>
-</LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_comment_like"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="8dp"
+        android:src="@android:drawable/btn_star"
+        app:layout_constraintEnd_toStartOf="@id/tv_comment_likes"
+        app:layout_constraintTop_toBottomOf="@id/tv_comment_text"
+        app:tint="#9E9E9E" />
+
+    <TextView
+        android:id="@+id/tv_comment_likes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:text="0"
+        android:textColor="#9E9E9E"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_comment_like"
+        app:layout_constraintTop_toBottomOf="@id/tv_comment_text" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

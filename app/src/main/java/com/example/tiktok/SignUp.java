@@ -17,6 +17,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+
 public class SignUp extends AppCompatActivity {
 
     private EditText edtAccount, edtPassword;
@@ -66,7 +68,6 @@ public class SignUp extends AppCompatActivity {
         Map<String, Boolean> followers = new HashMap<>();
         Map<String, Boolean> following = new HashMap<>();
 
-
         if (account.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đủ thông tin!", Toast.LENGTH_SHORT).show();
             return;
@@ -95,7 +96,12 @@ public class SignUp extends AppCompatActivity {
                     Toast.makeText(SignUp.this, "Tài khoản đã tồn tại!", Toast.LENGTH_SHORT).show();
                 } else {
                     String userId = databaseReference.push().getKey();
-                    User user = new User(account, password, followerCount, followingCount, likeCount, avatar, name, idName, bio, followers, following);
+
+                    // Hash password trước khi lưu
+                    String hashedPassword = BCrypt.withDefaults().hashToString(12, password.toCharArray());
+
+                    User user = new User(account, hashedPassword, followerCount, followingCount, likeCount, avatar, name, idName, bio, followers, following);
+
                     databaseReference.child(userId).setValue(user)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(SignUp.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();

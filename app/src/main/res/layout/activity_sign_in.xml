@@ -6,14 +6,26 @@
     android:id="@+id/main"
     android:background="@android:color/white">
 
+    <Spinner
+        android:id="@+id/spinnerLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:minWidth="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:entries="@array/languages"
+        android:backgroundTint="@android:color/black" />
+
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Đăng nhập TikTok"
+        android:text="@string/signin_title"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="70dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -50,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Sử dụng tên người dùng"
+                android:text="@string/signin_with_username"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:gravity="center"
@@ -77,7 +89,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Tiếp tục với Facebook"
+                android:text="@string/continue_with_facebook"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:gravity="center"
@@ -104,7 +116,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Tiếp tục với Apple"
+                android:text="@string/continue_with_apple"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:gravity="center"
@@ -131,7 +143,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Tiếp tục với Google"
+                android:text="@string/continue_with_google"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:gravity="center"
@@ -149,17 +161,18 @@
         android:layout_marginBottom="20dp"
         android:layout_marginStart="90dp"
         android:textColor="@android:color/black"
-        android:text="Bạn không có tài khoản? " />
+        android:text="@string/no_account" />
 
     <TextView
         android:id="@+id/tvSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Đăng ký"
+        android:text="@string/sign_up"
         android:textSize="14sp"
         android:textColor="@android:color/holo_red_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/tvLogin"
+        android:layout_marginStart="10dp"
         android:layout_marginBottom="20dp"
         android:layout_marginEnd="20dp" />
 

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class LogIn extends AppCompatActivity {
     private Button btnLogin;
     private TextView tvSignUp;
     private DatabaseReference databaseReference;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +38,24 @@ public class LogIn extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
 
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 checkUserInFirebase();
+
             }
         });
 
@@ -47,7 +63,9 @@ public class LogIn extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LogIn.this, SignUp.class);
+                intent.putExtra("language", language);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -103,11 +121,10 @@ public class LogIn extends AppCompatActivity {
                             editor.putString("userID", userKey);
                             editor.apply();
 
-                            Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-
                             Intent intent = new Intent(this, HomeScreen.class);
                             intent.putExtra("USER_ID", userKey);
                             intent.putExtra("USER_ID_NAME", userIdName);
+                            intent.putExtra("language", language);
                             startActivity(intent);
                             finish();
                         } else {

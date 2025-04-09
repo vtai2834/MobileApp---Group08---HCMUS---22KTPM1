@@ -27,7 +27,7 @@
                 android:id="@+id/cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hủy"
+                android:text="@string/cancel"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"/>
@@ -53,7 +53,7 @@
                 android:id="@+id/save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lưu"
+                android:text="@string/btn_save"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/red"/>
@@ -105,7 +105,7 @@
                 android:background="@android:color/transparent"
                 android:inputType="text"
                 android:layout_gravity="center_horizontal"
-                android:hint="Nhập TikTok ID" />
+                android:hint="@string/tiktok_id_hint" />
 
 
             <View
@@ -158,7 +158,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="TikTok ID chỉ có thể bao gồm chữ cái, chữ số, dấu gạch dưới và dấu chấm. Khi thay đổi TikTok ID, liên kết hồ sơ của bạn cũng sẽ thay đổi."
+                android:text="@string/constrant_tiktok_id_1"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="@color/light_gray"/>
@@ -167,7 +167,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Bạn có thể thay đổi TikTok ID của mình một lần trong mỗi 30 ngày."
+                android:text="@string/constrant_tiktok_id_2"
                 android:textSize="15sp"
                 android:layout_marginTop="10dp"
                 android:textStyle="bold"

@@ -48,12 +48,7 @@
             android:exported="false" />
         <activity
             android:name=".SignUp"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:exported="false">
         </activity>
         <activity
             android:name=".EditProfile"
@@ -80,7 +75,13 @@
             android:exported="false" />
         <activity
             android:name=".SignIn"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".SendCode"
             android:exported="false" />

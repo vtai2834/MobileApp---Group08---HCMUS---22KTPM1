@@ -26,7 +26,7 @@
     <string name="username_hint">Nhập tên đăng nhập</string>
     <string name="confirm">Xác nhận</string>
 
-    <!--    Trang Search -->
+    <!--    Other -->
     <string name="viewed">Vừa xem</string>
     <string name="search_hint">Tìm kiếm</string>
     <string name="you_like">Bạn có thể thích</string>
@@ -49,7 +49,7 @@
     <!-- Trang Edit Profile -->
     <string name="your_introduction">Giới thiệu về bạn</string>
     <string name="edit_profile_">Sửa hồ sơ</string>
-    <string name="change_avt">Thay đổi ảnh</string>
+    <string name="change_avt">Thay đổi ảnh đại diện</string>
     <string name="add_name">Thêm tên</string>
     <string name="add_ID">Thêm ID</string>
     <string name="bio">Tiểu sử</string>
@@ -73,6 +73,7 @@
     <string name="name">Tên</string>
     <string name="enter_username">Nhập username</string>
     <string name="constrant_name">Biệt danh không được quá 30 kí tự. Bạn chỉ có thể thay đổi biệt danh 7 ngày một lần.</string>
+
 
     <string-array name="languages">
         <item>Tiếng Việt</item>

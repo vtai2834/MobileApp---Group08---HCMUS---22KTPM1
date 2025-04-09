@@ -18,6 +18,7 @@ public class ChangeBio extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private String originalBio;
     private String userKey;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,17 @@ public class ChangeBio extends AppCompatActivity {
 
         originalBio = getIntent().getStringExtra("currentBio");
         userKey = getIntent().getStringExtra("userKey");
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
 
         if (originalBio != null) {
             etBio.setText(originalBio);

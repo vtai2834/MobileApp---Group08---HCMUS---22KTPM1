@@ -1,6 +1,8 @@
 package com.example.tiktok;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
@@ -25,6 +28,7 @@ public class SignUp extends AppCompatActivity {
     private Button btnContinue;
     private DatabaseReference databaseReference;
     private TextView tvLoginLink;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,18 @@ public class SignUp extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
 
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
+
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +65,7 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SignUp.this, SignIn.class);
+                intent.putExtra("language", language);
                 startActivity(intent);
                 finish();
             }

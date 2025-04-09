@@ -34,7 +34,7 @@
                 android:id="@+id/tvUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="nô lệ US"
+                android:text="Username"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -150,7 +150,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Đã follow"
+                            android:text="@string/following_text"
                             android:textColor="@color/black"
                             android:textSize="13sp" />
                     </LinearLayout>
@@ -202,7 +202,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Thích"
+                            android:text="@string/like"
                             android:textColor="@color/black"
                             android:textSize="13sp" />
                     </LinearLayout>
@@ -224,7 +224,7 @@
                         android:layout_marginEnd="4dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_outline_background"
-                        android:text="Sửa hồ sơ"
+                        android:text="@string/edit_profile"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         tools:ignore="TouchTargetSizeCheck" />
@@ -237,7 +237,7 @@
                         android:layout_marginStart="4dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_outline_background"
-                        android:text="Chia sẻ hồ sơ"
+                        android:text="@string/share_profile"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         tools:ignore="TouchTargetSizeCheck" />
@@ -263,7 +263,7 @@
                     android:background="@drawable/button_outline_background"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="8dp"
-                    android:text="+ Thêm tiểu sử"
+                    android:text="@string/add_bio"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
@@ -333,7 +333,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Đơn hàng của bạn"
+                            android:text="@string/your_bill"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -413,7 +413,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Chưa có video nào"
+                    android:text="@string/title_no_video"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -423,7 +423,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Các video bạn đăng sẽ xuất hiện ở đây"
+                    android:text="@string/your_video"
                     android:textColor="#888888"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -456,7 +456,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Trang chủ"
+                android:text="@string/homescreen_icon"
                 android:textColor="#888888"
                 android:textSize="10sp" />
         </LinearLayout>
@@ -478,7 +478,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Khám phá"
+                android:text="@string/search_icon"
                 android:textColor="#888888"
                 android:textSize="10sp" />
         </LinearLayout>
@@ -513,7 +513,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hộp thư"
+                android:text="@string/noti_icon"
                 android:textColor="#888888"
                 android:textSize="10sp" />
         </LinearLayout>
@@ -536,7 +536,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hồ sơ"
+                android:text="@string/profile_icon"
                 android:textColor="@color/white"
                 android:textSize="10sp" />
         </LinearLayout>

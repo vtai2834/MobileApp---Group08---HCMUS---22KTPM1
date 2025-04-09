@@ -50,11 +50,12 @@ public class ProfileScreen extends AppCompatActivity {
     private LinearLayout home_button, discover_button, upload_button, inbox_button, profile_button;
     public List<String> videoIdsItems;
 
-    private String username; // Account username (e.g., "zoi5161")
-    private String userIdName; // Display username for UI
+    private String username;
+    private String userIdName;
     private DatabaseReference databaseReference;
     private DatabaseReference videosReference;
     private boolean isEditingBio = false;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,18 @@ public class ProfileScreen extends AppCompatActivity {
 
         initializeViews();
         setupClickListeners();
+
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
 
         // Get username from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -189,11 +202,13 @@ public class ProfileScreen extends AppCompatActivity {
         home_button.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileScreen.this, HomeScreen.class);
 //            intent.putExtra("USER_ID", username);
+            intent.putExtra("language", language);
             startActivity(intent);
         });
 
         edit_profile_btn.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileScreen.this, EditProfile.class);
+            intent.putExtra("language", language);
             startActivity(intent);
         });
 
@@ -201,6 +216,7 @@ public class ProfileScreen extends AppCompatActivity {
             Intent intent = new Intent(ProfileScreen.this, CameraScreen.class);
 //            intent.putExtra("USER_ID", username);
 //            intent.putExtra("USER_ID_NAME", userIdName != null ? userIdName : username);
+            intent.putExtra("language", language);
             startActivity(intent);
         });
 

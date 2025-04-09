@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Sửa hồ sơ"
+            android:text="@string/edit_profile_"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -87,7 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Thay đổi ảnh"
+                    android:text="@string/change_avt"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -104,7 +104,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp"
-                android:text="Giới thiệu về bạn"
+                android:text="@string/your_introduction"
                 android:textColor="#888888"
                 android:textSize="14sp" />
 
@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:text="Tên"
+                    android:text="@string/name"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -141,7 +141,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:hint="Thêm tên"
+                        android:hint="@string/add_name"
                         android:inputType="text"
                         android:maxLines="1"
                         android:textColor="#888888"
@@ -196,7 +196,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:hint="Thêm ID"
+                        android:hint="@string/add_ID"
                         android:inputType="text"
                         android:maxLines="1"
                         android:textColor="#888888"
@@ -277,7 +277,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="Tiểu sử"
+                android:text="@string/bio"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -294,7 +294,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:background="@null"
-                    android:hint="Thêm tiểu sử"
+                    android:hint="@string/add_bio_"
                     android:inputType="textMultiLine"
                     android:maxLines="1"
                     android:textColor="#888888"
@@ -326,7 +326,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp"
-                android:text="Liên kết"
+                android:text="@string/link"
                 android:textColor="#888888"
                 android:textSize="14sp" />
 
@@ -361,7 +361,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thêm"
+                        android:text="@string/add"
                         android:textColor="#888888"
                         android:textSize="16sp" />
 
@@ -411,7 +411,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thêm"
+                        android:text="@string/add"
                         android:textColor="#888888"
                         android:textSize="16sp" />
 
@@ -432,11 +432,11 @@
             <!-- Additional Settings Section -->
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="36dp"
+                android:layout_height="48dp"
                 android:paddingHorizontal="16dp"
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp"
-                android:text="Thay đổi thứ tự hiển thị"
+                android:text="@string/change_display_order"
                 android:textColor="#888888"
                 android:textSize="14sp" />
 

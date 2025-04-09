@@ -21,6 +21,7 @@ public class ChangeTikTokID extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private String originalIdName;
     private String userKey;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,17 @@ public class ChangeTikTokID extends AppCompatActivity {
 
         originalIdName = getIntent().getStringExtra("idName");
         userKey = getIntent().getStringExtra("userKey");
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
 
         if (originalIdName != null) {
             etUserId.setText(originalIdName);

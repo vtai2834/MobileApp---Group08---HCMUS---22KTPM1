@@ -21,6 +21,7 @@ public class ChangeUsername extends AppCompatActivity {
 
     private String currentUsername;
     private String userKey;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,19 @@ public class ChangeUsername extends AppCompatActivity {
         cancelButton = findViewById(R.id.cancel);
 
         Intent intent = getIntent();
+
+        language = intent.getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
+
         if (intent != null) {
             currentUsername = intent.getStringExtra("currentUsername");
             userKey = intent.getStringExtra("userKey");

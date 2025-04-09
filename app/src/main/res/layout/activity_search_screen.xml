@@ -36,7 +36,7 @@
             android:background="@drawable/search_edittext_background"
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="8dp"
-            android:hint="Tìm kiếm"
+            android:hint="@string/search_hint"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:maxLines="1"
@@ -149,7 +149,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Bạn có thể thích"
+                android:text="@string/you_like"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#000000" />
@@ -157,7 +157,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Làm mới"
+                android:text="@string/refresh"
                 android:textColor="#757575"
                 android:drawableStart="@drawable/ic_refresh"
                 android:drawablePadding="4dp" />

@@ -45,13 +45,15 @@ public class HomeScreen extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
-
+    private String language;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_screen);
+        language = getIntent().getStringExtra("language");
+
 
         // Lấy userId từ Intent
 //        userID = getIntent().getStringExtra("USER_ID");
@@ -149,6 +151,7 @@ public class HomeScreen extends AppCompatActivity {
                 Intent intent = new Intent(HomeScreen.this, SearchScreen.class);
                 intent.putExtra("VIDEOS_ARRAY_JSON", new ArrayList<>(videoIds));
 //                intent.putExtra("USER_ID", userID);
+                intent.putExtra("language", language);
                 startActivity(intent);
                 finish();
             }
@@ -163,6 +166,7 @@ public class HomeScreen extends AppCompatActivity {
                 Intent intent = new Intent(HomeScreen.this, CameraScreen.class);
 //                intent.putExtra("USER_ID", userID);
 //                intent.putExtra("USER_ID_NAME", userIdName);
+                intent.putExtra("language", language);
                 startActivity(intent);
 
                 HomeScreen.this.finish();
@@ -178,6 +182,7 @@ public class HomeScreen extends AppCompatActivity {
 
                 Intent intent = new Intent(HomeScreen.this, InboxScreen.class);
                 intent.putExtra("USER_ID", userID);
+                intent.putExtra("language", language);
                 startActivity(intent);
 
                 HomeScreen.this.finish();
@@ -193,6 +198,7 @@ public class HomeScreen extends AppCompatActivity {
                 // Không cần truyền USER_ID nữa, vì ProfileScreen đã lấy từ SharedPreferences
                 Intent intent = new Intent(HomeScreen.this, ProfileScreen.class);
                 intent.putExtra("VIDEOS_ARRAY_JSON", new ArrayList<>(videoIds));
+                intent.putExtra("language", language);
                 startActivity(intent);
 
                 HomeScreen.this.finish();

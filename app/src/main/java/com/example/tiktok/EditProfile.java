@@ -35,6 +35,7 @@ public class EditProfile extends AppCompatActivity {
     private String username;
     private String originalName, originalIdName, originalBio;
     private boolean hasChanges = false;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,18 @@ public class EditProfile extends AppCompatActivity {
 
         initializeViews();
         setupClickListeners();
+
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
 
         // Get username from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -126,6 +139,7 @@ public class EditProfile extends AppCompatActivity {
                                     Intent intent = new Intent(EditProfile.this, ChangeTikTokID.class);
                                     intent.putExtra("idName", idName);
                                     intent.putExtra("userKey", userKey);
+                                    intent.putExtra("language", language);
                                     startActivity(intent);
                                     return;
                                 }
@@ -156,6 +170,7 @@ public class EditProfile extends AppCompatActivity {
                                     Intent intent = new Intent(EditProfile.this, ChangeUsername.class);
                                     intent.putExtra("currentUsername", currentUsername);
                                     intent.putExtra("userKey", userKey);
+                                    intent.putExtra("language", language);
                                     startActivity(intent);
                                     return;
                                 }
@@ -186,6 +201,7 @@ public class EditProfile extends AppCompatActivity {
                                     Intent intent = new Intent(EditProfile.this, ChangeBio.class);
                                     intent.putExtra("currentBio", currentBio);  // Truyền bio vào ChangeBio
                                     intent.putExtra("userKey", userKey);  // Truyền userKey vào ChangeBio
+                                    intent.putExtra("language", language);
                                     startActivity(intent);
                                     return;
                                 }

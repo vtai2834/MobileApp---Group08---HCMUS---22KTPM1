@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">TikTok</string>
+    <string name="btn_save">Save</string>
+
+    <string name="signin_title">Sign in to TikTok</string>
+    <string name="signin_with_username">Continue with username</string>
+    <string name="continue_with_email">Continue with Email</string>
+    <string name="continue_with_facebook">Continue with Facebook</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="continue_with_apple">Continue with Apple</string>
+    <string name="continue_with_instagram">Continue with Instagram</string>
+    <string name="no_account">Don\'t have an account? </string>
+    <string name="sign_up">Sign up</string>
+
+    <!--    Trang Sign Up  -->
+    <string name="signup_title">Sign up to TikTok</string>
+    <string name="or">or</string>
+    <string name="account_hint">Enter username</string>
+    <string name="password_hint">Enter password</string>
+    <string name="btn_continue">Continue</string>
+    <string name="have_account">Already have an account? </string>
+    <string name="sign_in">Sign in</string>
+
+    <!--    Trang Log In  -->
+    <string name="username_hint">Enter username</string>
+    <string name="confirm">Confirm</string>
+
+    <!--    Other -->
+    <string name="viewed">Viewed</string>
+    <string name="search_hint">Search</string>
+    <string name="you_like">You may also like</string>
+    <string name="refresh">Refresh</string>
+
+    <!--    Trang Profile -->
+    <string name="following_text">Following</string>
+    <string name="like">Like</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="share_profile">Share Profile</string>
+    <string name="add_bio">+  Add Bio</string>
+    <string name="your_bill">Your Bill</string>
+    <string name="homescreen_icon">Home</string>
+    <string name="search_icon">Search</string>
+    <string name="noti_icon">Notification</string>
+    <string name="profile_icon">Profile</string>
+    <string name="title_no_video">No video</string>
+    <string name="your_video">Your video will appear here</string>
+
+    <!-- Trang Edit Profile -->
+    <string name="your_introduction">Your Introduction</string>
+    <string name="edit_profile_">Edit Profile</string>
+    <string name="change_avt">Change Avatar</string>
+    <string name="add_name">Add Name</string>
+    <string name="add_ID">Add ID</string>
+    <string name="bio">Bio</string>
+    <string name="add_bio_">Add Bio</string>
+    <string name="add">Add</string>
+    <string name="link">Link</string>
+    <string name="change_display_order">Change Display Order</string>
+
+    <!-- Trang Edit Bio -->
+    <string name="cancel">Cancel</string>
+    <string name="bio_hint">Add Bio</string>
+    <string name="bio_title">Bio</string>
+    <string name="constrant_bio">Bio cannot be more than 80 characters.</string>
+
+    <!-- Trang Edit TikTok ID -->
+    <string name="tiktok_id_hint">Add TikTok ID</string>
+    <string name="constrant_tiktok_id_1">TikTok ID can only contain letters, numbers, underscores and dots. When you change your TikTok ID, your profile link will also change.</string>
+    <string name="constrant_tiktok_id_2">You can only change your TikTok ID once every 30 days.</string>
+
+    <!-- Trang Edit Username -->
+    <string name="name">Name</string>
+    <string name="enter_username">Enter username</string>
+    <string name="constrant_name">Name cannot be more than 30 characters. You can only change your name once every 7 days.</string>
+
+    <string-array name="languages">
+        <item>Vietnamese</item>
+        <item>English</item>
+    </string-array>
+</resources>

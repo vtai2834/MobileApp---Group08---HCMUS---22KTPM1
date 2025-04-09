@@ -27,7 +27,7 @@
                 android:id="@+id/cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hủy"
+                android:text="@string/cancel"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"/>
@@ -43,7 +43,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tên"
+                    android:text="@string/name"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/black"/>
@@ -53,7 +53,7 @@
                 android:id="@+id/save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lưu"
+                android:text="@string/btn_save"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/red"/>
@@ -101,7 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Tên"
+                android:text="@string/name"
                 android:textSize="15sp"
                 android:layout_marginTop="10dp"
                 android:textStyle="bold"/>
@@ -114,7 +114,7 @@
                 android:background="@android:color/transparent"
                 android:inputType="text"
                 android:layout_gravity="center_horizontal"
-                android:hint="Nhập username" />
+                android:hint="@string/enter_username" />
 
 
             <View
@@ -140,7 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Biệt danh không được quá 30 kí tự. Bạn chỉ có thể thay đổi biệt danh 7 ngày một lần"
+                android:text="@string/constrant_name"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="@color/light_gray"/>

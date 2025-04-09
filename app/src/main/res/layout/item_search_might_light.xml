@@ -32,7 +32,7 @@
             android:id="@+id/subtitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Vừa xem"
+            android:text="@string/viewed"
             android:textSize="14sp"
             android:textColor="#757575" />
     </LinearLayout>

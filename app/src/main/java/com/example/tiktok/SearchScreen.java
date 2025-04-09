@@ -82,11 +82,24 @@ public class SearchScreen extends AppCompatActivity {
 
     private String userID;
     private boolean isSearchMode = false;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
+
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
 
 //        userID = getIntent().getStringExtra("USER_ID");
         User currentUser = UserManager.getInstance().getCurrentUser();
@@ -131,6 +144,7 @@ public class SearchScreen extends AppCompatActivity {
         btnBack.setOnClickListener(view -> {
             Intent intent = new Intent(SearchScreen.this, HomeScreen.class);
 //            intent.putExtra("USER_ID", userID);
+            intent.putExtra("language", language);
             startActivity(intent);
             finish();
         });
@@ -449,7 +463,7 @@ public class SearchScreen extends AppCompatActivity {
                         String title = videoTitles.get(i - 1); // do query là index 0
                         RecommendedItem item = new RecommendedItem(
                                 title,
-                                i % 3 == 0 ? "Gợi ý hàng đầu" : "",
+                                "",
                                 i < 3,
                                 "" // thumbnail hoặc dữ liệu bổ sung nếu có
                         );
@@ -961,6 +975,7 @@ public class SearchScreen extends AppCompatActivity {
                     Intent intent = new Intent(SearchScreen.this, HomeScreen.class);
                     intent.putExtra("SEARCH_VIDEO_POSITION", pos);
 //                    intent.putExtra("USER_ID", userID);
+                    intent.putExtra("language", language);
                     startActivity(intent);
                     finish();
                 } else {

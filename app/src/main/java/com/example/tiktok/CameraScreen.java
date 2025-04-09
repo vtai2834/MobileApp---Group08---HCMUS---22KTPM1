@@ -426,7 +426,7 @@ public class CameraScreen extends AppCompatActivity {
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (checkPermissions()) {
+            if (true) {
                 startCamera();
             } else {
                 Toast.makeText(this, "Cần cấp quyền để sử dụng camera", Toast.LENGTH_SHORT).show();

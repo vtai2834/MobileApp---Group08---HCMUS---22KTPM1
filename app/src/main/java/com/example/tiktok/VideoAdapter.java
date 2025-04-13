@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
@@ -43,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
 
@@ -125,7 +128,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         RelativeLayout comment = view.findViewById(R.id.comment);
         comment.setOnClickListener(v -> {
             FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
-            CommentBottomSheet commentBottomSheet = new CommentBottomSheet(videoIds.get(position_vid), userID);
+            CommentBottomSheet commentBottomSheet = new CommentBottomSheet(videoIds.get(position_vid), userID, videoItem);
             commentBottomSheet.show(fragmentManager, commentBottomSheet.getTag());
         });
 
@@ -307,6 +310,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 TextView music = holder.itemView.findViewById(R.id.music);
                 TextView content = holder.itemView.findViewById(R.id.content);
                 ImageView like_img = holder.itemView.findViewById(R.id.like_img);
+                CircleImageView avt = holder.itemView.findViewById(R.id.avt);
 
                 // Lấy thông tin người dùng từ Firebase bằng cách kiểm tra nếu username là user ID
                 String videoUsername = videoItem.getUsername();  // Tên người dùng từ videoItem
@@ -338,8 +342,47 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         }
                     });
                 } else {
-                    // Nếu không phải user ID Firebase, chỉ hiển thị username
-                    usernameView.setText(videoItem.getUsername());
+                    // Nếu không phải user ID Firebase, tìm user có idName = videoUsername
+                    userRef.orderByChild("idName").equalTo(videoUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                // Lặp qua kết quả (thường chỉ có 1 kết quả)
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    String user_avt = snapshot.child("avatar").getValue(String.class);
+
+                                    // Load profile image
+                                    if (user_avt != null && !user_avt.isEmpty()) {
+                                        Glide.with(content)
+                                                .load(user_avt)
+                                                .placeholder(R.drawable.default_profile)
+                                                .error(R.drawable.default_profile)
+                                                .into(avt);
+                                    } else {
+                                        avt.setImageResource(R.drawable.default_profile);
+                                    }
+
+                                    // Đã tìm thấy user, thoát khỏi vòng lặp
+                                    break;
+                                }
+
+                                // Hiển thị username
+                                usernameView.setText(videoUsername);
+                            } else {
+                                // Không tìm thấy user với idName = videoUsername
+                                Log.d("Firebase", "No user found with idName: " + videoUsername);
+                                usernameView.setText(videoUsername);
+                                avt.setImageResource(R.drawable.default_profile);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d("Firebase", "Error fetching user data: " + error.getMessage());
+                            usernameView.setText(videoUsername);
+                            avt.setImageResource(R.drawable.default_profile);
+                        }
+                    });
                 }
 
                 like_cnt.setText(videoItem.getLikes());
@@ -517,6 +560,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                                                                                         // Cập nhật lại icon và thông báo
                                                                                         plusImageView.setImageResource(R.drawable.minus_icon); // Đổi icon thành minus
                                                                                         Toast.makeText(context, "Follow thành công", Toast.LENGTH_SHORT).show();
+
+                                                                                        // Add this code to create follow notification
+                                                                                        notificationManager.createFollowNotification(
+                                                                                                currentUserKey,
+                                                                                                videoOwnerUserKey
+                                                                                        );
                                                                                     }
                                                                                 });
                                                                             }

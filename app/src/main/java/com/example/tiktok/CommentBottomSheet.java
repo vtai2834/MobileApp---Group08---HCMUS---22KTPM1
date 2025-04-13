@@ -1,5 +1,6 @@
 package com.example.tiktok;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,8 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.example.tiktok.R;
-
 public class CommentBottomSheet extends BottomSheetDialogFragment {
 
     private RecyclerView recyclerViewComments;
@@ -37,10 +36,12 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
     private String videoID;
     private String userID;
     private NotificationManager notificationManager;
+    private Video videoItem;
 
-    public CommentBottomSheet(String videoId, String userID) {
+    public CommentBottomSheet(String videoId, String userID, Video videoItem) {
         this.videoID = videoId;
         this.userID = userID;
+        this.videoItem = videoItem;
     }
 
     @Nullable
@@ -59,30 +60,76 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
         // Initialize notification manager
         notificationManager = NotificationManager.getInstance();
 
-        // Initialize list
+        // Đầu tiên, khởi tạo commentList và adapter
         commentList = new ArrayList<>();
+        commentAdapter = new CommentAdapter(commentList);
+        recyclerViewComments.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerViewComments.setAdapter(commentAdapter);
 
         DatabaseReference cmtRef = FirebaseDatabase.getInstance().getReference("comments").child(videoID);
         DatabaseReference videoRef = FirebaseDatabase.getInstance().getReference("videos").child(videoID);
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
 
         cmtRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 commentList.clear(); // Clear old data
+                final int[] pendingRequests = {0}; // Đếm số lượng request đang chờ
+
+                if (!dataSnapshot.exists() || dataSnapshot.getChildrenCount() == 0) {
+                    // Không có comment nào
+                    textCommentCount.setText("0 Comments");
+                    return;
+                }
 
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) { // Iterate through users
                     for (DataSnapshot snapshot : userSnapshot.getChildren()) { // Iterate through comments
                         Comment comment = snapshot.getValue(Comment.class);
                         if (comment != null) {
-                            commentList.add(comment);
-                            Log.d("Firebase", "Comment: " + comment.getCommentText() + " | Total: " + commentList.size());
+                            String userId = comment.getUserId();
+                            Log.d("CMTBOTTOMSHEET", "check userId: " + userId);
+
+                            pendingRequests[0]++; // Tăng số lượng request
+
+                            userRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        String userIdName = snapshot.child("idName").getValue(String.class);
+                                        if (userIdName != null && !userIdName.isEmpty()) {
+                                            comment.setUserId(userIdName);
+                                        }
+
+                                        commentList.add(comment);
+                                        Log.d("Firebase", "Comment added: " + comment.getCommentText() + " | Total: " + commentList.size());
+                                    }
+
+                                    pendingRequests[0]--; // Giảm số lượng request
+
+                                    // Nếu đây là request cuối cùng, cập nhật UI
+                                    if (pendingRequests[0] == 0) {
+                                        commentAdapter.notifyDataSetChanged();
+                                        textCommentCount.setText(String.format("%d Comments", commentList.size()));
+                                        Log.d("Firebase", "All comments loaded. Total: " + commentList.size());
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.e("Firebase", "Error updating comment count: " + error.getMessage());
+                                    pendingRequests[0]--; // Giảm số lượng request ngay cả khi có lỗi
+
+                                    // Nếu đây là request cuối cùng, cập nhật UI
+                                    if (pendingRequests[0] == 0) {
+                                        commentAdapter.notifyDataSetChanged();
+                                        textCommentCount.setText(String.format("%d Comments", commentList.size()));
+                                    }
+                                }
+                            });
                         }
                     }
                 }
-
-                // Notify adapter
-                commentAdapter.notifyDataSetChanged();
-                textCommentCount.setText(String.format("%d Comments", commentList.size()));
             }
 
             @Override
@@ -90,11 +137,6 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
                 Log.e("Firebase", "Error: " + databaseError.getMessage());
             }
         });
-
-        // Set up RecyclerView
-        commentAdapter = new CommentAdapter(commentList);
-        recyclerViewComments.setLayoutManager(new LinearLayoutManager(requireContext())); // Fix context issue
-        recyclerViewComments.setAdapter(commentAdapter);
 
         // Handle close button click
         btn_close.setOnClickListener(v -> dismiss());
@@ -141,8 +183,10 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
                                             Log.e("Firebase", "Error parsing comment count: " + e.getMessage());
                                         }
 
+                                        commentCount += 1;
                                         // Increment comment count
-                                        videoRef.child("comments").setValue(String.valueOf(commentCount + 1));
+                                        videoRef.child("comments").setValue(String.valueOf(commentCount));
+                                        videoItem.setComments(String.valueOf(commentCount));
                                     }
                                 }
 

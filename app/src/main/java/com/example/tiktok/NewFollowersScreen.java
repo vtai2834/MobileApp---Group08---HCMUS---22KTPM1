@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -64,8 +65,6 @@ public class NewFollowersScreen extends AppCompatActivity {
 
         // Initialize followers list
         followers = new ArrayList<>();
-
-        // Set up RecyclerView
         followerAdapter = new FollowerAdapter(followers, userId -> {
             // Handle follow back action
             followUser(userId);
@@ -83,9 +82,44 @@ public class NewFollowersScreen extends AppCompatActivity {
     }
 
     private void loadFollowers() {
-        // In a real app, this would query the followers from Firebase
-        // For demo purposes, we'll create sample followers
-        createSampleFollowers();
+        // Get follow notifications from Firebase
+        DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications");
+        notificationsRef.child(currentUserId).orderByChild("type").equalTo("follow")
+        .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                followers.clear();
+
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Notification notification = snapshot.getValue(Notification.class);
+                        if (notification != null) {
+                            // Convert notification to follower
+                            Follower follower = new Follower(
+                                    notification.getUserId(),
+                                    notification.getUsername(),
+                                    "",
+                                    notification.getUserAvatar(),
+                                    NotificationManager.getInstance().formatDate(notification.getTimestamp()),
+                                    false
+                            );
+                            followers.add(follower);
+                        }
+                    }
+
+                    followerAdapter.notifyDataSetChanged();
+                } else {
+                    // If no notifications, create sample data
+                    createSampleFollowers();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error
+                createSampleFollowers();
+            }
+        });
     }
 
     private void createSampleFollowers() {
@@ -183,23 +217,62 @@ public class NewFollowersScreen extends AppCompatActivity {
     }
 
     private void followUser(String userId) {
-        // In a real app, this would update the follow status in Firebase
-        // For demo purposes, we'll just update the local list
-        for (Follower follower : followers) {
-            if (follower.getUserId().equals(userId)) {
-                follower.setFollowing(true);
-                followerAdapter.notifyDataSetChanged();
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
 
-                // Create a follow notification
-                NotificationManager.getInstance().createFollowNotification(
-                        currentUserId,
-                        userId
-                );
+        // Get current user info
+        usersRef.child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot currentUserSnapshot) {
+                if (currentUserSnapshot.exists()) {
+                    String currentUserIdName = currentUserSnapshot.child("idName").getValue(String.class);
 
-                Toast.makeText(this, "Đã follow " + follower.getUsername(), Toast.LENGTH_SHORT).show();
-                break;
+                    // Get target user info
+                    usersRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot targetUserSnapshot) {
+                            if (targetUserSnapshot.exists()) {
+                                String targetUserIdName = targetUserSnapshot.child("idName").getValue(String.class);
+
+                                // Add current user to target user's followers
+                                usersRef.child(userId).child("follower").child(currentUserIdName).setValue(true);
+                                usersRef.child(userId).child("followerCount").setValue(ServerValue.increment(1));
+
+                                // Add target user to current user's following
+                                usersRef.child(currentUserId).child("following").child(targetUserIdName).setValue(true);
+                                usersRef.child(currentUserId).child("followingCount").setValue(ServerValue.increment(1));
+
+                                // Update UI
+                                for (Follower follower : followers) {
+                                    if (follower.getUserId().equals(userId)) {
+                                        follower.setFollowing(true);
+                                        followerAdapter.notifyDataSetChanged();
+                                        break;
+                                    }
+                                }
+
+                                // Create follow notification
+                                NotificationManager.getInstance().createFollowNotification(
+                                        currentUserId,
+                                        userId
+                                );
+
+                                Toast.makeText(NewFollowersScreen.this, "Đã follow lại", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Toast.makeText(NewFollowersScreen.this, "Lỗi khi follow", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
-        }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(NewFollowersScreen.this, "Lỗi khi lấy thông tin người dùng", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // Follower model class

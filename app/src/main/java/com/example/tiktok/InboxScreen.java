@@ -68,8 +68,12 @@ public class InboxScreen extends AppCompatActivity {
         });
 
         // Get current user ID
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        currentUserId = sharedPreferences.getString("username", null);
+//        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+//        currentUserId = sharedPreferences.getString("username", null);
+        User currentUser = UserManager.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            currentUserId = currentUser.getUserID();
+        }
 
         if (currentUserId == null) {
             // If user is not logged in, redirect to login screen
@@ -192,14 +196,37 @@ public class InboxScreen extends AppCompatActivity {
     }
 
     private void loadNotificationCounts() {
-        // Load new followers count
-        DatabaseReference followersRef = FirebaseDatabase.getInstance().getReference("followers");
-        followersRef.child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+        // Load new followers count from Users node
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+        userRef.child(currentUserId).child("follower").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // In a real app, this would count actual new followers
-                    newFollowersText.setText("Long Dương đã bắt đầu follow bạn.");
+                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                    // Get the most recent follower
+                    for (DataSnapshot followerSnapshot : dataSnapshot.getChildren()) {
+                        String followerIdName = followerSnapshot.getKey();
+
+                        // Find user with this idName to get their username
+                        userRef.orderByChild("idName").equalTo(followerIdName).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot userSnapshot) {
+                                if (userSnapshot.exists()) {
+                                    for (DataSnapshot user : userSnapshot.getChildren()) {
+                                        String username = user.child("idName").getValue(String.class);
+                                        newFollowersText.setText(username + " đã bắt đầu follow bạn.");
+                                        break; // Just get the first one
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                newFollowersText.setText("Chưa có người follow mới.");
+                            }
+                        });
+
+                        break; // Just get the first one
+                    }
                 } else {
                     newFollowersText.setText("Chưa có người follow mới.");
                 }
@@ -207,7 +234,7 @@ public class InboxScreen extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
+                newFollowersText.setText("Chưa có người follow mới.");
             }
         });
 

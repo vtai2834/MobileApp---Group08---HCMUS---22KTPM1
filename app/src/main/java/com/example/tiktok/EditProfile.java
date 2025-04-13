@@ -2,7 +2,10 @@ package com.example.tiktok;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -14,14 +17,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.text.SimpleDateFormat;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
+import android.os.Environment;
+import java.util.Date;
+import java.util.Locale;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 public class EditProfile extends AppCompatActivity {
 
     private ImageView back_to_profilescreen;
@@ -32,10 +49,16 @@ public class EditProfile extends AppCompatActivity {
     private RelativeLayout tiktokStudioContainer, ordersContainer;
 
     private DatabaseReference databaseReference;
+    private String userKey;
+
     private String username;
     private String originalName, originalIdName, originalBio;
     private boolean hasChanges = false;
     private String language;
+    private static final int REQUEST_CAMERA = 100;
+    private static final int REQUEST_GALLERY = 200;
+    private Uri imageUri;
+    private File photoFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +126,17 @@ public class EditProfile extends AppCompatActivity {
         });
 
         profilePhotoContainer.setOnClickListener(v -> {
-            Toast.makeText(this, "Chức năng thay đổi ảnh chưa được hỗ trợ", Toast.LENGTH_SHORT).show();
+            String[] options = {"Chụp ảnh", "Chọn từ thư viện"};
+            new android.app.AlertDialog.Builder(EditProfile.this)
+                    .setTitle("Chọn ảnh đại diện")
+                    .setItems(options, (dialog, which) -> {
+                        if (which == 0) {
+                            openCamera();
+                        } else {
+                            openGallery();
+                        }
+                    })
+                    .show();
         });
 
         instagramContainer.setOnClickListener(v -> {
@@ -259,6 +292,7 @@ public class EditProfile extends AppCompatActivity {
                 for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     if (storedUsername != null && storedUsername.equals(username)) {
+                        userKey = userSnapshot.getKey();
                         String avt = userSnapshot.child("avatar").getValue(String.class);
                         String name = userSnapshot.child("name").getValue(String.class);
                         String idName = userSnapshot.child("idName").getValue(String.class);
@@ -367,4 +401,105 @@ public class EditProfile extends AppCompatActivity {
         getUserDataFromFirebase();
     }
 
+    private void openCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = createImageFile();
+            if (photoFile != null) {
+                imageUri = FileProvider.getUriForFile(this,
+                        "com.example.myapp.fileprovider",
+                        photoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                cameraIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivityForResult(cameraIntent, REQUEST_CAMERA);
+            }
+        } else {
+            Toast.makeText(this, "Không tìm thấy ứng dụng camera", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_GALLERY);
+    }
+
+    private File createImageFile() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return new File(storageDir, imageFileName + ".jpg");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CAMERA || requestCode == REQUEST_GALLERY) {
+                if (requestCode == REQUEST_GALLERY && data != null) {
+                    imageUri = data.getData();
+                } else if (requestCode == REQUEST_CAMERA && data != null) {
+//                    Bundle extras = data.getExtras();
+//                    Bitmap photo = (Bitmap) extras.get("data");
+//                    imageUri = getImageUriFromBitmap(photo);
+                }
+
+                if (imageUri != null) {
+                    profileImage.setImageURI(imageUri);
+
+                    new Thread(() -> {
+                        try {
+                            File file = getFileFromUri(imageUri);
+                            String avatarUrl = SpbaseSv.uploadAvatar(file);
+
+                            if (avatarUrl != null) {
+                                runOnUiThread(() -> {
+                                    // Cập nhật avatar lên Firebase Realtime Database
+                                    databaseReference.child(userKey).child("avatar").setValue(avatarUrl);
+
+                                    // Load ảnh mới vào ImageView bằng Glide
+                                    Glide.with(EditProfile.this)
+                                            .load(avatarUrl)
+                                            .into(profileImage);
+                                });
+                            } else {
+                                runOnUiThread(() -> Toast.makeText(EditProfile.this, "Lỗi upload avatar!", Toast.LENGTH_SHORT).show());
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            runOnUiThread(() -> Toast.makeText(EditProfile.this, "Lỗi upload file!", Toast.LENGTH_SHORT).show());
+                        }
+                    }).start();
+                }
+            }
+        }
+    }
+
+    private Uri getImageUriFromBitmap(Bitmap bitmap) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
+        return Uri.parse(path);
+    }
+
+    private File getFileFromUri(Uri uri) throws IOException {
+        InputStream inputStream = getContentResolver().openInputStream(uri);
+        if (inputStream == null) {
+            throw new IOException("Không mở được InputStream từ URI!");
+        }
+
+        File tempFile = File.createTempFile("temp_avatar", ".jpg", getCacheDir());
+        FileOutputStream outputStream = new FileOutputStream(tempFile);
+
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) > 0) {
+            outputStream.write(buffer, 0, length);
+        }
+
+        outputStream.close();
+        inputStream.close();
+
+        return tempFile;
+    }
 }

@@ -33,6 +33,7 @@ public class VideoPreviewActivity extends AppCompatActivity {
     private String userID;
     private String userIdName;
     private long videoDuration = 0;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,17 @@ public class VideoPreviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_preview);
 
         initializeViews();
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
 
         // Get user info from intent
 //        userID = getIntent().getStringExtra("USER_ID");
@@ -127,6 +139,7 @@ public class VideoPreviewActivity extends AppCompatActivity {
 //            intent.putExtra("USER_ID_NAME", userIdName);
             intent.putExtra("video_uri", videoUri);
             intent.putExtra("video_duration", videoDuration);
+            intent.putExtra("language", language);
             startActivity(intent);
         });
     }

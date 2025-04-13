@@ -31,7 +31,7 @@
                 android:id="@+id/tv_comment_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="54 Comments"
+                android:text="@string/comments"
                 android:layout_gravity="center"
                 android:textStyle="bold"
                 android:textSize="18sp"
@@ -70,7 +70,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Add a comment..."
+                android:hint="@string/comment_hint"
                 android:padding="12dp"
                 android:background="@drawable/rounded_input_background"
                 android:textColor="@color/black"/>

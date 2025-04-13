@@ -47,6 +47,7 @@ public class PostCreationActivity extends AppCompatActivity {
     private String userID;
     private String userIdName;
     private long videoDuration = 0;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,17 @@ public class PostCreationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post_video);
 
         initializeViews();
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
 
         // Get data from intent
 //        userID = getIntent().getStringExtra("USER_ID");

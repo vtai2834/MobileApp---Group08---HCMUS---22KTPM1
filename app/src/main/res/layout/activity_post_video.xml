@@ -50,7 +50,7 @@
                 android:id="@+id/captionInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Thêm mô tả..."
+                android:hint="@string/add_description"
                 android:background="@null"
                 android:textSize="16sp"
                 android:minHeight="100dp"
@@ -73,7 +73,7 @@
                     android:id="@+id/previewButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Xem trước"
+                    android:text="@string/preview"
                     android:textColor="@android:color/white"
                     android:background="#80000000"
                     android:padding="4dp"
@@ -83,7 +83,7 @@
                     android:id="@+id/editCoverButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sửa ảnh bìa"
+                    android:text="@string/edit_cover"
                     android:textColor="@android:color/white"
                     android:background="#80000000"
                     android:padding="4dp"
@@ -110,7 +110,7 @@
                     android:id="@+id/mentionButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="\u0040 Nhắc đến"
+                    android:text="@string/tag"
                     android:textColor="@android:color/black"
                     android:backgroundTint="#F0F0F0" />
             </LinearLayout>
@@ -142,7 +142,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Vị trí"
+                    android:text="@string/location"
                     android:textSize="16sp"
                     android:layout_marginStart="16dp" />
 
@@ -168,22 +168,22 @@
                     <com.google.android.material.chip.Chip
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bếp nhà Jack" />
+                        android:text="@string/Jack_kitchen" />
 
                     <com.google.android.material.chip.Chip
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Góc Chill" />
+                        android:text="@string/chill_area" />
 
                     <com.google.android.material.chip.Chip
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Lầu bím bõ" />
+                        android:text="@string/braided_floor" />
 
                     <com.google.android.material.chip.Chip
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Rap Xiếc Trung Quốc" />
+                        android:text="@string/china_circus" />
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
 
@@ -214,7 +214,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Thêm liên kết"
+                    android:text="@string/add_link"
                     android:textSize="16sp"
                     android:layout_marginStart="16dp" />
 
@@ -252,7 +252,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Ai cũng có thể xem bài đăng này"
+                    android:text="@string/who_seen"
                     android:textSize="16sp"
                     android:layout_marginStart="16dp" />
 
@@ -290,7 +290,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Tùy chọn khác"
+                    android:text="@string/other_option"
                     android:textSize="16sp"
                     android:layout_marginStart="16dp" />
 
@@ -304,7 +304,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Quản lý chất lượng tải lên"
+                android:text="@string/quality_management"
                 android:textColor="#808080"
                 android:textSize="14sp"
                 android:layout_marginStart="52dp" />
@@ -335,7 +335,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Chia sẻ với"
+                    android:text="@string/share_with"
                     android:textSize="16sp"
                     android:layout_marginStart="16dp" />
             </LinearLayout>
@@ -390,7 +390,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="Nháp"
+            android:text="@string/draft"
             android:textColor="@android:color/black"
             android:backgroundTint="#F0F0F0"
             app:icon="@drawable/ic_draft"
@@ -403,7 +403,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:text="Đăng"
+            android:text="@string/post"
             android:textColor="@android:color/white"
             android:backgroundTint="#FF0050"
             app:icon="@drawable/ic_post"

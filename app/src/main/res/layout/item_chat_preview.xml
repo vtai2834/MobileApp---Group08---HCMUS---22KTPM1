@@ -43,7 +43,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         android:layout_marginTop="4dp"
-        android:text="Last message"
+        android:text="@string/last_message"
         android:textColor="#888888"
         android:textSize="14sp"
         android:maxLines="1"

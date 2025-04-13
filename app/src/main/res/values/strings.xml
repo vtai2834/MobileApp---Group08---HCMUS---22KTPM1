@@ -74,6 +74,58 @@
     <string name="enter_username">Nhập username</string>
     <string name="constrant_name">Biệt danh không được quá 30 kí tự. Bạn chỉ có thể thay đổi biệt danh 7 ngày một lần.</string>
 
+    <!-- Trang Notification  -->
+    <string name="new_follower">Những Follower mới</string>
+    <string name="activity">Hoạt động</string>
+    <string name="refollow">Follow lại</string>
+    <string name="you_know">Những người bạn có thể biết</string>
+    <string name="time_follow">đã bắt đầu follow bạn. 3/17</string>
+    <string name="time_ago">1 giờ</string>
+    <string name="last_message">Tin nhắn cuối cùng</string>
+    <string name="your_think">Bạn có suy nghĩ?</string>
+    <string name="a_follower">Long Dương đã bắt đầu follow bạn.</string>
+    <string name="a_comment">Binhtinhluilai đã bình luận: Anh gì ơi</string>
+    <string name="a_noti_shop">7 tin cập nhật của cửa hàng và... • 1 ngày</string>
+    <string name="noti_system">Thông báo hệ thống</string>
+    <string name="a_noti_system">LIVE: LIVE Studio hiện đã khả d... • 1 ngày</string>
+    <string name="message">Tin nhắn</string>
+
+    <!-- Trang Share -->
+    <string name="share">Chia sẻ tới</string>
+    <string name="report">Báo cáo</string>
+
+    <!-- Trang Comment  -->
+    <string name="comments">54 Bình luận</string>
+    <string name="comment_hint">Nhập bình luận...</string>
+    <string name="reply">Trả lời</string>
+
+    <!-- Trang Post Video -->
+    <string name="add_description">Thêm mô tả...</string>
+    <string name="preview">Xem trước</string>
+    <string name="edit_cover">Sửa ảnh bìa</string>
+    <string name="tag">\@ Nhắc đến</string>
+    <string name="location">Vị trí</string>
+    <string name="add_link">Thêm liên kết</string>
+    <string name="who_seen">Ai cũng có thể xem bài đăng này</string>
+    <string name="other_option">Tùy chọn khác</string>
+    <string name="quality_management">Quyền riêng tư và nhiều mục cài đặt khác đã được chuyển đến đây</string>
+    <string name="share_with">Chia sẻ với</string>
+    <string name="draft">Nháp</string>
+    <string name="post">Đăng</string>
+    <string name="Jack_kitchen">Bếp nhà Jack</string>
+    <string name="chill_area">Góc Chill</string>
+    <string name="braided_floor">Lầu bếp bõ</string>
+    <string name="china_circus">Rạp xiếc Trung Quốc</string>
+
+    <!-- Others -->
+    <string name="add_song">Thêm âm thanh</string>
+    <string name="ten_minutes">10 phút</string>
+    <string name="image">Ảnh</string>
+    <string name="text">VĂN BẢN</string>
+    <string name="poster">BÀI ĐĂNG</string>
+    <string name="example">MẪU</string>
+    <string name="choose">CHỌN</string>
+
     <string-array name="languages">
         <item>Tiếng Việt</item>
         <item>Tiếng Anh</item>

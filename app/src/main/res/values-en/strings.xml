@@ -73,6 +73,59 @@
     <string name="enter_username">Enter username</string>
     <string name="constrant_name">Name cannot be more than 30 characters. You can only change your name once every 7 days.</string>
 
+    <!-- Trang Notification  -->
+    <string name="new_follower">New Followers</string>
+    <string name="activity">Activity</string>
+    <string name="refollow">Refollow</string>
+    <string name="you_know">You may know</string>
+    <string name="time_follow">has started following you. 3/17</string>
+    <string name="time_ago">1 hour</string>
+    <string name="last_message">Last message</string>
+    <string name="your_think">Your think?</string>
+    <string name="a_follower">Long Duong has started following you.</string>
+    <string name="a_comment">Binhtinhluilai has commented: Anh gi ơi</string>
+    <string name="a_noti_shop">7 updates from the shop and... • 1 day</string>
+    <string name="noti_system">System Notification</string>
+    <string name="a_noti_system">LIVE: LIVE Studio has now become available... • 1 day</string>
+    <string name="message">Message</string>
+
+    <!-- Trang Share -->
+    <string name="share">Share to</string>
+    <string name="report">Report</string>
+
+    <!-- Trang Comment  -->
+    <string name="comments">54 Comments</string>
+    <string name="comment_hint">Add a comment...</string>
+    <string name="reply">Reply</string>
+
+    <!-- Trang Post Video -->
+    <string name="add_description">Add description...</string>
+    <string name="preview">Preview</string>
+    <string name="edit_cover">Edit Cover</string>
+    <string name="tag">\@ Tag</string>
+    <string name="location">Location</string>
+    <string name="add_link">Add Link</string>
+    <string name="who_seen">Who can see this video</string>
+    <string name="other_option">Other Option</string>
+    <string name="quality_management">Quality Management and other settings have been moved to here</string>
+    <string name="share_with">Share with</string>
+    <string name="draft">Draft</string>
+    <string name="post">Post</string>
+    <string name="Jack_kitchen">Jack Kitchen</string>
+    <string name="chill_area">Chill Area</string>
+    <string name="braided_floor">Braided Floor</string>
+    <string name="china_circus">China Circus</string>
+
+    <!-- Others -->
+    <string name="add_song">Add Song</string>
+    <string name="ten_minutes">10 minutes</string>
+    <string name="image">Image</string>
+    <string name="text">TEXT</string>
+    <string name="poster">POSTER</string>
+    <string name="example">EXAMPLE</string>
+    <string name="choose">CHOOSE</string>
+
+
     <string-array name="languages">
         <item>Vietnamese</item>
         <item>English</item>

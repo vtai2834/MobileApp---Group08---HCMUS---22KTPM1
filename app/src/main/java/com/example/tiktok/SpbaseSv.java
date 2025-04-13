@@ -75,4 +75,29 @@ public class SpbaseSv {
             }
         }
     }
+
+    public static String uploadAvatar(File avatarFile) throws IOException {
+        Log.d("Supabase", "Uploading avatar: " + avatarFile.getAbsolutePath());
+
+        String uniqueFileName = UUID.randomUUID().toString() + ".jpg";
+        RequestBody requestBody = RequestBody.create(avatarFile, MediaType.parse("image/jpeg"));
+
+        Request request = new Request.Builder()
+                .url(SUPABASE_URL + "/storage/v1/object/" + SUPABASE_BUCKET + "/" + uniqueFileName)
+                .addHeader("Authorization", "Bearer " + SUPABASE_API_KEY)
+                .addHeader("Content-Type", "multipart/form-data")
+                .post(requestBody)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                Log.d("Supabase", "Avatar uploaded successfully!");
+                return SUPABASE_URL + "/storage/v1/object/public/" + SUPABASE_BUCKET + "/" + uniqueFileName;
+            } else {
+                Log.e("Supabase", "Avatar upload failed: " + response.message());
+                return null;
+            }
+        }
+    }
+
 }

@@ -40,11 +40,24 @@ public class InboxScreen extends AppCompatActivity {
     private TextView newFollowersText, activityText, shopText, systemText;
     private View newFollowersRow, activityRow, shopRow, systemRow;
     private View shopBadge, systemBadge;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbox_screen);
+
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
 
         // Initialize Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -220,7 +233,11 @@ public class InboxScreen extends AppCompatActivity {
                                 if (userSnapshot.exists()) {
                                     for (DataSnapshot user : userSnapshot.getChildren()) {
                                         String username = user.child("idName").getValue(String.class);
-                                        newFollowersText.setText(username + " đã bắt đầu follow bạn.");
+                                        if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                            newFollowersText.setText(username + " has started following you.");
+                                        } else {
+                                            newFollowersText.setText(username + " đã bắt đầu follow bạn.");
+                                        }
                                         break; // Just get the first one
                                     }
                                 }
@@ -228,20 +245,33 @@ public class InboxScreen extends AppCompatActivity {
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
-                                newFollowersText.setText("Chưa có người follow mới.");
+                                if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                    newFollowersText.setText("No new followers yet.");
+                                } else {
+                                    newFollowersText.setText("Chưa có người follow mới.");
+                                }
                             }
                         });
 
                         break; // Just get the first one
                     }
                 } else {
-                    newFollowersText.setText("Chưa có người follow mới.");
+                    if (language.equals("English") || language.equals("Tiếng Anh")) {
+                        newFollowersText.setText("No new followers yet.");
+                    } else {
+                        newFollowersText.setText("Chưa có người follow mới.");
+                    }
+
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                newFollowersText.setText("Chưa có người follow mới.");
+                if (language.equals("English") || language.equals("Tiếng Anh")) {
+                    newFollowersText.setText("No new followers yet.");
+                } else {
+                    newFollowersText.setText("Chưa có người follow mới.");
+                }
             }
         });
 
@@ -254,11 +284,23 @@ public class InboxScreen extends AppCompatActivity {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 Notification notification = snapshot.getValue(Notification.class);
                                 if (notification != null) {
-                                    activityText.setText(notification.getUsername() + " đã bình luận về video của bạn ");
+                                    String username = notification.getUsername();  // Lấy tên người dùng từ notification
+
+                                    if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                        // Nếu ngôn ngữ là tiếng Anh
+                                        activityText.setText(username + " commented on your video");
+                                    } else {
+                                        // Nếu ngôn ngữ không phải en, có thể để vi hoặc mặc định
+                                        activityText.setText(username + " đã bình luận về video của bạn");
+                                    }
                                 }
                             }
                         } else {
-                            activityText.setText("Binhtinhluilai đã bình luận: Anh tài ơi");
+                            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                activityText.setText("Binhtinhluilai commented: Hey, genius!");
+                            } else {
+                                activityText.setText("Binhtinhluilai đã bình luận: Anh tài ơi");
+                            }
                         }
                     }
 
@@ -269,47 +311,92 @@ public class InboxScreen extends AppCompatActivity {
                 });
 
         // Set sample shop notification
-        shopText.setText("7 tin cập nhật của cửa hàng và... • 1 ngày");
+        if (language.equals("English") || language.equals("Tiếng Anh")) {
+            shopText.setText("7 shop updates and... • 1 day");
+        } else {
+            shopText.setText("7 tin cập nhật của cửa hàng và... • 1 ngày");
+        }
+
         shopBadge.setVisibility(View.VISIBLE);
 
         // Set sample system notification
-        systemText.setText("LIVE: LIVE Studio hiện đã khả d... • 1 ngày");
+        if (language.equals("English") || language.equals("Tiếng Anh")) {
+            systemText.setText("LIVE: LIVE Studio is now available... • 1 day");
+        } else {
+            systemText.setText("LIVE: LIVE Studio hiện đã khả d... • 1 ngày");
+        }
         systemBadge.setVisibility(View.VISIBLE);
     }
 
     private void addSampleChatPreviews() {
         // These would come from Firebase in a real app
-        chatPreviews.add(new ChatPreview(
-                "Bánh Mỳ bột kem ...Dau 🍓",
-                "Hãy chào Bánh Mỳ bột kem ...Dau 🍓",
-                "https://via.placeholder.com/150",
-                false,
-                System.currentTimeMillis()
-        ));
+        if (language.equals("English") || language.equals("Tiếng Anh")) {
+            chatPreviews.add(new ChatPreview(
+                    "Bánh Mỳ bột kem ...Dau 🍓",
+                    "Say hello to Bánh Mỳ bột kem ...Dau 🍓",
+                    "https://via.placeholder.com/150",
+                    false,
+                    System.currentTimeMillis()
+            ));
 
-        chatPreviews.add(new ChatPreview(
-                "Na",
-                "Hãy chào Na",
-                "https://via.placeholder.com/150",
-                false,
-                System.currentTimeMillis()
-        ));
+            chatPreviews.add(new ChatPreview(
+                    "Na",
+                    "Say hello to Na",
+                    "https://via.placeholder.com/150",
+                    false,
+                    System.currentTimeMillis()
+            ));
 
-        chatPreviews.add(new ChatPreview(
-                "i'm tired :')",
-                "Đã xem",
-                "https://via.placeholder.com/150",
-                true,
-                System.currentTimeMillis()
-        ));
+            chatPreviews.add(new ChatPreview(
+                    "i'm tired :')",
+                    "Seen",
+                    "https://via.placeholder.com/150",
+                    true,
+                    System.currentTimeMillis()
+            ));
 
-        chatPreviews.add(new ChatPreview(
-                "86tranquangkhai",
-                "Tài khoản bạn đang liên hệ... • 11/10/2024",
-                "https://via.placeholder.com/150",
-                true,
-                System.currentTimeMillis()
-        ));
+            chatPreviews.add(new ChatPreview(
+                    "86tranquangkhai",
+                    "The account you're contacting... • 11/10/2024",
+                    "https://via.placeholder.com/150",
+                    true,
+                    System.currentTimeMillis()
+            ));
+        } else {
+            // Các ngôn ngữ khác (vi hoặc các ngôn ngữ khác)
+            chatPreviews.add(new ChatPreview(
+                    "Bánh Mỳ bột kem ...Dau 🍓",
+                    "Hãy chào Bánh Mỳ bột kem ...Dau 🍓",
+                    "https://via.placeholder.com/150",
+                    false,
+                    System.currentTimeMillis()
+            ));
+
+            chatPreviews.add(new ChatPreview(
+                    "Na",
+                    "Hãy chào Na",
+                    "https://via.placeholder.com/150",
+                    false,
+                    System.currentTimeMillis()
+            ));
+
+            chatPreviews.add(new ChatPreview(
+                    "i'm tired :')",
+                    "Đã xem",
+                    "https://via.placeholder.com/150",
+                    true,
+                    System.currentTimeMillis()
+            ));
+
+            chatPreviews.add(new ChatPreview(
+                    "86tranquangkhai",
+                    "Tài khoản bạn đang liên hệ... • 11/10/2024",
+                    "https://via.placeholder.com/150",
+                    true,
+                    System.currentTimeMillis()
+            ));
+        }
+
 
         chatPreviewAdapter.notifyDataSetChanged();
     }

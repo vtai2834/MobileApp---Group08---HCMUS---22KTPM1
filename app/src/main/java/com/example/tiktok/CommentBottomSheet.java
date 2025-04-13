@@ -50,6 +50,7 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
         // Inflate layout
         View view = inflater.inflate(R.layout.activity_comment_bottom_sheet, container, false);
 
+
         // Initialize views
         recyclerViewComments = view.findViewById(R.id.rv_comments);
         editTextComment = view.findViewById(R.id.et_comment_input);

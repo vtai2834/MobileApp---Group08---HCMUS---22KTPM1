@@ -80,11 +80,24 @@ public class CameraScreen extends AppCompatActivity {
 
     // Timer for recording progress
     private CountDownTimer recordingTimer;
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_screen);
+
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
 
 //        userID = getIntent().getStringExtra("USER_ID");
 //        userIdName = getIntent().getStringExtra("USER_ID_NAME");
@@ -152,12 +165,14 @@ public class CameraScreen extends AppCompatActivity {
         closeButton.setOnClickListener(v -> {
             Intent intent = new Intent(CameraScreen.this, HomeScreen.class);
 //            intent.putExtra("USER_ID", userID);
+            intent.putExtra("language", language);
             startActivity(intent);
             finish();
         });
 
         uploadGallery.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+
             intent.setType("video/*");
             startActivityForResult(intent, PICK_VIDEO_REQUEST);
         });
@@ -418,6 +433,7 @@ public class CameraScreen extends AppCompatActivity {
         intent.putExtra("USER_ID", userID);
         intent.putExtra("USER_ID_NAME", userIdName);
         intent.putExtra("video_uri", videoUri);
+        intent.putExtra("language", language);
         startActivity(intent);
     }
 

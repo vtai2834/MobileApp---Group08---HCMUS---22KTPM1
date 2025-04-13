@@ -27,7 +27,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Hộp thư"
+            android:text="@string/noti_icon"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
@@ -62,7 +62,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bạn có suy nghĩ?"
+            android:text="@string/your_think"
             android:textColor="#888888"
             android:textSize="14sp" />
     </LinearLayout>
@@ -155,7 +155,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Những Follower mới"
+                        android:text="@string/new_follower"
                         android:textColor="@android:color/black"
                         android:textSize="16sp" />
 
@@ -163,7 +163,7 @@
                         android:id="@+id/newFollowersText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Long Dương đã bắt đầu follow bạn."
+                        android:text="@string/a_follower"
                         android:textColor="#888888"
                         android:textSize="14sp"
                         android:maxLines="1"
@@ -215,7 +215,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hoạt động"
+                        android:text="@string/activity"
                         android:textColor="@android:color/black"
                         android:textSize="16sp" />
 
@@ -223,7 +223,7 @@
                         android:id="@+id/activityText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Binhtinhluilai đã bình luận: Anh gì ơi"
+                        android:text="@string/a_comment"
                         android:textColor="#888888"
                         android:textSize="14sp"
                         android:maxLines="1"
@@ -283,7 +283,7 @@
                         android:id="@+id/shopText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="7 tin cập nhật của cửa hàng và... • 1 ngày"
+                        android:text="@string/a_noti_shop"
                         android:textColor="#888888"
                         android:textSize="14sp"
                         android:maxLines="1"
@@ -339,7 +339,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thông báo hệ thống"
+                        android:text="@string/noti_system"
                         android:textColor="@android:color/black"
                         android:textSize="16sp" />
 
@@ -347,7 +347,7 @@
                         android:id="@+id/systemText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="LIVE: LIVE Studio hiện đã khả d... • 1 ngày"
+                        android:text="@string/a_noti_system"
                         android:textColor="#888888"
                         android:textSize="14sp"
                         android:maxLines="1"
@@ -371,7 +371,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tin nhắn"
+                android:text="@string/message"
                 android:textColor="#888888"
                 android:textSize="14sp"
                 android:paddingStart="16dp"

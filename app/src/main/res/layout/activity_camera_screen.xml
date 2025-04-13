@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_marginLeft="80dp"
-            android:text="Thêm âm thanh"
+            android:text="@string/add_song"
             android:textColor="@android:color/white"
             app:backgroundTint="#80000000"
             app:cornerRadius="20dp"
@@ -128,7 +128,7 @@
             android:id="@+id/duration10min"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10 phút"
+            android:text="@string/ten_minutes"
             android:textColor="@android:color/white"
             android:padding="8dp"
             android:layout_marginEnd="16dp" />
@@ -155,7 +155,7 @@
             android:id="@+id/photoOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ẢNH"
+            android:text="@string/image"
             android:textColor="@android:color/white"
             android:padding="8dp"
             android:layout_marginStart="16dp" />
@@ -164,7 +164,7 @@
             android:id="@+id/textOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="VĂN BẢN"
+            android:text="@string/text"
             android:textColor="@android:color/white"
             android:padding="8dp"
             android:layout_marginStart="16dp" />
@@ -240,7 +240,7 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BÀI ĐĂNG" />
+            android:text="@string/poster" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -250,7 +250,7 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="MẪU" />
+            android:text="@string/example" />
     </com.google.android.material.tabs.TabLayout>
 
     <!-- Recording Progress Indicator -->

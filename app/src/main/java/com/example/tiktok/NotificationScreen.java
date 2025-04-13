@@ -43,11 +43,24 @@ public class NotificationScreen extends AppCompatActivity {
     private String currentUserId;
     private DatabaseReference notificationsRef;
     private String currentTab = "all"; // "all", "priority", "other"
+    private String language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification_screen);
+
+        language = getIntent().getStringExtra("language");
+
+        if (language != null) {
+            if (language.equals("English") || language.equals("Tiếng Anh")) {
+                LocaleHelper.setLocale(this, "en");
+            } else {
+                LocaleHelper.setLocale(this, "vi");
+            }
+        } else {
+            LocaleHelper.setLocale(this, "vi");
+        }
 
         // Initialize views
         notificationRecyclerView = findViewById(R.id.notificationRecyclerView);

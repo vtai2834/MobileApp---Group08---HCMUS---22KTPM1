@@ -55,7 +55,7 @@
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_comment_username"
-        tools:text="2d" />
+        tools:text="@string/time_ago" />
 
     <LinearLayout
         android:id="@+id/comment_actions"
@@ -71,7 +71,7 @@
             android:id="@+id/tv_reply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Reply"
+            android:text="@string/reply"
             android:textColor="#9E9E9E"
             android:textSize="12sp" />
 
@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Like"
+            android:text="@string/like"
             android:textColor="#9E9E9E"
             android:textSize="12sp" />
     </LinearLayout>

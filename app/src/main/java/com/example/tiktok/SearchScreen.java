@@ -457,6 +457,8 @@ public class SearchScreen extends AppCompatActivity {
                 for (int i = 1; i < tfidfVectors.size(); i++) {
                     double[] titleVector = toVectorArray(tfidfVectors.get(i), dictionary);
                     double similarity = cosineSimilarity(queryVector, titleVector);
+                    double bonus = bigramBonus(searchQuery, videoTitles.get(i - 1));
+                    similarity += bonus;
                     Log.d("search", "title: " + videoTitles.get(i - 1) + ", similarity: " + similarity);
 
                     if (similarity >= 0) {
@@ -464,7 +466,7 @@ public class SearchScreen extends AppCompatActivity {
                         RecommendedItem item = new RecommendedItem(
                                 title,
                                 "",
-                                i < 3,
+                                similarity > 0.04,
                                 "" // thumbnail hoặc dữ liệu bổ sung nếu có
                         );
                         scoredItems.add(new Pair<>(similarity, item));
@@ -532,7 +534,25 @@ public class SearchScreen extends AppCompatActivity {
 //        recommendedItems.add(new RecommendedItem("cao thủ liên quân official", "", false, ""));
 //        recommendedItems.add(new RecommendedItem("1s vs sgp mới nhất", "", false, ""));
 //    }
+public static double bigramBonus(String query, String title) {
+    query = query.toLowerCase();
+    title = title.toLowerCase();
 
+    int matchCount = 0;
+    int total = 0;
+
+    for (int i = 0; i < query.length() - 1; i++) {
+        String bigram = query.substring(i, i + 2);
+        total++;
+        if (title.contains(bigram)) {
+            matchCount++;
+        }
+    }
+
+    if (total == 0) return 0.0;
+
+    return (double) matchCount / total * 0.1; // max bonus = 0.1
+}
     private static List<String> tokenize(String text) {
         List<String> tokens = new ArrayList<>();
         text = text.toLowerCase().replaceAll("[^\\p{L}\\p{Nd}]+", " "); // chỉ giữ lại chữ và số
@@ -659,7 +679,7 @@ public class SearchScreen extends AppCompatActivity {
                 for (int i = 0; i < limit; i++) {
                     String title = allVideos.get(i).getTitle();
                     String thumbnailUrl = allVideos.get(i).getThumbnailUrl();
-                    recommendedItems.add(new RecommendedItem(title, "", (i%3==0), thumbnailUrl));
+                    recommendedItems.add(new RecommendedItem(title, "", false, thumbnailUrl));
                 }
 
             }

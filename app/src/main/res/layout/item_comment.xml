@@ -85,28 +85,35 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/iv_comment_like"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginTop="8dp"
-        android:src="@android:drawable/btn_star"
-        app:layout_constraintEnd_toStartOf="@id/tv_comment_likes"
-        app:layout_constraintTop_toBottomOf="@id/tv_comment_text"
-        app:tint="#9E9E9E" />
-
-    <TextView
-        android:id="@+id/tv_comment_likes"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
-        android:text="0"
-        android:textColor="#9E9E9E"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_comment_like"
-        app:layout_constraintTop_toBottomOf="@id/tv_comment_text" />
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/iv_comment_avatar"
+        tools:ignore="MissingConstraints">
+        <ImageView
+            android:id="@+id/iv_comment_like"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="8dp"
+            android:src="@android:drawable/btn_star"
+            app:layout_constraintEnd_toStartOf="@id/tv_comment_likes"
+            app:layout_constraintTop_toBottomOf="@id/tv_comment_text"
+            app:tint="#9E9E9E" />
+
+        <TextView
+            android:id="@+id/tv_comment_likes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:text="0"
+            android:textColor="#9E9E9E"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_comment_like"
+            app:layout_constraintTop_toBottomOf="@id/tv_comment_text" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

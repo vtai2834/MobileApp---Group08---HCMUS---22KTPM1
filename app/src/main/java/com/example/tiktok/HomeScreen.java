@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.activity.EdgeToEdge;
@@ -28,10 +29,10 @@ import java.util.Objects;
 
 public class HomeScreen extends AppCompatActivity {
 
-    RelativeLayout search_button;
-    RelativeLayout plus_button;
-    RelativeLayout noti_button;
-    RelativeLayout profile_button;
+    LinearLayout search_button;
+    LinearLayout plus_button;
+    LinearLayout noti_button;
+    LinearLayout profile_button;
 
 
     private ViewPager2 viewPager;
@@ -139,7 +140,7 @@ public class HomeScreen extends AppCompatActivity {
         // Thiết lập ViewPager2 cuộn dọc
         viewPager.setOrientation(ViewPager2.ORIENTATION_VERTICAL); // Chuyển thành cuộn dọc
 
-        search_button = findViewById(R.id.search_page);
+        search_button = findViewById(R.id.discover_button);
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,7 +158,7 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
-        plus_button = findViewById(R.id.upload_page);
+        plus_button = findViewById(R.id.upload_button);
         plus_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,7 +174,7 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
-        noti_button = findViewById(R.id.notifi_page);
+        noti_button = findViewById(R.id.inbox_button);
         noti_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -189,7 +190,7 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
-        profile_button = findViewById(R.id.info_page);
+        profile_button = findViewById(R.id.profile_button);
         profile_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

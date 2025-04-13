@@ -47,7 +47,8 @@ public class ProfileScreen extends AppCompatActivity {
     private LinearLayout emptyStateContainer;
     private Button edit_profile_btn;
     private LinearLayout tiktokStudioBtn, ordersBtn;
-    private LinearLayout home_button, discover_button, upload_button, inbox_button, profile_button;
+    private LinearLayout home_button;
+    private LinearLayout discover_button, upload_button, inbox_button;
     public List<String> videoIdsItems;
 
     private String username;
@@ -128,7 +129,6 @@ public class ProfileScreen extends AppCompatActivity {
         discover_button = findViewById(R.id.discover_button);
         upload_button = findViewById(R.id.upload_button);
         inbox_button = findViewById(R.id.inbox_button);
-        profile_button = findViewById(R.id.profile_button);
 
         // RecyclerView and empty state
         recyclerView = findViewById(R.id.recyclerViewProfile);
@@ -206,6 +206,14 @@ public class ProfileScreen extends AppCompatActivity {
             startActivity(intent);
         });
 
+        discover_button.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileScreen.this, SearchScreen.class);
+            intent.putExtra("language", language);
+            startActivity(intent);
+        });
+
+
+
         edit_profile_btn.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileScreen.this, EditProfile.class);
             intent.putExtra("language", language);
@@ -214,8 +222,12 @@ public class ProfileScreen extends AppCompatActivity {
 
         upload_button.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileScreen.this, CameraScreen.class);
-//            intent.putExtra("USER_ID", username);
-//            intent.putExtra("USER_ID_NAME", userIdName != null ? userIdName : username);
+            intent.putExtra("language", language);
+            startActivity(intent);
+        });
+
+        inbox_button.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileScreen.this, InboxScreen.class);
             intent.putExtra("language", language);
             startActivity(intent);
         });

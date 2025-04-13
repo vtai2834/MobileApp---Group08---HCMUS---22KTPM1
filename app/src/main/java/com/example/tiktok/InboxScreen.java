@@ -193,6 +193,13 @@ public class InboxScreen extends AppCompatActivity {
             Intent intent = new Intent(InboxScreen.this, CameraScreen.class);
             startActivity(intent);
         });
+
+        findViewById(R.id.discover_button).setOnClickListener(v -> {
+            // Navigate to discover screen
+            Intent intent = new Intent(InboxScreen.this, SearchScreen.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private void loadNotificationCounts() {

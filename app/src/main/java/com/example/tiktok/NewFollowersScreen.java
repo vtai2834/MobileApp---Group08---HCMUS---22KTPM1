@@ -54,8 +54,10 @@ public class NewFollowersScreen extends AppCompatActivity {
         usersRef = database.getReference("Users");
 
         // Get current user ID
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        currentUserId = sharedPreferences.getString("username", null);
+        User currentUser = UserManager.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            currentUserId = currentUser.getUserID();
+        }
 
         if (currentUserId == null) {
             Toast.makeText(this, "Lỗi: Không tìm thấy tài khoản!", Toast.LENGTH_SHORT).show();
@@ -65,6 +67,10 @@ public class NewFollowersScreen extends AppCompatActivity {
 
         // Initialize followers list
         followers = new ArrayList<>();
+
+        // Load followers
+        loadFollowers();
+
         followerAdapter = new FollowerAdapter(followers, userId -> {
             // Handle follow back action
             followUser(userId);
@@ -76,51 +82,52 @@ public class NewFollowersScreen extends AppCompatActivity {
         backButton.setOnClickListener(v -> {
             onBackPressed();
         });
-
-        // Load followers
-        loadFollowers();
     }
 
     private void loadFollowers() {
         // Get follow notifications from Firebase
         DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications");
         notificationsRef.child(currentUserId).orderByChild("type").equalTo("follow")
-        .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                followers.clear();
+            .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    followers.clear();
 
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Notification notification = snapshot.getValue(Notification.class);
-                        if (notification != null) {
-                            // Convert notification to follower
-                            Follower follower = new Follower(
-                                    notification.getUserId(),
-                                    notification.getUsername(),
-                                    "",
-                                    notification.getUserAvatar(),
-                                    NotificationManager.getInstance().formatDate(notification.getTimestamp()),
-                                    false
-                            );
-                            followers.add(follower);
+                    if (dataSnapshot.exists()) {
+                        Log.d("NEWFOLLOWSCREEN", "Check before add" + followers.size());
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Notification notification = snapshot.getValue(Notification.class);
+                            if (notification != null) {
+                                // Convert notification to follower
+                                Follower follower = new Follower(
+                                        notification.getUserId(),
+                                        notification.getUsername(),
+                                        "",
+                                        notification.getUserAvatar(),
+                                        NotificationManager.getInstance().formatDate(notification.getTimestamp()),
+                                        false
+                                );
+
+                                followers.add(follower);
+                            }
                         }
-                    }
+                        Log.d("NEWFOLLOWSCREEN", "Check after add" + followers.size());
 
-                    followerAdapter.notifyDataSetChanged();
-                } else {
-                    // If no notifications, create sample data
+                        followerAdapter.notifyDataSetChanged();
+                    } else {
+                        // If no notifications, create sample data
+                        createSampleFollowers();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle error
                     createSampleFollowers();
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
-                createSampleFollowers();
-            }
-        });
+            });
     }
+
 
     private void createSampleFollowers() {
         followers.add(new Follower(

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
@@ -92,7 +93,7 @@ public class FollowerAdapter extends RecyclerView.Adapter<FollowerAdapter.Follow
         TextView usernameText;
         TextView subtitleText;
         TextView followDateText;
-        Button followButton;
+        MaterialButton followButton;
 
         public FollowerViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -101,6 +102,7 @@ public class FollowerAdapter extends RecyclerView.Adapter<FollowerAdapter.Follow
             subtitleText = itemView.findViewById(R.id.subtitleText);
             followDateText = itemView.findViewById(R.id.followDateText);
             followButton = itemView.findViewById(R.id.followButton);
+            followButton.setBackgroundColor(0xFFFF0000);
         }
     }
 }

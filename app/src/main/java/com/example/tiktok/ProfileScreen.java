@@ -47,10 +47,11 @@ public class ProfileScreen extends AppCompatActivity {
     private LinearLayout emptyStateContainer;
     private Button edit_profile_btn;
     private LinearLayout tiktokStudioBtn, ordersBtn;
-    private LinearLayout home_button;
+    private LinearLayout home_button, followersSection, followingSection;
     private LinearLayout discover_button, upload_button, inbox_button;
     public List<String> videoIdsItems;
 
+    private String userKey;
     private String username;
     private String userIdName;
     private DatabaseReference databaseReference;
@@ -112,6 +113,8 @@ public class ProfileScreen extends AppCompatActivity {
         like = findViewById(R.id.like);
         etBio = findViewById(R.id.etBio);
         addBioBtn = findViewById(R.id.addBioBtn);
+        followersSection = findViewById(R.id.followersSection);
+        followingSection = findViewById(R.id.followingSection);
 
         // Tabs
         tabVideos = findViewById(R.id.tabVideos);
@@ -212,7 +215,27 @@ public class ProfileScreen extends AppCompatActivity {
             startActivity(intent);
         });
 
+        followersSection.setOnClickListener(v -> {
+            if (userKey != null) {
+                Intent intent = new Intent(ProfileScreen.this, NewFollowersScreen.class);
+//                intent.putExtra("userKey", userKey); // Truyền userKey sang ListFollower
+                intent.putExtra("language", language); // Nếu bạn cần dùng ngôn ngữ
+                startActivity(intent);
+            } else {
+                Toast.makeText(ProfileScreen.this, "Không thể lấy userKey!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
+        followingSection.setOnClickListener(v -> {
+            if (userKey != null) {
+                Intent intent = new Intent(ProfileScreen.this, NewFollowingScreen.class);
+//                intent.putExtra("userKey", userKey); // Truyền userKey sang ListFollower
+                intent.putExtra("language", language); // Nếu bạn cần dùng ngôn ngữ
+                startActivity(intent);
+            } else {
+                Toast.makeText(ProfileScreen.this, "Không thể lấy userKey!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         edit_profile_btn.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileScreen.this, EditProfile.class);
@@ -273,6 +296,7 @@ public class ProfileScreen extends AppCompatActivity {
                     String storedUsername = userSnapshot.child("account").getValue(String.class);
                     if (storedUsername != null && storedUsername.equals(username)) {
                         userFound = true;
+                        userKey = userSnapshot.getKey();
                         String avt = userSnapshot.child("avatar").getValue(String.class);
                         String name = userSnapshot.child("name").getValue(String.class);
                         String idName = userSnapshot.child("idName").getValue(String.class);

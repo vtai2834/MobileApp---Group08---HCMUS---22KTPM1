@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> <!-- Quyền truy cập bộ nhớ ngoài (Android 10 trở lên) -->
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -27,6 +26,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TikTok"
         tools:targetApi="31">
+        <activity
+            android:name=".NewFollowingScreen"
+            android:exported="false" />
+        <activity
+            android:name=".ListFollower"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -37,7 +42,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
 
         <activity
             android:name=".NewFollowersScreen"
@@ -61,8 +65,7 @@
             android:exported="false" />
         <activity
             android:name=".SignUp"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".EditProfile"
             android:exported="false" />

@@ -44,7 +44,6 @@
         android:textColor="#888888"
         android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@id/avatarImageView"
-        app:layout_constraintEnd_toStartOf="@id/followButton"
         app:layout_constraintTop_toBottomOf="@id/usernameText" />
 
     <!-- Follow Date -->
@@ -59,25 +58,7 @@
         android:textColor="#888888"
         android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@id/avatarImageView"
-        app:layout_constraintEnd_toStartOf="@id/followButton"
         app:layout_constraintTop_toBottomOf="@id/subtitleText" />
-
-    <!-- Follow Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/followButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:backgroundTint="@color/red"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp"
-        android:text="@string/refollow"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="TextContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

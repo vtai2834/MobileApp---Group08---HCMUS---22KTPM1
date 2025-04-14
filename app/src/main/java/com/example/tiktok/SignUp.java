@@ -90,6 +90,11 @@ public class SignUp extends AppCompatActivity {
             return;
         }
 
+        if (!account.matches("^[a-zA-Z0-9_]+$")) {
+            Toast.makeText(this, "Tài khoản không được chứa khoảng trắng hoặc ký tự đặc biệt!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$")) {
             Toast.makeText(this, "Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ và số!", Toast.LENGTH_SHORT).show();
             return;

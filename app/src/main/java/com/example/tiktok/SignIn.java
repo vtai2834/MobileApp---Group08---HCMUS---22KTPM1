@@ -31,6 +31,13 @@ public class SignIn extends AppCompatActivity {
         int savedPosition = preferences.getInt("lang_position", 0);
         spinnerLanguage.setSelection(savedPosition);
 
+        spinnerLanguage.post(() -> {
+            String selected = spinnerLanguage.getSelectedItem().toString();
+            if (selected.equals("Tiếng Anh")) {
+                setLocale("en");
+            }
+        });
+
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             private boolean isFirstSelect = true;
 

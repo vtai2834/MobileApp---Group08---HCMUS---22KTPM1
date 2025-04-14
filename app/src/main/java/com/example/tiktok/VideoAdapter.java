@@ -402,14 +402,19 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                                 String currentUserIdName = snapshot.child("idName").getValue(String.class);
                                 if (currentUserIdName != null && !currentUserIdName.isEmpty()) {
                                     String videoUsername = videoItem.getUsername();
+//                                    Toast.makeText(context,
+//                                            "currentUserIdName: " + currentUserIdName + "\nvideoUsername: " + videoUsername,
+//                                            Toast.LENGTH_SHORT).show();
 
                                     if (videoUsername.startsWith("-OL")) {
+
                                         // Nếu là user ID, lấy idName của người đăng video
                                         userRef.child(videoUsername).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot ownerSnapshot) {
                                                 if (ownerSnapshot.exists()) {
                                                     String videoOwnerIdName = ownerSnapshot.child("idName").getValue(String.class);
+
                                                     if (videoOwnerIdName != null) {
                                                         // Kiểm tra xem người dùng hiện tại có phải là người đăng video không
                                                         if (currentUserIdName.equals(videoOwnerIdName)) {
@@ -621,8 +626,13 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
                         usersRef.child(videoOwnerUserKey).child("follower").child(currentUserIdName)
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
+
+
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot followerSnapshot) {
+                                        if (plusImageView.getVisibility() != View.VISIBLE) {
+                                            plusImageView.setVisibility(View.VISIBLE); // Đảm bảo plusImageView hiển thị
+                                        }
                                         if (followerSnapshot.exists()) {
                                             plusImageView.setImageResource(R.drawable.minus_icon); // Đã follow -> icon minus
                                         } else {
@@ -631,7 +641,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                                     }
 
                                     @Override
-                                    public void onCancelled(@NonNull DatabaseError error) { }
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                    }
                                 });
                     }
                 }

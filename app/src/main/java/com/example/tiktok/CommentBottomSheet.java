@@ -38,6 +38,7 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
     private NotificationManager notificationManager;
     private Video videoItem;
 
+    private User current_user;
     public CommentBottomSheet(String videoId, String userID, Video videoItem) {
         this.videoID = videoId;
         this.userID = userID;
@@ -70,6 +71,32 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
         DatabaseReference cmtRef = FirebaseDatabase.getInstance().getReference("comments").child(videoID);
         DatabaseReference videoRef = FirebaseDatabase.getInstance().getReference("videos").child(videoID);
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+
+        DatabaseReference cur_userRef = userRef.child(userID);
+        cur_userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                    current_user = snapshot.getValue(User.class);
+                else
+                    Log.d("CMTBOTTOMSHEET", "User not found");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                current_user = new User(
+                        "null",
+                        "null",
+                        0,
+                        0,
+                        0,
+                        "null",
+                        "null",
+                        "null",
+                        "null"
+                );
+            }
+        });
 
         cmtRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -155,7 +182,7 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
                 // Create comment object
                 Comment newComment = new Comment(
                         userID,
-                        "https://via.placeholder.com/150", // Default avatar
+                        current_user.getAvatar(), // Default avatar
                         commentText,
                         timestamp
                 );
@@ -223,7 +250,12 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
                             });
 
                             // Add comment to local list and update UI
-                            commentList.add(newComment);
+                            commentList.add(new Comment(
+                                    current_user.getIdName(),
+                                    current_user.getAvatar(),
+                                    commentText,
+                                    timestamp
+                            ));
                             commentAdapter.notifyDataSetChanged();
                             textCommentCount.setText(String.format("%d Comments", commentList.size()));
 

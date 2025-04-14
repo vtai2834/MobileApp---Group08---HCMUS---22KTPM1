@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -83,7 +84,7 @@ public class SearchScreen extends AppCompatActivity {
     private String userID;
     private boolean isSearchMode = false;
     private String language;
-
+    private String lastSearchQuery = "._.";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -398,6 +399,9 @@ public class SearchScreen extends AppCompatActivity {
 //    }
 //}
     private void loadRecommendedItems(String searchQuery) {
+        if(searchQuery.equals(lastSearchQuery))
+            return;
+        lastSearchQuery = searchQuery;
         recommendedItems.clear();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference videosRef = database.getReference("videos");
@@ -585,28 +589,34 @@ public static double bigramBonus(String query, String title) {
         Map<String, Double> tfidf = new HashMap<>();
         List<String> words = tokenize(text);
 
+        // Tính TF
         Map<String, Integer> tf = new HashMap<>();
         for (String word : words) {
             tf.put(word, tf.getOrDefault(word, 0) + 1);
         }
 
+        // Tiền xử lý DF: mỗi từ xuất hiện trong bao nhiêu document
+        Map<String, Integer> dfMap = new HashMap<>();
+        for (String doc : corpus) {
+            Set<String> uniqueWords = new HashSet<>(tokenize(doc));
+            for (String word : uniqueWords) {
+                dfMap.put(word, dfMap.getOrDefault(word, 0) + 1);
+            }
+        }
+
+        int N = corpus.size();
+
+        // Tính TF-IDF
         for (String word : tf.keySet()) {
             double tfVal = tf.get(word);
-
-            double df = 0;
-            for (String doc : corpus) {
-                List<String> docWords = tokenize(doc);
-                if (docWords.contains(word)) {
-                    df++;
-                }
-            }
-
-            double idf = Math.log((double) corpus.size() / (df + 1)); // tránh chia 0
+            double df = dfMap.getOrDefault(word, 0);
+            double idf = Math.log((double) N / (df + 1)); // tránh chia 0
             tfidf.put(word, tfVal * idf);
         }
 
         return tfidf;
     }
+
 
 //    private Map<String, Double> computeTFIDFVector(String text, List<String> corpus) {
 //        Map<String, Double> tfidf = new HashMap<>();
@@ -729,6 +739,25 @@ public static double bigramBonus(String query, String title) {
         }
     }
 
+    private boolean checkInRecommendList(String title) {
+        if (recommendedItems == null || title == null) return false;
+
+        Log.d("search_2", "checkInRecommendList function called with title: " + title + " List size: " + recommendedItems.size());
+
+        for (RecommendedItem item : recommendedItems) {
+            String itemTitle = item.getTitle().toLowerCase();
+            boolean isMatch = itemTitle != null && itemTitle.equals(title);
+
+            Log.d("search_2", "item.getTitle(): " + itemTitle + " is in recommend list: " + isMatch);
+
+            if (isMatch)
+                return true;
+        }
+
+        return false;
+    }
+
+
     private void performSearch(String query) {
         Log.d(TAG, "Performing search with query: " + query);
 
@@ -758,7 +787,7 @@ public static double bigramBonus(String query, String title) {
                     // Check if query appears in any field
                     if (title.contains(queryLower) ||
                             username.contains(queryLower) ||
-                            music.contains(queryLower)) {
+                            music.contains(queryLower) || checkInRecommendList(title)) {
 
                         // Create Video object and add to results
                         Video video = createVideoFromSnapshot(videoSnapshot);
@@ -767,6 +796,8 @@ public static double bigramBonus(String query, String title) {
                             videoIds.add(videoId);
                         }
                     }
+
+
                 }
 
                 // Update UI with search results

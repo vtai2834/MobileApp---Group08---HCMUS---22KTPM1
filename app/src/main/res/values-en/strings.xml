@@ -94,7 +94,7 @@
     <string name="report">Report</string>
 
     <!-- Trang Comment  -->
-    <string name="comments">54 Comments</string>
+    <string name="comments">... Comments</string>
     <string name="comment_hint">Add a comment...</string>
     <string name="reply">Reply</string>
 

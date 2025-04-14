@@ -84,7 +84,7 @@ public class SearchScreen extends AppCompatActivity {
     private String userID;
     private boolean isSearchMode = false;
     private String language;
-    private String lastSearchQuery = "";
+    private String lastSearchQuery = "._.";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -745,12 +745,12 @@ public static double bigramBonus(String query, String title) {
         Log.d("search_2", "checkInRecommendList function called with title: " + title + " List size: " + recommendedItems.size());
 
         for (RecommendedItem item : recommendedItems) {
-            String itemTitle = item.getTitle();
+            String itemTitle = item.getTitle().toLowerCase();
             boolean isMatch = itemTitle != null && itemTitle.equals(title);
 
             Log.d("search_2", "item.getTitle(): " + itemTitle + " is in recommend list: " + isMatch);
 
-            if (isMatch && !title.equals("Title of new Video"))
+            if (isMatch)
                 return true;
         }
 

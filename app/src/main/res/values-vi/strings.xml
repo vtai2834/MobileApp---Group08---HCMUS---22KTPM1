@@ -95,7 +95,7 @@
     <string name="report">Báo cáo</string>
 
     <!-- Trang Comment  -->
-    <string name="comments">54 Bình luận</string>
+    <string name="comments">... Comments</string>
     <string name="comment_hint">Nhập bình luận...</string>
     <string name="reply">Trả lời</string>
 

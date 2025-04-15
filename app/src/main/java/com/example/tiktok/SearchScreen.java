@@ -705,8 +705,8 @@ public static double bigramBonus(String query, String title) {
         for (RecommendedItem item : recommendedItems) {
             // Search for videos matching the title to get a relevant thumbnail
             videosRef.orderByChild("title")
-                    .startAt(item.getTitle().toLowerCase())
-                    .endAt(item.getTitle().toLowerCase() + "\uf8ff")
+                    .startAt(item.getTitle())
+                    .endAt(item.getTitle() + "\uf8ff")
                     .limitToFirst(1)
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override

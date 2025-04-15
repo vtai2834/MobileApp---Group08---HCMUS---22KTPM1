@@ -99,7 +99,7 @@ public class ProfileScreen extends AppCompatActivity {
         videosReference = FirebaseDatabase.getInstance().getReference("videos");
 //
         // Load user data
-        getUserDataFromFirebase();
+//        getUserDataFromFirebase();
 
         // Initialize RecyclerView
         setupRecyclerView();
@@ -447,6 +447,7 @@ public class ProfileScreen extends AppCompatActivity {
 
                 // Update adapter and UI
                 if (videoAdapter != null) {
+
                     videoAdapter.notifyDataSetChanged();
                 }
                 updateEmptyState();
@@ -458,7 +459,10 @@ public class ProfileScreen extends AppCompatActivity {
                 Toast.makeText(ProfileScreen.this, "Lỗi khi tải video!", Toast.LENGTH_SHORT).show();
                 updateEmptyState();
             }
+
         });
+//        updateEmptyState();
+
     }
 
     private void generateAndUpdateThumbnail(Video video, String videoId) {

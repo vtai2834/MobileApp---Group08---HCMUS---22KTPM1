@@ -125,8 +125,10 @@ public class CommentBottomSheet extends BottomSheetDialogFragment {
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     if (snapshot.exists()) {
                                         String userIdName = snapshot.child("idName").getValue(String.class);
+                                        String avatar = snapshot.child("avatar").getValue(String.class);
                                         if (userIdName != null && !userIdName.isEmpty()) {
                                             comment.setUserId(userIdName);
+                                            comment.setUserAvatar(avatar);
                                         }
 
                                         commentList.add(comment);

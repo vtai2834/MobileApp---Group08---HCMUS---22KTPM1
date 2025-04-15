@@ -1,5 +1,6 @@
 package com.example.tiktok;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ public class ProfileScreen extends AppCompatActivity {
     private View indicatorVideos, indicatorLiked;
     private ImageView tabVideos, tabLiked;
     private LinearLayout emptyStateContainer;
+    private LinearLayout whiteSpace;
     private Button edit_profile_btn;
     private LinearLayout tiktokStudioBtn, ordersBtn;
     private LinearLayout home_button, followersSection, followingSection;
@@ -115,6 +117,7 @@ public class ProfileScreen extends AppCompatActivity {
         addBioBtn = findViewById(R.id.addBioBtn);
         followersSection = findViewById(R.id.followersSection);
         followingSection = findViewById(R.id.followingSection);
+        whiteSpace = findViewById(R.id.white_space);
 
         // Tabs
         tabVideos = findViewById(R.id.tabVideos);
@@ -140,6 +143,10 @@ public class ProfileScreen extends AppCompatActivity {
         // Initialize video lists
         videoList = new ArrayList<>();
         videoIds = new ArrayList<>();
+
+        // Lấy userKey từ Intent (giống ChangeBio.java)
+        String userKey = getIntent().getStringExtra("userKey");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
     }
 
     private void setupRecyclerView() {
@@ -198,6 +205,49 @@ public class ProfileScreen extends AppCompatActivity {
             if (!hasFocus && isEditingBio) {
                 updateBioToFirebase();
                 isEditingBio = false;
+            }
+        });
+
+        whiteSpace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 1. Ẩn bàn phím
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etBio.getWindowToken(), 0);
+
+                // 2. Bỏ focus
+                etBio.clearFocus();
+
+                // 3. Lấy nội dung bio
+                String newBio = etBio.getText().toString().trim();
+
+                if (newBio.length() == 0) {
+                    databaseReference.child(userKey).child("bio").setValue("")
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                    // Nếu bio rỗng thì không cập nhật mà ẩn input đi
+                    etBio.setVisibility(View.GONE);
+                    addBioBtn.setVisibility(View.VISIBLE);
+                    isEditingBio = false;
+                    return;
+                }
+
+                // 4. Cập nhật bio nếu có userKey
+                if (userKey != null) {
+                    databaseReference.child(userKey).child("bio").setValue(newBio)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                } else {
+                    Toast.makeText(getApplicationContext(), "Không tìm thấy userKey!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

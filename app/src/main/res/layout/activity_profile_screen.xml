@@ -63,6 +63,7 @@
         android:layout_below="@id/topBar">
 
         <LinearLayout
+            android:id="@+id/white_space"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">

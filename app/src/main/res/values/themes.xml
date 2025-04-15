@@ -17,6 +17,6 @@
 
         <!-- Set màu nền cho window (Activity) -->
         <item name="android:windowBackground">@android:color/black</item>
-
+        <item name="materialButtonStyle">@style/Widget.MaterialComponents.Button</item>
     </style>
 </resources>

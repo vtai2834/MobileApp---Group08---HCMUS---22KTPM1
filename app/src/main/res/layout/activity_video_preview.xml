@@ -30,7 +30,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
+            android:src="@drawable/ic_menu_back"
             app:tint="@android:color/white"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 

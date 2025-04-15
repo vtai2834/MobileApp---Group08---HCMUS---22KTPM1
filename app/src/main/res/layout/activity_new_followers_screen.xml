@@ -22,7 +22,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
+            android:src="@drawable/ic_menu_back"
             app:tint="#000000"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 

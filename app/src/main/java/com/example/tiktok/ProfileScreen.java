@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,11 +47,12 @@ public class ProfileScreen extends AppCompatActivity {
     private View indicatorVideos, indicatorLiked;
     private ImageView tabVideos, tabLiked;
     private LinearLayout emptyStateContainer;
-    private LinearLayout whiteSpace;
+    private LinearLayout whiteSpace, bottomNavigation;
+    private RelativeLayout topBar;
     private Button edit_profile_btn;
     private LinearLayout tiktokStudioBtn, ordersBtn;
     private LinearLayout home_button, followersSection, followingSection;
-    private LinearLayout discover_button, upload_button, inbox_button;
+    private LinearLayout discover_button, upload_button, inbox_button, profile_button;
     public List<String> videoIdsItems;
 
     private String userKey;
@@ -118,6 +120,8 @@ public class ProfileScreen extends AppCompatActivity {
         followersSection = findViewById(R.id.followersSection);
         followingSection = findViewById(R.id.followingSection);
         whiteSpace = findViewById(R.id.white_space);
+        bottomNavigation = findViewById(R.id.bottomNavigation);
+        topBar = findViewById(R.id.topBar);
 
         // Tabs
         tabVideos = findViewById(R.id.tabVideos);
@@ -135,6 +139,7 @@ public class ProfileScreen extends AppCompatActivity {
         discover_button = findViewById(R.id.discover_button);
         upload_button = findViewById(R.id.upload_button);
         inbox_button = findViewById(R.id.inbox_button);
+        profile_button = findViewById(R.id.profile_button);
 
         // RecyclerView and empty state
         recyclerView = findViewById(R.id.recyclerViewProfile);
@@ -211,6 +216,171 @@ public class ProfileScreen extends AppCompatActivity {
         whiteSpace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (etBio.hasFocus()) {
+                    // 1. Ẩn bàn phím
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(etBio.getWindowToken(), 0);
+
+                    // 2. Bỏ focus
+                    etBio.clearFocus();
+
+                    // 3. Lấy nội dung bio
+                    String newBio = etBio.getText().toString().trim();
+
+                    if (newBio.length() == 0) {
+                        databaseReference.child(userKey).child("bio").setValue("")
+                                .addOnSuccessListener(aVoid -> {
+                                    if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                        Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+
+                        etBio.setVisibility(View.GONE);
+                        addBioBtn.setVisibility(View.VISIBLE);
+                        isEditingBio = false;
+                        return;
+                    }
+
+                    // 4. Cập nhật bio nếu có userKey
+                    if (userKey != null) {
+                        databaseReference.child(userKey).child("bio").setValue(newBio)
+                                .addOnSuccessListener(aVoid -> {
+                                    if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                        Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Không tìm thấy userKey!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    isEditingBio = false;
+                }
+            }
+        });
+
+        topBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etBio.hasFocus()) {
+                    // 1. Ẩn bàn phím
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(etBio.getWindowToken(), 0);
+
+                    // 2. Bỏ focus
+                    etBio.clearFocus();
+
+                    // 3. Lấy nội dung bio
+                    String newBio = etBio.getText().toString().trim();
+
+                    if (newBio.length() == 0) {
+                        databaseReference.child(userKey).child("bio").setValue("")
+                                .addOnSuccessListener(aVoid -> {
+                                    if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                        Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+
+                        etBio.setVisibility(View.GONE);
+                        addBioBtn.setVisibility(View.VISIBLE);
+                        isEditingBio = false;
+                        return;
+                    }
+
+                    // 4. Cập nhật bio nếu có userKey
+                    if (userKey != null) {
+                        databaseReference.child(userKey).child("bio").setValue(newBio)
+                                .addOnSuccessListener(aVoid -> {
+                                    if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                        Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Không tìm thấy userKey!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    isEditingBio = false;
+                }
+            }
+        });
+
+        profile_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etBio.hasFocus()) {
+                    // 1. Ẩn bàn phím
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(etBio.getWindowToken(), 0);
+
+                    // 2. Bỏ focus
+                    etBio.clearFocus();
+
+                    // 3. Lấy nội dung bio
+                    String newBio = etBio.getText().toString().trim();
+
+                    if (newBio.length() == 0) {
+                        databaseReference.child(userKey).child("bio").setValue("")
+                                .addOnSuccessListener(aVoid -> {
+                                    if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                        Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+
+                        etBio.setVisibility(View.GONE);
+                        addBioBtn.setVisibility(View.VISIBLE);
+                        isEditingBio = false;
+                        return;
+                    }
+
+                    // 4. Cập nhật bio nếu có userKey
+                    if (userKey != null) {
+                        databaseReference.child(userKey).child("bio").setValue(newBio)
+                                .addOnSuccessListener(aVoid -> {
+                                    if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                        Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Không tìm thấy userKey!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    isEditingBio = false;
+                }
+            }
+        });
+
+        // Navigation
+        home_button.setOnClickListener(v -> {
+            if (etBio.hasFocus()) {
                 // 1. Ẩn bàn phím
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(etBio.getWindowToken(), 0);
@@ -224,12 +394,16 @@ public class ProfileScreen extends AppCompatActivity {
                 if (newBio.length() == 0) {
                     databaseReference.child(userKey).child("bio").setValue("")
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                    Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                }
                             })
                             .addOnFailureListener(e -> {
                                 Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             });
-                    // Nếu bio rỗng thì không cập nhật mà ẩn input đi
+
                     etBio.setVisibility(View.GONE);
                     addBioBtn.setVisibility(View.VISIBLE);
                     isEditingBio = false;
@@ -240,7 +414,11 @@ public class ProfileScreen extends AppCompatActivity {
                 if (userKey != null) {
                     databaseReference.child(userKey).child("bio").setValue(newBio)
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                    Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                }
                             })
                             .addOnFailureListener(e -> {
                                 Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -248,11 +426,10 @@ public class ProfileScreen extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Không tìm thấy userKey!", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
 
-        // Navigation
-        home_button.setOnClickListener(v -> {
+                isEditingBio = false;
+            }
+
             Intent intent = new Intent(ProfileScreen.this, HomeScreen.class);
 //            intent.putExtra("USER_ID", username);
             intent.putExtra("language", language);
@@ -260,6 +437,56 @@ public class ProfileScreen extends AppCompatActivity {
         });
 
         discover_button.setOnClickListener(v -> {
+            if (etBio.hasFocus()) {
+                // 1. Ẩn bàn phím
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etBio.getWindowToken(), 0);
+
+                // 2. Bỏ focus
+                etBio.clearFocus();
+
+                // 3. Lấy nội dung bio
+                String newBio = etBio.getText().toString().trim();
+
+                if (newBio.length() == 0) {
+                    databaseReference.child(userKey).child("bio").setValue("")
+                            .addOnSuccessListener(aVoid -> {
+                                if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                    Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+
+                    etBio.setVisibility(View.GONE);
+                    addBioBtn.setVisibility(View.VISIBLE);
+                    isEditingBio = false;
+                    return;
+                }
+
+                // 4. Cập nhật bio nếu có userKey
+                if (userKey != null) {
+                    databaseReference.child(userKey).child("bio").setValue(newBio)
+                            .addOnSuccessListener(aVoid -> {
+                                if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                    Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                } else {
+                    Toast.makeText(getApplicationContext(), "Không tìm thấy userKey!", Toast.LENGTH_SHORT).show();
+                }
+
+                isEditingBio = false;
+            }
+
             Intent intent = new Intent(ProfileScreen.this, SearchScreen.class);
             intent.putExtra("language", language);
             startActivity(intent);
@@ -294,12 +521,112 @@ public class ProfileScreen extends AppCompatActivity {
         });
 
         upload_button.setOnClickListener(v -> {
+            if (etBio.hasFocus()) {
+                // 1. Ẩn bàn phím
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etBio.getWindowToken(), 0);
+
+                // 2. Bỏ focus
+                etBio.clearFocus();
+
+                // 3. Lấy nội dung bio
+                String newBio = etBio.getText().toString().trim();
+
+                if (newBio.length() == 0) {
+                    databaseReference.child(userKey).child("bio").setValue("")
+                            .addOnSuccessListener(aVoid -> {
+                                if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                    Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+
+                    etBio.setVisibility(View.GONE);
+                    addBioBtn.setVisibility(View.VISIBLE);
+                    isEditingBio = false;
+                    return;
+                }
+
+                // 4. Cập nhật bio nếu có userKey
+                if (userKey != null) {
+                    databaseReference.child(userKey).child("bio").setValue(newBio)
+                            .addOnSuccessListener(aVoid -> {
+                                if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                    Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                } else {
+                    Toast.makeText(getApplicationContext(), "Không tìm thấy userKey!", Toast.LENGTH_SHORT).show();
+                }
+
+                isEditingBio = false;
+            }
+
             Intent intent = new Intent(ProfileScreen.this, CameraScreen.class);
             intent.putExtra("language", language);
             startActivity(intent);
         });
 
         inbox_button.setOnClickListener(v -> {
+            if (etBio.hasFocus()) {
+                // 1. Ẩn bàn phím
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etBio.getWindowToken(), 0);
+
+                // 2. Bỏ focus
+                etBio.clearFocus();
+
+                // 3. Lấy nội dung bio
+                String newBio = etBio.getText().toString().trim();
+
+                if (newBio.length() == 0) {
+                    databaseReference.child(userKey).child("bio").setValue("")
+                            .addOnSuccessListener(aVoid -> {
+                                if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                    Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+
+                    etBio.setVisibility(View.GONE);
+                    addBioBtn.setVisibility(View.VISIBLE);
+                    isEditingBio = false;
+                    return;
+                }
+
+                // 4. Cập nhật bio nếu có userKey
+                if (userKey != null) {
+                    databaseReference.child(userKey).child("bio").setValue(newBio)
+                            .addOnSuccessListener(aVoid -> {
+                                if (language.equals("English") || language.equals("Tiếng Anh")) {
+                                    Toast.makeText(getApplicationContext(), "Update bio successfully!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Cập nhật tiểu sử thành công!", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getApplicationContext(), "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                } else {
+                    Toast.makeText(getApplicationContext(), "Không tìm thấy userKey!", Toast.LENGTH_SHORT).show();
+                }
+
+                isEditingBio = false;
+            }
+
             Intent intent = new Intent(ProfileScreen.this, InboxScreen.class);
             intent.putExtra("language", language);
             startActivity(intent);

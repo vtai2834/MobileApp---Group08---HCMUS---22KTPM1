@@ -13,7 +13,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="0dp"
-        app:use_controller="true"/>
+        app:use_controller="true"
+        app:controller_layout_id="@layout/custom_player_control_view"/>
+
+    <ImageView
+        android:id="@+id/play_pause_overlay"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:alpha="0.8"
+        android:src="@drawable/play_icon"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/control_layout"
@@ -172,15 +182,16 @@
         <!--        Tên người dùng-->
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="70dp"
+            android:layout_height="80dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="10dp">
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="20dp">
             <!--        Tên người dùng-->
             <TextView
                 android:id="@+id/username"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:text="\@karenne"
+                android:text="\@username"
                 android:textStyle="bold"
                 android:textSize="25dp"
                 android:textColor="@color/white"
@@ -192,7 +203,7 @@
                 android:layout_height="20dp"
                 android:layout_width="wrap_content"
                 android:layout_below="@id/username"
-                android:text="#mangden #aiuem10ngannam"
+                android:text="content"
                 android:textColor="@color/white" />
 
             <!--            Phần nhạc nhẽo-->
@@ -200,8 +211,8 @@
                 android:id="@+id/music"
                 android:layout_below="@id/content"
                 android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:text="\u266B Waiting for you"
+                android:layout_height="30dp"
+                android:text="music"
                 android:textSize="15sp"
                 android:textColor="@color/white"/>
 

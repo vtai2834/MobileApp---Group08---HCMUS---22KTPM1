@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/exo_controller"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="@android:color/transparent"
+    android:gravity="center_vertical">
+
+    <!-- Current time -->
+    <TextView
+        android:id="@+id/exo_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:text="00:00" />
+
+    <com.google.android.exoplayer2.ui.DefaultTimeBar
+        android:id="@+id/exo_progress"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+
+        app:played_color="#FFFFFF"
+        app:unplayed_color="#33FFFFFF"
+        app:buffered_color="#66FFFFFF"
+        app:scrubber_color="#FFFFFF"
+        app:bar_height="4dp"
+
+        app:scrubber_enabled_size="14dp"
+        app:scrubber_disabled_size="10dp"
+        app:scrubber_dragged_size="18dp"
+        />
+
+    <!-- Duration -->
+    <TextView
+        android:id="@+id/exo_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:text="00:15" />
+</LinearLayout>

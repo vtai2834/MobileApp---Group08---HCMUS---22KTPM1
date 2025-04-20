@@ -554,37 +554,39 @@ public class ProfileScreen extends AppCompatActivity {
                                                                         followerCountRef.setValue(ServerValue.increment(1));
 
                                                                         // Thêm người đăng video vào list following của người dùng hiện tại
-                                                                        // Tăng followingCount
-                                                                        DatabaseReference followingCountRef = userRef.child(currentUserKey).child("followingCount");
-                                                                        followingCountRef.setValue(ServerValue.increment(1)).addOnSuccessListener(aVoid -> {
-                                                                            // Sau khi tăng thành công, đọc lại giá trị mới
-                                                                            followingCountRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                                @Override
-                                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                                    Long count = snapshot.getValue(Long.class);
-                                                                                    if (count != null) {
-                                                                                        follower.setText(String.valueOf(count));
-                                                                                    } else {
-                                                                                        follower.setText("0");
-                                                                                    }
-                                                                                }
+                                                                        DatabaseReference followingRef = userRef.child(currentUserKey).child("following");
+                                                                        followingRef.child(videoOwnerIdName).setValue(true).addOnCompleteListener(task1 -> {
+                                                                            if (task1.isSuccessful()) {
+                                                                                // Tăng followingCount của người dùng hiện tại
+                                                                                DatabaseReference followingCountRef = userRef.child(currentUserKey).child("followingCount");
+                                                                                followingCountRef.setValue(ServerValue.increment(1)).addOnSuccessListener(aVoid -> {
 
-                                                                                @Override
-                                                                                public void onCancelled(@NonNull DatabaseError error) {
-                                                                                    follower.setText("0");
-                                                                                }
-                                                                            });
+                                                                                    // Đọc lại giá trị mới của followingCount
+                                                                                    followingCountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                        @Override
+                                                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                                            Long followerCount = snapshot.getValue(Long.class);
+                                                                                            follower.setText(followerCount != null ? String.valueOf(followerCount) : "0");
+                                                                                        }
 
-                                                                            // Cập nhật lại icon và toast
-                                                                            addFriendBtn.setImageResource(R.drawable.unfollow);
-                                                                            Toast.makeText(ProfileScreen.this, "Follow thành công", Toast.LENGTH_SHORT).show();
+                                                                                        @Override
+                                                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                                                            follower.setText("0");
+                                                                                        }
+                                                                                    });
 
-                                                                        }).addOnFailureListener(e -> {
-                                                                            Toast.makeText(ProfileScreen.this, "Lỗi khi tăng followingCount: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                                    // Cập nhật lại icon và thông báo
+                                                                                    addFriendBtn.setImageResource(R.drawable.unfollow); // Đổi icon thành minus
+                                                                                    Toast.makeText(ProfileScreen.this, "Follow thành công", Toast.LENGTH_SHORT).show();
+
+                                                                                }).addOnFailureListener(e -> {
+                                                                                    Toast.makeText(ProfileScreen.this, "Lỗi khi tăng followingCount: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                                });
+                                                                            }
                                                                         });
-
                                                                     }
                                                                 });
+
                                                             }
                                                         }
 
@@ -734,7 +736,7 @@ public class ProfileScreen extends AppCompatActivity {
         });
 
         followersSection.setOnClickListener(v -> {
-            if(currentUsername.equals(viewUsername)) {
+            if(!username.equals(viewUsername)) {
                 if (userKey != null) {
                     Intent intent = new Intent(ProfileScreen.this, NewFollowersScreen.class);
 //                intent.putExtra("userKey", userKey); // Truyền userKey sang ListFollower
@@ -750,7 +752,7 @@ public class ProfileScreen extends AppCompatActivity {
         });
 
         followingSection.setOnClickListener(v -> {
-            if(currentUsername.equals(viewUsername)) {
+            if(!username.equals(viewUsername)) {
                 if (userKey != null) {
                     Intent intent = new Intent(ProfileScreen.this, NewFollowingScreen.class);
 //                intent.putExtra("userKey", userKey); // Truyền userKey sang ListFollower

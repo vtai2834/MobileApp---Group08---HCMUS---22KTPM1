@@ -83,9 +83,27 @@ public class ProfileScreen extends AppCompatActivity {
             LocaleHelper.setLocale(this, "vi");
         }
 
-        // Get username from SharedPreferences
+// Lấy username từ intent (nếu đang xem profile người khác)
+        String viewUsername = getIntent().getStringExtra("viewUsername");
+
+// Lấy username của người dùng hiện tại
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        username = sharedPreferences.getString("username", null);
+        String currentUsername = sharedPreferences.getString("username", null);
+
+        if (viewUsername != null && !viewUsername.equals(currentUsername)) {
+            // Đang xem profile người khác
+            username = viewUsername;
+            // Ẩn các nút chỉnh sửa profile
+            edit_profile_btn.setVisibility(View.GONE);
+            addBioBtn.setVisibility(View.GONE);
+            // Hiển thị nút Follow thay vì nút Edit Profile (nếu có)
+            // followButton.setVisibility(View.VISIBLE);
+        } else {
+            // Đang xem profile của chính mình
+            username = currentUsername;
+            edit_profile_btn.setVisibility(View.VISIBLE);
+            // Hiển thị các nút khác liên quan đến chỉnh sửa profile
+        }
 
         // Get videos_list from HomeScreen
         videoIdsItems = getIntent().getStringArrayListExtra("VIDEOS_ARRAY_JSON");

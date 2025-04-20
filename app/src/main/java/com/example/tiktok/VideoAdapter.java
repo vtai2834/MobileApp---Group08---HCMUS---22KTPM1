@@ -1,5 +1,6 @@
 package com.example.tiktok;
 
+import static androidx.core.content.ContextCompat.startActivities;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.app.Activity;
@@ -606,7 +607,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         }
                     });
                 });
-              
+
+                avt.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, ProfileScreen.class);
+                    intent.putExtra("viewUsername", videoUsername);
+                    context.startActivity(intent);
+                });
                 // Truyền position vào processClick
                 processClick(holder.itemView, position, videoItem);
             }

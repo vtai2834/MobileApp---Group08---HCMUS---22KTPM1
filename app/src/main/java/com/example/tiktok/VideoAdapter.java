@@ -567,7 +567,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                                                                                         plusImageView.setImageResource(R.drawable.minus_icon); // Đổi icon thành minus
                                                                                         Toast.makeText(context, "Follow thành công", Toast.LENGTH_SHORT).show();
 
-                                                                                        // Add this code to create follow notification
                                                                                         notificationManager.createFollowNotification(
                                                                                                 currentUserKey,
                                                                                                 videoOwnerUserKey
@@ -613,12 +612,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                     intent.putExtra("viewUsername", videoUsername);
                     context.startActivity(intent);
                 });
+
                 // Truyền position vào processClick
                 processClick(holder.itemView, position, videoItem);
             }
         });
     }
-
 
     private void checkFollowStatusAndUpdateIcon(String currentUserIdName, String videoOwnerIdName, ImageView plusImageView) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");

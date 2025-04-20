@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -39,17 +42,19 @@ public class ProfileScreen extends AppCompatActivity {
     private ProfileVideoAdapter videoAdapter;
     private List<Video> videoList;
     private List<String> videoIds;
-
+    private NotificationManager notificationManager;
     private CircleImageView avtProfile;
     private TextView tvUsername, user_id, follower, following, like;
     private EditText etBio;
     private TextView addBioBtn;
+    private Context context;
     private View indicatorVideos, indicatorLiked;
     private ImageView tabVideos, tabLiked;
     private LinearLayout emptyStateContainer;
     private LinearLayout whiteSpace, bottomNavigation;
     private RelativeLayout topBar;
     private Button edit_profile_btn;
+    private ImageButton addFriendBtn;
     private LinearLayout tiktokStudioBtn, ordersBtn;
     private LinearLayout home_button, followersSection, followingSection;
     private LinearLayout discover_button, upload_button, inbox_button, profile_button;
@@ -62,6 +67,8 @@ public class ProfileScreen extends AppCompatActivity {
     private DatabaseReference videosReference;
     private boolean isEditingBio = false;
     private String language;
+    private String viewUsername;
+    private String currentUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,12 +90,12 @@ public class ProfileScreen extends AppCompatActivity {
             LocaleHelper.setLocale(this, "vi");
         }
 
-// Lấy username từ intent (nếu đang xem profile người khác)
-        String viewUsername = getIntent().getStringExtra("viewUsername");
+        // Lấy username từ intent (nếu đang xem profile người khác)
+        viewUsername = getIntent().getStringExtra("viewUsername");
 
-// Lấy username của người dùng hiện tại
+        // Lấy username của người dùng hiện tại
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        String currentUsername = sharedPreferences.getString("username", null);
+        currentUsername = sharedPreferences.getString("username", null);
 
         if (viewUsername != null && !viewUsername.equals(currentUsername)) {
             // Đang xem profile người khác
@@ -96,12 +103,74 @@ public class ProfileScreen extends AppCompatActivity {
             // Ẩn các nút chỉnh sửa profile
             edit_profile_btn.setVisibility(View.GONE);
             addBioBtn.setVisibility(View.GONE);
+            addFriendBtn.setVisibility(View.VISIBLE);
             // Hiển thị nút Follow thay vì nút Edit Profile (nếu có)
             // followButton.setVisibility(View.VISIBLE);
+
+            String userKey = sharedPreferences.getString("userKey", null);
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+
+            if (userKey != null) {
+                userRef.child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            String currentUserIdName = snapshot.child("idName").getValue(String.class);
+                            if (currentUserIdName != null && !currentUserIdName.isEmpty()) {
+                                String videoUsername = viewUsername;
+//                                    Toast.makeText(ProfileScreen.this,
+//                                            "currentUserIdName: " + currentUserIdName + "\nvideoUsername: " + videoUsername,
+//                                            Toast.LENGTH_SHORT).show();
+
+                                if (videoUsername.startsWith("-OL")) {
+                                    // Nếu là user ID, lấy idName của người đăng video
+                                    userRef.child(videoUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot ownerSnapshot) {
+                                            if (ownerSnapshot.exists()) {
+                                                String videoOwnerIdName = ownerSnapshot.child("idName").getValue(String.class);
+
+                                                if (videoOwnerIdName != null) {
+                                                    // Kiểm tra xem người dùng hiện tại có phải là người đăng video không
+                                                    if (currentUserIdName.equals(videoOwnerIdName)) {
+                                                        // Nếu người đăng video là chính mình, không hiển thị icon
+                                                        addFriendBtn.setVisibility(View.INVISIBLE);  // Ẩn icon
+                                                    } else {
+                                                        // Nếu không phải, kiểm tra trạng thái follow
+                                                        checkFollowStatusAndUpdateIcon(currentUserIdName, videoOwnerIdName);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) { }
+                                    });
+                                } else {
+                                    // Nếu video username không phải là Firebase userId mà đã là idName
+                                    if (currentUserIdName.equals(videoUsername)) {
+                                        // Nếu người đăng video là chính mình, không hiển thị icon
+                                        addFriendBtn.setVisibility(View.INVISIBLE);  // Ẩn icon
+                                    } else {
+                                        // Nếu không phải, kiểm tra trạng thái follow
+                                        checkFollowStatusAndUpdateIcon(currentUserIdName, videoUsername);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) { }
+                });
+            }
+
         } else {
             // Đang xem profile của chính mình
             username = currentUsername;
             edit_profile_btn.setVisibility(View.VISIBLE);
+            addBioBtn.setVisibility(View.VISIBLE);
+            addFriendBtn.setVisibility(View.GONE);
             // Hiển thị các nút khác liên quan đến chỉnh sửa profile
         }
 
@@ -140,6 +209,7 @@ public class ProfileScreen extends AppCompatActivity {
         whiteSpace = findViewById(R.id.white_space);
         bottomNavigation = findViewById(R.id.bottomNavigation);
         topBar = findViewById(R.id.topBar);
+        addFriendBtn = findViewById(R.id.addFriendBtn);
 
         // Tabs
         tabVideos = findViewById(R.id.tabVideos);
@@ -396,6 +466,157 @@ public class ProfileScreen extends AppCompatActivity {
             }
         });
 
+        // Follow in another profile screen
+        addFriendBtn.setOnClickListener(v -> {
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+            userRef.orderByChild("account").equalTo(viewUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                            String videoOwnerUserKey = userSnapshot.getKey();  // userKey của người đăng video
+                            String videoOwnerIdName = userSnapshot.child("idName").getValue(String.class);
+
+                            if (videoOwnerIdName != null && !videoOwnerIdName.isEmpty()) {
+                                SharedPreferences sharedPreferences = ProfileScreen.this.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                                String currentUserKey = sharedPreferences.getString("userKey", null);
+
+                                if (currentUserKey != null) {
+                                    userRef.child(currentUserKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if (snapshot.exists()) {
+                                                String currentUserIdName = snapshot.child("idName").getValue(String.class);
+
+                                                if (currentUserIdName != null && !currentUserIdName.isEmpty()) {
+                                                    // ======= Kiểm tra nếu người dùng không thể follow chính mình =======
+                                                    if (currentUserIdName.equals(videoOwnerIdName)) {
+                                                        Toast.makeText(ProfileScreen.this, "Bạn không thể follow chính mình", Toast.LENGTH_SHORT).show();
+                                                        return;
+                                                    }
+
+                                                    // ======= Kiểm tra xem đã follow người đó chưa =======
+                                                    DatabaseReference followerRef = userRef.child(videoOwnerUserKey).child("follower");
+                                                    followerRef.child(currentUserIdName).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot followerSnapshot) {
+                                                            if (followerSnapshot.exists()) {
+                                                                // Đã follow rồi, thực hiện unfollow
+                                                                followerRef.child(currentUserIdName).removeValue().addOnCompleteListener(task -> {
+                                                                    if (task.isSuccessful()) {
+                                                                        // Giảm followerCount của người đăng video
+                                                                        DatabaseReference followerCountRef = userRef.child(videoOwnerUserKey).child("followerCount");
+                                                                        followerCountRef.setValue(ServerValue.increment(-1));
+
+                                                                        // Xóa người đăng video khỏi list following của người dùng hiện tại
+                                                                        DatabaseReference followingRef = userRef.child(currentUserKey).child("following");
+                                                                        followingRef.child(videoOwnerIdName).removeValue().addOnCompleteListener(task1 -> {
+                                                                            if (task1.isSuccessful()) {
+                                                                                // Giảm followingCount của người dùng hiện tại
+                                                                                DatabaseReference followingCountRef = userRef.child(currentUserKey).child("followingCount");
+                                                                                followingCountRef.setValue(ServerValue.increment(-1)).addOnSuccessListener(aVoid -> {
+                                                                                    // Sau khi giảm thành công, đọc lại giá trị mới
+                                                                                    followingCountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                        @Override
+                                                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                                            Long count = snapshot.getValue(Long.class);
+                                                                                            if (count != null) {
+                                                                                                follower.setText(String.valueOf(count));
+                                                                                            } else {
+                                                                                                follower.setText("0");
+                                                                                            }
+                                                                                        }
+
+                                                                                        @Override
+                                                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                                                            follower.setText("0");
+                                                                                        }
+                                                                                    });
+
+                                                                                    // Cập nhật lại icon và thông báo
+                                                                                    addFriendBtn.setImageResource(R.drawable.add_user); // Đổi icon thành plus
+                                                                                    Toast.makeText(ProfileScreen.this, "Đã hủy follow", Toast.LENGTH_SHORT).show();
+
+                                                                                }).addOnFailureListener(e -> {
+                                                                                    Toast.makeText(ProfileScreen.this, "Lỗi khi giảm followingCount: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                                });
+                                                                            }
+                                                                        });
+
+                                                                    }
+                                                                });
+                                                            } else {
+                                                                // Chưa follow, thực hiện follow
+                                                                followerRef.child(currentUserIdName).setValue(true).addOnCompleteListener(task -> {
+                                                                    if (task.isSuccessful()) {
+                                                                        // Tăng followerCount của người đăng video
+                                                                        DatabaseReference followerCountRef = userRef.child(videoOwnerUserKey).child("followerCount");
+                                                                        followerCountRef.setValue(ServerValue.increment(1));
+
+                                                                        // Thêm người đăng video vào list following của người dùng hiện tại
+                                                                        // Tăng followingCount
+                                                                        DatabaseReference followingCountRef = userRef.child(currentUserKey).child("followingCount");
+                                                                        followingCountRef.setValue(ServerValue.increment(1)).addOnSuccessListener(aVoid -> {
+                                                                            // Sau khi tăng thành công, đọc lại giá trị mới
+                                                                            followingCountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                @Override
+                                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                                    Long count = snapshot.getValue(Long.class);
+                                                                                    if (count != null) {
+                                                                                        follower.setText(String.valueOf(count));
+                                                                                    } else {
+                                                                                        follower.setText("0");
+                                                                                    }
+                                                                                }
+
+                                                                                @Override
+                                                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                                                    follower.setText("0");
+                                                                                }
+                                                                            });
+
+                                                                            // Cập nhật lại icon và toast
+                                                                            addFriendBtn.setImageResource(R.drawable.unfollow);
+                                                                            Toast.makeText(ProfileScreen.this, "Follow thành công", Toast.LENGTH_SHORT).show();
+
+                                                                        }).addOnFailureListener(e -> {
+                                                                            Toast.makeText(ProfileScreen.this, "Lỗi khi tăng followingCount: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                        });
+
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                            Toast.makeText(ProfileScreen.this, "Lỗi khi kiểm tra trạng thái follow", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Toast.makeText(ProfileScreen.this, "Lỗi khi lấy idName người dùng hiện tại", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    } else {
+                        Toast.makeText(ProfileScreen.this, "Không tìm thấy người đăng video", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(ProfileScreen.this, "Lỗi khi truy vấn người đăng video", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
         // Navigation
         home_button.setOnClickListener(v -> {
             if (etBio.hasFocus()) {
@@ -452,6 +673,7 @@ public class ProfileScreen extends AppCompatActivity {
 //            intent.putExtra("USER_ID", username);
             intent.putExtra("language", language);
             startActivity(intent);
+            finish();
         });
 
         discover_button.setOnClickListener(v -> {
@@ -508,27 +730,38 @@ public class ProfileScreen extends AppCompatActivity {
             Intent intent = new Intent(ProfileScreen.this, SearchScreen.class);
             intent.putExtra("language", language);
             startActivity(intent);
+            finish();
         });
 
         followersSection.setOnClickListener(v -> {
-            if (userKey != null) {
-                Intent intent = new Intent(ProfileScreen.this, NewFollowersScreen.class);
+            if(currentUsername.equals(viewUsername)) {
+                if (userKey != null) {
+                    Intent intent = new Intent(ProfileScreen.this, NewFollowersScreen.class);
 //                intent.putExtra("userKey", userKey); // Truyền userKey sang ListFollower
-                intent.putExtra("language", language); // Nếu bạn cần dùng ngôn ngữ
-                startActivity(intent);
-            } else {
-                Toast.makeText(ProfileScreen.this, "Không thể lấy userKey!", Toast.LENGTH_SHORT).show();
+                    intent.putExtra("language", language); // Nếu bạn cần dùng ngôn ngữ
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(ProfileScreen.this, "Không thể lấy userKey!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else{
+                Toast.makeText(ProfileScreen.this, "Không được xem Followers của người khác!", Toast.LENGTH_SHORT).show();
             }
         });
 
         followingSection.setOnClickListener(v -> {
-            if (userKey != null) {
-                Intent intent = new Intent(ProfileScreen.this, NewFollowingScreen.class);
+            if(currentUsername.equals(viewUsername)) {
+                if (userKey != null) {
+                    Intent intent = new Intent(ProfileScreen.this, NewFollowingScreen.class);
 //                intent.putExtra("userKey", userKey); // Truyền userKey sang ListFollower
-                intent.putExtra("language", language); // Nếu bạn cần dùng ngôn ngữ
-                startActivity(intent);
-            } else {
-                Toast.makeText(ProfileScreen.this, "Không thể lấy userKey!", Toast.LENGTH_SHORT).show();
+                    intent.putExtra("language", language); // Nếu bạn cần dùng ngôn ngữ
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(ProfileScreen.this, "Không thể lấy userKey!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else{
+                Toast.makeText(ProfileScreen.this, "Không được xem Following của người khác!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -592,6 +825,7 @@ public class ProfileScreen extends AppCompatActivity {
             Intent intent = new Intent(ProfileScreen.this, CameraScreen.class);
             intent.putExtra("language", language);
             startActivity(intent);
+            finish();
         });
 
         inbox_button.setOnClickListener(v -> {
@@ -648,6 +882,7 @@ public class ProfileScreen extends AppCompatActivity {
             Intent intent = new Intent(ProfileScreen.this, InboxScreen.class);
             intent.putExtra("language", language);
             startActivity(intent);
+            finish();
         });
 
         // TikTok Studio and Orders (just show toast)
@@ -717,7 +952,14 @@ public class ProfileScreen extends AppCompatActivity {
                             addBioBtn.setVisibility(View.GONE);
                         } else {
                             etBio.setVisibility(View.GONE);
-                            addBioBtn.setVisibility(View.VISIBLE);
+                            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                            String currentUsername = sharedPreferences.getString("username", null);
+                            if(username.equals(currentUsername)) {
+                                addBioBtn.setVisibility(View.VISIBLE);
+                            }
+                            else{
+                                addBioBtn.setVisibility(View.GONE);
+                            }
                         }
 
                         // Load profile image
@@ -879,5 +1121,45 @@ public class ProfileScreen extends AppCompatActivity {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+    private void checkFollowStatusAndUpdateIcon(String currentUserIdName, String videoOwnerIdName) {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
+
+        usersRef.orderByChild("idName").equalTo(videoOwnerIdName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                        String videoOwnerUserKey = userSnapshot.getKey();
+
+                        usersRef.child(videoOwnerUserKey).child("follower").child(currentUserIdName)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot followerSnapshot) {
+                                        if (addFriendBtn.getVisibility() != View.VISIBLE) {
+                                            addFriendBtn.setVisibility(View.VISIBLE); // Đảm bảo plusImageView hiển thị
+                                        }
+                                        if (followerSnapshot.exists()) {
+                                            addFriendBtn.setImageResource(R.drawable.unfollow); // Đã follow -> icon minus
+                                        } else {
+                                            addFriendBtn.setImageResource(R.drawable.add_user); // Chưa follow -> icon plus
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                    }
+                                });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) { }
+        });
+    }
+
 }
 

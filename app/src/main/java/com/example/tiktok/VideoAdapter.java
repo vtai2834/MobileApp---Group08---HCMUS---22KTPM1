@@ -1,5 +1,6 @@
 package com.example.tiktok;
 
+import static androidx.core.content.ContextCompat.startActivities;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.app.Activity;
@@ -283,6 +284,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         Video videoItem = videoItems.get(position);
         ExoPlayer player = playerMap.get(position);
         ImageView plusImageView = holder.itemView.findViewById(R.id.plus);
+        ImageView playPauseOverlay = holder.itemView.findViewById(R.id.play_pause_overlay);
 
         if (player == null) {
             player = new ExoPlayer.Builder(context).build();
@@ -291,15 +293,28 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             player.setMediaItem(mediaItem);
             player.prepare();
         }
-
+        //Loading bar
         holder.playerView.setUseController(true);
         holder.playerView.setControllerShowTimeoutMs(0);
         ExoPlayer finalPlayer = player;
+
+        holder.playerView.setOnClickListener(v -> {
+            if (finalPlayer.isPlaying()) {
+                finalPlayer.pause();
+                playPauseOverlay.setVisibility(View.VISIBLE);
+            } else {
+                finalPlayer.play();
+                playPauseOverlay.setVisibility(View.GONE);
+            }
+            holder.playerView.showController();
+
+        });
 
         holder.itemView.post(() -> {
             if (holder.getAdapterPosition() == position) { // Đảm bảo đúng ViewHolder
                 holder.playerView.setPlayer(finalPlayer);
                 finalPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
+                holder.playerView.showController();
                 finalPlayer.play();
 
                 currentPositionPlayingVideo = holder.getAdapterPosition();
@@ -566,7 +581,6 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                                                                                         plusImageView.setImageResource(R.drawable.minus_icon); // Đổi icon thành minus
                                                                                         Toast.makeText(context, "Follow thành công", Toast.LENGTH_SHORT).show();
 
-                                                                                        // Add this code to create follow notification
                                                                                         notificationManager.createFollowNotification(
                                                                                                 currentUserKey,
                                                                                                 videoOwnerUserKey
@@ -606,13 +620,18 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                         }
                     });
                 });
-              
+
+                avt.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, ProfileScreen.class);
+                    intent.putExtra("viewUsername", videoUsername);
+                    context.startActivity(intent);
+                });
+
                 // Truyền position vào processClick
                 processClick(holder.itemView, position, videoItem);
             }
         });
     }
-
 
     private void checkFollowStatusAndUpdateIcon(String currentUserIdName, String videoOwnerIdName, ImageView plusImageView) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");

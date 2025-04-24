@@ -764,7 +764,8 @@ public static double bigramBonus(String query, String title) {
         // Clear previous results
         searchResults.clear();
         videoIds.clear();
-
+        List<Video> recommendSearchResult = new ArrayList<Video>();
+        List<String> recommendVideoIds = new ArrayList<String>();
         // Search in the entire video list
         videosRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -787,7 +788,7 @@ public static double bigramBonus(String query, String title) {
                     // Check if query appears in any field
                     if (title.contains(queryLower) ||
                             username.contains(queryLower) ||
-                            music.contains(queryLower) || checkInRecommendList(title)) {
+                            music.contains(queryLower)) {
 
                         // Create Video object and add to results
                         Video video = createVideoFromSnapshot(videoSnapshot);
@@ -796,10 +797,25 @@ public static double bigramBonus(String query, String title) {
                             videoIds.add(videoId);
                         }
                     }
+                    else if(checkInRecommendList(title))
+                    {
+                        Video video = createVideoFromSnapshot(videoSnapshot);
+                        if (video != null) {
+                            recommendSearchResult.add(video);
+                            recommendVideoIds.add(videoId);
+                        }
+                    }
 
 
                 }
-
+                for(Video video : recommendSearchResult)
+                {
+                    searchResults.add(video);
+                }
+                for(String videoId : recommendVideoIds)
+                {
+                    videoIds.add(videoId);
+                }
                 // Update UI with search results
                 runOnUiThread(() -> {
                     showSearchResults();

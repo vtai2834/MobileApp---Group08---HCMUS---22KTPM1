@@ -296,6 +296,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         //Loading bar
         holder.playerView.setUseController(true);
         holder.playerView.setControllerShowTimeoutMs(0);
+        playPauseOverlay.setVisibility(View.GONE);
+
         ExoPlayer finalPlayer = player;
 
         holder.playerView.setOnClickListener(v -> {

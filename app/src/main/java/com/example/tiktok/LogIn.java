@@ -3,6 +3,7 @@ package com.example.tiktok;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +40,11 @@ public class LogIn extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
 
         language = getIntent().getStringExtra("language");
+        if (language == null) {
+            Log.d("LOGIN_CHECK_LANGUAGE", "Language is null");
+        }else {
+            Log.d("LOGIN_CHECK_LANGUAGE", "Language is: " + language);
+        }
 
         if (language != null) {
             if (language.equals("English") || language.equals("Tiếng Anh")) {

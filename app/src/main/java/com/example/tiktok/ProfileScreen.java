@@ -72,6 +72,11 @@ public class ProfileScreen extends AppCompatActivity {
         setupClickListeners();
 
         language = getIntent().getStringExtra("language");
+        if (language == null) {
+            Log.d("LOGIN_CHECK_LANGUAGE", "Language is null");
+        }else {
+            Log.d("LOGIN_CHECK_LANGUAGE", "Language is: " + language);
+        }
 
         if (language != null) {
             if (language.equals("English") || language.equals("Tiếng Anh")) {

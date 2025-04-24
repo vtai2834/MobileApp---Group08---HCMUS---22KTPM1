@@ -54,6 +54,11 @@ public class HomeScreen extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_screen);
         language = getIntent().getStringExtra("language");
+        if (language == null) {
+            Log.d("LOGIN_CHECK_LANGUAGE", "Language is null");
+        }else {
+            Log.d("LOGIN_CHECK_LANGUAGE", "Language is: " + language);
+        }
 
 
         // Lấy userId từ Intent

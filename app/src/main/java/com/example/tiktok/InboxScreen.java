@@ -190,6 +190,7 @@ public class InboxScreen extends AppCompatActivity {
         findViewById(R.id.home_button).setOnClickListener(v -> {
             // Navigate to home screen
             Intent intent = new Intent(InboxScreen.this, HomeScreen.class);
+            intent.putExtra("language", language);
             startActivity(intent);
             finish();
         });
@@ -197,6 +198,7 @@ public class InboxScreen extends AppCompatActivity {
         findViewById(R.id.profile_button).setOnClickListener(v -> {
             // Navigate to profile screen
             Intent intent = new Intent(InboxScreen.this, ProfileScreen.class);
+            intent.putExtra("language", language);
             startActivity(intent);
             finish();
         });
@@ -204,12 +206,14 @@ public class InboxScreen extends AppCompatActivity {
         findViewById(R.id.upload_button).setOnClickListener(v -> {
             // Navigate to camera screen
             Intent intent = new Intent(InboxScreen.this, CameraScreen.class);
+            intent.putExtra("language", language);
             startActivity(intent);
         });
 
         findViewById(R.id.discover_button).setOnClickListener(v -> {
             // Navigate to discover screen
             Intent intent = new Intent(InboxScreen.this, SearchScreen.class);
+            intent.putExtra("language", language);
             startActivity(intent);
             finish();
         });

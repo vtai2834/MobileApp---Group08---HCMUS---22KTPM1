@@ -244,7 +244,9 @@ public class HomeScreen extends AppCompatActivity {
                 "VideoAdapter - onResume()",
                 "On Resumn play video at: " + videoAdapter.getCurrentPositionVideo()
         );
-        videoAdapter.playVideoAt(videoAdapter.getCurrentPositionVideo());
+//        int current_position = videoAdapter.getCurrentPositionVideo();
+        videoAdapter.notifyDataSetChanged();
+//        videoAdapter.playVideoAt(current_position);
     }
 
     @Override

@@ -68,7 +68,7 @@ public class ShareDialog extends BottomSheetDialog {
         fb_btn.setOnClickListener(v -> {
 
             shareToApp("com.facebook.katana", "facebook.com");
-            Toast.makeText(context, "Đăng bài hoặc chia sẻ qua Facebook thành công !", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Đăng bài hoặc chia sẻ qua Facebook thành công !", Toast.LENGTH_SHORT).show();
         });
 
         // Thiết lập sự kiện cho SMS
@@ -86,19 +86,19 @@ public class ShareDialog extends BottomSheetDialog {
             }
             dismiss();
 
-            Toast.makeText(context, "Chia sẻ qua SMS thành công !", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Chia sẻ qua SMS thành công !", Toast.LENGTH_SHORT).show();
         });
 
         // Thiết lập sự kiện cho Messenger
         view.findViewById(R.id.messengerButton).setOnClickListener(v -> {
             shareToApp("com.facebook.orca", "fb-messenger://share");
-            Toast.makeText(context, "Chia sẻ qua Messenger thành công !", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Chia sẻ qua Messenger thành công !", Toast.LENGTH_SHORT).show();
         });
 
         // Thiết lập sự kiện cho Instagram
         view.findViewById(R.id.instagramButton).setOnClickListener(v -> {
             shareToApp("com.instagram.android", "instagram://");
-            Toast.makeText(context, "Chia sẻ qua Instagram thành công !", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Chia sẻ qua Instagram thành công !", Toast.LENGTH_SHORT).show();
         });
 
         // Thiết lập sự kiện cho Cancel

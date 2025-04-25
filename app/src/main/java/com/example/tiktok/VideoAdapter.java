@@ -40,6 +40,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -626,6 +627,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 avt.setOnClickListener(v -> {
                     Intent intent = new Intent(context, ProfileScreen.class);
                     intent.putExtra("viewUsername", videoUsername);
+                    intent.putExtra("VIDEOS_ARRAY_JSON", new ArrayList<>(videoIds));
                     context.startActivity(intent);
                 });
 

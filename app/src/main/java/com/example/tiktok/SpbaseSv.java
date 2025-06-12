@@ -13,9 +13,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SpbaseSv {
-    private static final String SUPABASE_URL = "https://kzmyevwdlqjbtevzmksy.supabase.co"; // Replace with your Supabase URL
-    private static final String SUPABASE_BUCKET = "video_bucket"; // Replace with your bucket name
-    private static final String SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6bXlldndkbHFqYnRldnpta3N5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MTY5MjY2OSwiZXhwIjoyMDU3MjY4NjY5fQ.osTE7aLyQ_63o_yYw7n6eerDMuBNkw5ynB0AUGhBkeU"; // Replace with your Supabase API key
+    private static final String SUPABASE_URL = "https://buvzptsvgxckgiwisrwn.supabase.co"; // Replace with your Supabase URL
+    private static final String SUPABASE_BUCKET = "videos"; // Replace with your bucket name
+    private static final String SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1dnpwdHN2Z3hja2dpd2lzcnduIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTcxMzEwNiwiZXhwIjoyMDY1Mjg5MTA2fQ.bteXSCYMCYrxiDcspN6OIXpo4CWxDySjXccoyBAKhB8"; // Replace with your Supabase API key
 
     private static final OkHttpClient client = new OkHttpClient();
 

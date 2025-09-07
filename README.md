@@ -1,7 +1,13 @@
 # MobileApp---Group08---HCMUS---22KTPM1
 Software development for mobile devices - Group 08 - class 22KTPM1 - HCMUS
 
-- Link demo: https://youtu.be/DXtMfQ2JnE4?si=4czszIAfF9BMcrRB
+- 📺 **Demo Video:** [Watch on YouTube](https://youtu.be/DXtMfQ2JnE4?si=4czszIAfF9BMcrRB)
+
+<div align="center">
+  <a href="https://youtu.be/DXtMfQ2JnE4?si=4czszIAfF9BMcrRB">
+    <img src="https://img.youtube.com/vi/DXtMfQ2JnE4/0.jpg" alt="Demo Video">
+  </a>
+</div>
 
 - Đồ án môn học phát triển ứng dụng thiết bị di động trên Android. Thiết kế ứng dụng TikTok clone với các chức năng cơ bản:
 1. Nhóm Nền tảng & Cơ bản (Core) 
